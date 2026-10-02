@@ -1,0 +1,3347 @@
+{
+	"$schema": "https://cdn.smootify.io/components-v2/glossary.schema.json",
+	"version": 1,
+	"runtime": "2.0",
+	"attributes": [
+		{
+			"id": "product",
+			"label": "Product",
+			"inside": ["smootify-product", "smootify-variant", "box-item"],
+			"name": "product",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Title",
+					"value": "title"
+				},
+				{
+					"label": "Vendor",
+					"value": "vendor",
+					"note": "On a link, it goes to the vendor",
+					"on": ["text", "link"]
+				},
+				{
+					"label": "Description",
+					"value": "description",
+					"on": ["rich", "container"]
+				},
+				{
+					"label": "Link",
+					"value": "url",
+					"on": ["link"],
+					"note": "The title too, when empty"
+				},
+				{
+					"label": "Link only",
+					"value": "link",
+					"on": ["link"],
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Image by position",
+					"value": "specific-image",
+					"on": ["image", "lightbox"],
+					"extra": {
+						"index": "1"
+					},
+					"note": "index counts from 0: 0 is the first image, and without it the second"
+				},
+				{
+					"label": "First collection",
+					"value": "first-collection",
+					"on": ["text", "link"]
+				},
+				{
+					"label": "Collections",
+					"value": "collections",
+					"on": ["text", "link", "container"],
+					"inside": ["smootify-product"],
+					"note": "One copy per collection"
+				},
+				{
+					"label": "Category",
+					"value": "category",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Type",
+					"value": "type",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Tags",
+					"value": "tags",
+					"on": ["text"],
+					"inside": ["smootify-product"],
+					"note": "One copy per tag; exclude takes a list"
+				},
+				{
+					"label": "Option values",
+					"value": "option-values",
+					"on": ["container", "text", "button", "link"],
+					"inside": ["smootify-product"],
+					"extra": {
+						"data-option": "1"
+					},
+					"note": "One copy per value of the option"
+				},
+				{
+					"label": "Stock",
+					"value": "stock",
+					"inside": ["smootify-product"],
+					"note": "Every variant together"
+				},
+				{
+					"label": "Published on",
+					"value": "published-at",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Created on",
+					"value": "created-at",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Lowest price",
+					"value": "min-price",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Lowest available price",
+					"value": "min-available-price",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Highest price",
+					"value": "max-price",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Lowest compare-at price",
+					"value": "min-compare-at-price",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Highest compare-at price",
+					"value": "max-compare-at-price",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Gallery",
+					"value": "gallery",
+					"on": ["container"],
+					"inside": ["smootify-product"],
+					"note": "Holds the gallery parts"
+				},
+				{
+					"label": "Images (deprecated: use Gallery)",
+					"value": "images",
+					"on": ["image", "link", "lightbox", "container"],
+					"inside": ["smootify-product"],
+					"note": "One copy per image",
+					"deprecated": "[product=\"gallery\"]"
+				},
+				{
+					"label": "Media (deprecated: use Gallery)",
+					"value": "media",
+					"on": ["image", "link", "lightbox", "container"],
+					"inside": ["smootify-product"],
+					"note": "One copy per image, video or model",
+					"deprecated": "[product=\"gallery\"]"
+				},
+				{
+					"label": "First video",
+					"value": "video",
+					"on": ["container", "lightbox", "video"],
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Videos",
+					"value": "videos",
+					"on": ["container", "lightbox", "video"],
+					"inside": ["smootify-product"],
+					"note": "One copy each"
+				},
+				{
+					"label": "First YouTube or Vimeo",
+					"value": "external-video",
+					"on": ["youtube", "lightbox", "container"],
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "YouTube and Vimeo videos",
+					"value": "external-videos",
+					"on": ["youtube", "lightbox", "container"],
+					"inside": ["smootify-product"],
+					"note": "One copy each"
+				},
+				{
+					"label": "3D model",
+					"value": "model",
+					"on": ["container"],
+					"inside": ["smootify-product"],
+					"aliases": ["models"]
+				},
+				{
+					"label": "Image number, from 0",
+					"name": "index",
+					"placeholder": "0 is the first",
+					"on": ["image"],
+					"with": ["[product=\"specific-image\"]"]
+				},
+				{
+					"label": "Leave out",
+					"name": "exclude",
+					"placeholder": "tag,other tag",
+					"on": ["text", "link", "container"],
+					"with": [
+						"[product=\"tags\"]",
+						"[product=\"collections\"]",
+						"[product=\"first-collection\"]"
+					],
+					"note": "A comma list; spaces around the values are ignored"
+				},
+				{
+					"label": "Option number",
+					"name": "data-option",
+					"placeholder": "1",
+					"on": ["container", "text", "button", "link"],
+					"inside": ["smootify-product"],
+					"with": ["[product=\"option-values\"]"]
+				},
+				{
+					"label": "Option name",
+					"name": "data-option-name",
+					"placeholder": "Color, Colour",
+					"on": ["container", "text", "button", "link"],
+					"inside": ["smootify-product"],
+					"with": ["[product=\"option-values\"]"],
+					"note": "The first of the names the product has"
+				}
+			]
+		},
+		{
+			"id": "gallery",
+			"label": "Gallery parts",
+			"inside": ["smootify-product [product=\"gallery\"]"],
+			"name": "gallery",
+			"items": [
+				{
+					"label": "Slider",
+					"value": "slider",
+					"on": ["slider"],
+					"note": "A slide per media"
+				},
+				{
+					"label": "Thumbnails",
+					"value": "thumbnails",
+					"on": ["container", "image", "link"],
+					"note": "Repeated; a click moves the slider"
+				},
+				{
+					"label": "Lightbox",
+					"value": "lightbox",
+					"on": ["lightbox"],
+					"note": "One link opening every media"
+				},
+				{
+					"label": "Lightboxes",
+					"value": "lightboxes",
+					"on": ["lightbox"],
+					"note": "A link per media"
+				}
+			]
+		},
+		{
+			"id": "variant",
+			"label": "Selected variant",
+			"inside": ["smootify-product", "smootify-variant", "box-item"],
+			"name": "variant",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Title",
+					"value": "title",
+					"note": "The product title inside smootify-product and box-item; the variant title inside smootify-variant"
+				},
+				{
+					"label": "SKU",
+					"value": "sku"
+				},
+				{
+					"label": "Barcode",
+					"value": "barcode"
+				},
+				{
+					"label": "Stock",
+					"value": "stock"
+				},
+				{
+					"label": "Weight",
+					"value": "weight"
+				},
+				{
+					"label": "Unit price",
+					"value": "unit-price"
+				},
+				{
+					"label": "Discount percentage",
+					"value": "discount-percentage"
+				},
+				{
+					"label": "Discounted amount",
+					"value": "discounted-amount"
+				},
+				{
+					"label": "Option 1 name",
+					"value": "option1-name",
+					"aliases": ["option1-label"]
+				},
+				{
+					"label": "Option 1 value",
+					"value": "option1-value"
+				},
+				{
+					"label": "Option 2 name",
+					"value": "option2-name",
+					"aliases": ["option2-label"]
+				},
+				{
+					"label": "Option 2 value",
+					"value": "option2-value"
+				},
+				{
+					"label": "Option 3 name",
+					"value": "option3-name",
+					"aliases": ["option3-label"]
+				},
+				{
+					"label": "Option 3 value",
+					"value": "option3-value"
+				},
+				{
+					"label": "Minimum quantity",
+					"value": "quantity-min"
+				},
+				{
+					"label": "Quantity step",
+					"value": "quantity-increment"
+				},
+				{
+					"label": "Maximum quantity",
+					"value": "quantity-max"
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Link",
+					"value": "url",
+					"on": ["link"],
+					"note": "The product page on this variant"
+				},
+				{
+					"label": "Bundle components",
+					"value": "components",
+					"on": ["container"],
+					"note": "One copy per component of a fixed bundle"
+				},
+				{
+					"label": "Swatch of option 1",
+					"value": "swatch1",
+					"on": ["container"],
+					"inside": ["smootify-variant"],
+					"note": "Holds the swatch parts"
+				},
+				{
+					"label": "Swatch of option 2",
+					"value": "swatch2",
+					"on": ["container"],
+					"inside": ["smootify-variant"]
+				},
+				{
+					"label": "Swatch of option 3",
+					"value": "swatch3",
+					"on": ["container"],
+					"inside": ["smootify-variant"]
+				},
+				{
+					"label": "Which variant",
+					"name": "data-type",
+					"placeholder": "min, min-available or max",
+					"on": ["link"],
+					"with": ["[variant=\"url\"]"]
+				},
+				{
+					"label": "Price format",
+					"name": "data-format",
+					"placeholder": "{{price}} / {{unit}}",
+					"with": ["[variant=\"unit-price\"]"]
+				},
+				{
+					"label": "Number of values",
+					"value": "number",
+					"on": ["text"],
+					"inside": ["variant-swatches", "variant-dropdown", "variant-popover", "variant-selector"]
+				},
+				{
+					"label": "Remove the parent",
+					"name": "remove-parent",
+					"value": "true",
+					"inside": ["smootify-variant"],
+					"with": [
+						"[variant=\"option1-value\"]",
+						"[variant=\"option2-value\"]",
+						"[variant=\"option3-value\"]"
+					],
+					"note": "For Default Title, the parent goes instead"
+				}
+			]
+		},
+		{
+			"id": "component",
+			"label": "Bundle component",
+			"inside": ["[variant=\"components\"]"],
+			"name": "component",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Product title",
+					"value": "title"
+				},
+				{
+					"label": "Variant title",
+					"value": "variant"
+				},
+				{
+					"label": "Quantity",
+					"value": "quantity"
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Link",
+					"value": "url",
+					"on": ["link"]
+				}
+			]
+		},
+		{
+			"id": "variant-swatch",
+			"label": "Variant swatch",
+			"inside": [
+				"smootify-variant [variant=\"swatch1\"]",
+				"smootify-variant [variant=\"swatch2\"]",
+				"smootify-variant [variant=\"swatch3\"]"
+			],
+			"name": "swatch",
+			"items": [
+				{
+					"label": "Name",
+					"value": "name",
+					"on": ["text"]
+				},
+				{
+					"label": "Color",
+					"value": "color",
+					"on": ["container", "text"],
+					"note": "Sets the background color"
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Description",
+					"value": "description",
+					"on": ["text"]
+				}
+			]
+		},
+		{
+			"id": "option",
+			"label": "Option buttons",
+			"inside": [
+				"variant-swatches",
+				"variant-dropdown",
+				"variant-popover",
+				"addon-swatches",
+				"smootify-product [product=\"option-values\"]"
+			],
+			"name": "option",
+			"items": [
+				{
+					"label": "Value",
+					"value": "title",
+					"on": ["text"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Text in its color",
+					"value": "color",
+					"on": ["text"]
+				},
+				{
+					"label": "Background in its color",
+					"value": "bg-color",
+					"on": ["container", "text", "button", "link"]
+				},
+				{
+					"label": "Description",
+					"value": "description",
+					"on": ["text"]
+				},
+				{
+					"label": "Price difference",
+					"value": "price-difference",
+					"on": ["text"],
+					"inside": ["variant-swatches", "variant-dropdown", "variant-popover"],
+					"note": "Hidden on the cheapest value; not in add-ons"
+				},
+				{
+					"label": "Choice label",
+					"value": "title",
+					"on": ["text"],
+					"inside": ["dynamic-property"],
+					"note": "In a dynamic property's swatch button: the choice's label"
+				},
+				{
+					"label": "Choice image",
+					"value": "image",
+					"on": ["image"],
+					"inside": ["dynamic-property"]
+				},
+				{
+					"label": "Add-on option 1",
+					"value": "option1",
+					"on": ["text"],
+					"inside": ["addon-swatches"]
+				},
+				{
+					"label": "Add-on option 2",
+					"value": "option2",
+					"on": ["text"],
+					"inside": ["addon-swatches"]
+				},
+				{
+					"label": "Add-on option 3",
+					"value": "option3",
+					"on": ["text"],
+					"inside": ["addon-swatches"]
+				},
+				{
+					"label": "Variant image",
+					"name": "option-variant",
+					"value": "image",
+					"on": ["image"],
+					"inside": ["variant-swatches", "variant-dropdown", "variant-popover", "addon-swatches"],
+					"note": "The variant the button stands for"
+				},
+				{
+					"label": "Price format",
+					"name": "data-format",
+					"placeholder": "+ {{price}}",
+					"on": ["text"],
+					"inside": ["variant-swatches", "variant-dropdown", "variant-popover"],
+					"with": ["[option=\"price-difference\"]"]
+				},
+				{
+					"label": "Option text format",
+					"name": "data-format",
+					"placeholder": "{{value}} {{difference}}",
+					"on": ["input"],
+					"inside": ["variant-selector"],
+					"note": "On the <select>: {{value}} is the value, {{difference}} what it costs more (empty on the cheapest)"
+				}
+			]
+		},
+		{
+			"id": "option-value-self",
+			"label": "Each value",
+			"inside": ["smootify-product"],
+			"name": "option",
+			"with": ["[product=\"option-values\"]"],
+			"note": "On the repeated element itself",
+			"items": [
+				{
+					"label": "Value",
+					"value": "title",
+					"on": ["text"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Text in its color",
+					"value": "color",
+					"on": ["text"]
+				},
+				{
+					"label": "Background in its color",
+					"value": "bg-color",
+					"on": ["container", "text", "button", "link"]
+				},
+				{
+					"label": "Description",
+					"value": "description",
+					"on": ["text"]
+				}
+			]
+		},
+		{
+			"id": "selected-option",
+			"label": "Selected value",
+			"inside": ["variant-swatches", "variant-dropdown", "variant-popover", "variant-selector"],
+			"name": "selected-option",
+			"items": [
+				{
+					"label": "Value",
+					"value": "title",
+					"on": ["text"]
+				},
+				{
+					"label": "Text in its color",
+					"value": "color",
+					"on": ["text"]
+				},
+				{
+					"label": "Background in its color",
+					"value": "bg-color",
+					"on": ["container", "text", "button", "link"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				}
+			]
+		},
+		{
+			"id": "add-to-cart",
+			"label": "Add to cart",
+			"inside": ["smootify-add-to-cart"],
+			"items": [
+				{
+					"label": "Bundle total",
+					"name": "bundle",
+					"value": "total",
+					"on": ["text"]
+				},
+				{
+					"label": "Bundle images",
+					"name": "bundle",
+					"value": "images",
+					"on": ["image", "container"],
+					"note": "One per selected add-on"
+				},
+				{
+					"label": "Units in the bundle",
+					"name": "bundle-limit",
+					"value": "current-total",
+					"on": ["text"]
+				},
+				{
+					"label": "Units above the limit",
+					"name": "bundle-limit",
+					"value": "above-units",
+					"on": ["text"]
+				},
+				{
+					"label": "Units missing",
+					"name": "bundle-limit",
+					"value": "missing-units",
+					"on": ["text"]
+				},
+				{
+					"label": "Buy now",
+					"name": "name",
+					"value": "buy-now",
+					"on": ["button"],
+					"note": "Goes straight to checkout"
+				},
+				{
+					"label": "Idle label",
+					"name": "data-state",
+					"value": "default",
+					"on": ["text", "container"],
+					"inside": [
+						"smootify-add-to-cart [type=\"submit\"]",
+						"smootify-cart [type=\"submit\"]",
+						"customer-order [data-action=\"buy-again\"]",
+						"order-page [data-action=\"buy-again\"]",
+						"smootify-product [data-is=\"direct-add-to-cart\"]"
+					]
+				},
+				{
+					"label": "Loading label",
+					"name": "data-state",
+					"value": "loading",
+					"on": ["text", "container"],
+					"inside": [
+						"smootify-add-to-cart [type=\"submit\"]",
+						"smootify-cart [type=\"submit\"]",
+						"customer-order [data-action=\"buy-again\"]",
+						"order-page [data-action=\"buy-again\"]",
+						"smootify-product [data-is=\"direct-add-to-cart\"]"
+					]
+				}
+			]
+		},
+		{
+			"id": "quantity",
+			"label": "Quantity",
+			"inside": ["quantity-input"],
+			"name": "data-action",
+			"on": ["button"],
+			"items": [
+				{
+					"label": "Plus",
+					"value": "plus"
+				},
+				{
+					"label": "Minus",
+					"value": "minus"
+				}
+			]
+		},
+		{
+			"id": "price",
+			"label": "Price",
+			"inside": ["smootify-price"],
+			"name": "data-prop",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Price",
+					"value": "price"
+				},
+				{
+					"label": "Compare-at price",
+					"value": "compareAtPrice"
+				},
+				{
+					"label": "Total",
+					"value": "total"
+				}
+			]
+		},
+		{
+			"id": "selling-plan",
+			"label": "Selling plans",
+			"inside": ["subscription-swatches"],
+			"items": [
+				{
+					"label": "Group name",
+					"name": "subscription-group",
+					"value": "name",
+					"on": ["text"]
+				}
+			]
+		},
+		{
+			"id": "cart",
+			"label": "Cart",
+			"inside": ["smootify-cart"],
+			"name": "cart",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Item count",
+					"value": "count",
+					"aliases": ["totalQuantity"]
+				},
+				{
+					"label": "Total",
+					"value": "total"
+				},
+				{
+					"label": "Subtotal",
+					"value": "subtotal"
+				},
+				{
+					"label": "Taxes",
+					"value": "taxes"
+				},
+				{
+					"label": "Duties",
+					"value": "duties"
+				},
+				{
+					"label": "Compare-at total",
+					"value": "compare-at-total",
+					"note": "Hidden when not higher"
+				},
+				{
+					"label": "Savings",
+					"value": "savings",
+					"note": "Hidden when nothing is saved"
+				},
+				{
+					"label": "Discounts",
+					"value": "discount",
+					"on": ["container"],
+					"note": "Template: one per discount"
+				},
+				{
+					"label": "Gift cards",
+					"value": "gift-card",
+					"on": ["container"],
+					"note": "Template: one per gift card"
+				}
+			]
+		},
+		{
+			"id": "discount",
+			"label": "Discount",
+			"inside": ["smootify-cart [cart=\"discount\"]", "cart-item [cart-item=\"discount\"]"],
+			"name": "discount",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Code or title",
+					"value": "title"
+				},
+				{
+					"label": "Amount",
+					"value": "amount"
+				}
+			]
+		},
+		{
+			"id": "gift-card",
+			"label": "Gift card",
+			"inside": ["smootify-cart [cart=\"gift-card\"]"],
+			"name": "gift-card",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Code",
+					"value": "code"
+				},
+				{
+					"label": "Amount",
+					"value": "amount"
+				}
+			]
+		},
+		{
+			"id": "cart-form",
+			"label": "Cart form and buttons",
+			"inside": ["smootify-cart"],
+			"items": [
+				{
+					"label": "Cart attribute",
+					"name": "data-name",
+					"placeholder": "attribute name",
+					"on": ["input"],
+					"note": "The field becomes a cart attribute"
+				},
+				{
+					"label": "Coupon field",
+					"name": "name",
+					"value": "coupon",
+					"on": ["input"],
+					"note": "Applied with the coupon button"
+				},
+				{
+					"label": "Gift card field",
+					"name": "name",
+					"value": "gift-card",
+					"on": ["input"],
+					"note": "Applied with the gift card button"
+				},
+				{
+					"label": "Note for the seller",
+					"name": "name",
+					"value": "note",
+					"on": ["input"],
+					"note": "A textarea"
+				},
+				{
+					"label": "Open the cart",
+					"name": "data-action",
+					"value": "open-cart",
+					"on": ["button"]
+				},
+				{
+					"label": "Close the cart",
+					"name": "data-action",
+					"value": "close-cart",
+					"on": ["button"]
+				},
+				{
+					"label": "Open the cart (short)",
+					"name": "data-action",
+					"value": "open",
+					"on": ["button"],
+					"note": "Same as open-cart"
+				},
+				{
+					"label": "Close the cart (short)",
+					"name": "data-action",
+					"value": "close",
+					"on": ["button"],
+					"note": "Same as close-cart"
+				},
+				{
+					"label": "Apply the coupon",
+					"name": "data-action",
+					"value": "coupon",
+					"on": ["button"]
+				},
+				{
+					"label": "Apply the gift card",
+					"name": "data-action",
+					"value": "gift-card",
+					"on": ["button"]
+				},
+				{
+					"label": "Remove the line",
+					"name": "data-action",
+					"value": "remove",
+					"on": ["button"],
+					"inside": [
+						"box-item",
+						"cart-item",
+						"smootify-cart [cart=\"discount\"]",
+						"smootify-cart [cart=\"gift-card\"]"
+					]
+				},
+				{
+					"label": "Ask for a quote",
+					"name": "name",
+					"value": "draft-order",
+					"on": ["button"],
+					"note": "A draft order instead of checkout"
+				},
+				{
+					"label": "Label while waiting",
+					"name": "data-wait",
+					"placeholder": "Updating…",
+					"on": ["input"],
+					"note": "Only on a Form Button (an input); on a <button>, use data-state children"
+				}
+			]
+		},
+		{
+			"id": "cart-item",
+			"label": "Cart line",
+			"inside": ["cart-item"],
+			"name": "cart-item",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Title",
+					"value": "title"
+				},
+				{
+					"label": "Variant title",
+					"value": "variant-title"
+				},
+				{
+					"label": "Vendor",
+					"value": "vendor"
+				},
+				{
+					"label": "Quantity",
+					"value": "quantity"
+				},
+				{
+					"label": "Price",
+					"value": "price"
+				},
+				{
+					"label": "Compare-at price",
+					"value": "compare-at-price"
+				},
+				{
+					"label": "Subtotal",
+					"value": "subtotal"
+				},
+				{
+					"label": "Total",
+					"value": "total"
+				},
+				{
+					"label": "Compare-at total",
+					"value": "compare-at-total"
+				},
+				{
+					"label": "Savings",
+					"value": "savings"
+				},
+				{
+					"label": "Discount percentage",
+					"value": "discount-percentage"
+				},
+				{
+					"label": "SKU",
+					"value": "sku"
+				},
+				{
+					"label": "Unit price",
+					"value": "unit-price"
+				},
+				{
+					"label": "Product link",
+					"value": "url",
+					"on": ["link"]
+				},
+				{
+					"label": "Variant link",
+					"value": "variant-url",
+					"on": ["link"],
+					"note": "The product page, like Link"
+				},
+				{
+					"label": "Variant image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Product image",
+					"value": "product-image",
+					"on": ["image"]
+				},
+				{
+					"label": "Options",
+					"value": "options",
+					"on": ["container"],
+					"note": "Template: one per option"
+				},
+				{
+					"label": "Discounts",
+					"value": "discount",
+					"on": ["container"],
+					"note": "Template: one per discount"
+				}
+			]
+		},
+		{
+			"id": "line-option",
+			"label": "Line option",
+			"inside": ["cart-item [cart-item=\"options\"]", "line-item [line-item=\"option\"]"],
+			"name": "option",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Name",
+					"value": "name"
+				},
+				{
+					"label": "Value",
+					"value": "value"
+				}
+			]
+		},
+		{
+			"id": "bundle-item",
+			"label": "Bundle line",
+			"inside": ["bundle-item"],
+			"name": "bundle-item",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Title",
+					"value": "title"
+				},
+				{
+					"label": "Quantity",
+					"value": "quantity"
+				},
+				{
+					"label": "Price",
+					"value": "price"
+				},
+				{
+					"label": "Subtotal",
+					"value": "subtotal"
+				},
+				{
+					"label": "Total",
+					"value": "total"
+				},
+				{
+					"label": "Link",
+					"value": "url",
+					"on": ["link"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				}
+			]
+		},
+		{
+			"id": "box-item",
+			"label": "Box item",
+			"inside": ["box-item"],
+			"name": "box-item",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Title",
+					"value": "title"
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Price",
+					"value": "price"
+				},
+				{
+					"label": "Total",
+					"value": "total"
+				},
+				{
+					"label": "Quantity",
+					"value": "quantity"
+				},
+				{
+					"label": "Category",
+					"value": "category"
+				}
+			]
+		},
+		{
+			"id": "image-size",
+			"label": "Image size",
+			"inside": ["smootify-product", "smootify-variant", "cart-item", "bundle-item", "box-item", "smootify-metaobject"],
+			"on": ["image"],
+			"note": "On an image Smootify fills: the Shopify CDN resizes it. In a gallery, on the Slider for its slides, on the thumbnail or lightbox part itself",
+			"items": [
+				{
+					"label": "Max width",
+					"name": "max-width",
+					"placeholder": "800"
+				},
+				{
+					"label": "Max height",
+					"name": "max-height",
+					"placeholder": "800"
+				},
+				{
+					"label": "Crop",
+					"name": "crop",
+					"placeholder": "center"
+				},
+				{
+					"label": "Padding color",
+					"name": "pad-color",
+					"placeholder": "ffffff"
+				}
+			],
+			"with": [
+				"[product=\"specific-image\"]",
+				"[variant=\"image\"]",
+				"[option-variant=\"image\"]",
+				"[component=\"image\"]",
+				"[cart-item=\"image\"]",
+				"[cart-item=\"product-image\"]",
+				"[bundle-item=\"image\"]",
+				"[reference=\"image\"]",
+				"[metafield]",
+				"[variant-metafield]",
+				"[option-metafield]",
+				"[metaobject]",
+				"[gallery=\"slider\"]",
+				"[gallery=\"thumbnails\"]",
+				"[gallery=\"lightboxes\"]"
+			]
+		},
+		{
+			"id": "loading",
+			"label": "Loading",
+			"inside": [
+				"smootify-product",
+				"smootify-variant",
+				"smootify-cart",
+				"customer-orders",
+				"order-page",
+				"store-credit",
+				"subscription-swatches",
+				"smootify-metaobjects",
+				"smootify-price",
+				"smootify-metaobject",
+				"smootify-search-discovery",
+				"smootify-search-page",
+				"customer-subscriptions",
+				"subscription-page"
+			],
+			"name": "skeleton",
+			"note": "A placeholder until the data arrives",
+			"items": [
+				{
+					"label": "Text",
+					"value": "text",
+					"on": ["text"]
+				},
+				{
+					"label": "Button",
+					"value": "button",
+					"on": ["button", "link"]
+				},
+				{
+					"label": "Box",
+					"value": "block",
+					"on": ["container"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"],
+					"note": "On an img: blurred until loaded"
+				},
+				{
+					"label": "Hidden until loaded",
+					"value": "hide",
+					"on": ["any"]
+				}
+			]
+		},
+		{
+			"id": "product-metafield",
+			"label": "Product metafield",
+			"inside": ["smootify-product", "cart-item"],
+			"items": [
+				{
+					"label": "Value",
+					"name": "metafield",
+					"placeholder": "key, like care_guide",
+					"on": ["text", "rich", "container", "link", "button", "image", "video"]
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"on": ["any"],
+					"with": ["[metafield]"]
+				},
+				{
+					"label": "Into an attribute",
+					"name": "data-attr",
+					"placeholder": "href",
+					"on": ["any"],
+					"with": ["[metafield]"]
+				},
+				{
+					"label": "List separator",
+					"name": "separator",
+					"placeholder": ", or repeat",
+					"note": "Used as written, spaces included: a comma and a space joins with a comma and a space",
+					"on": ["any"],
+					"with": ["[metafield]"]
+				},
+				{
+					"label": "Decimal digits",
+					"name": "data-digits",
+					"placeholder": "2",
+					"on": ["any"],
+					"with": ["[metafield]"]
+				},
+				{
+					"label": "JSON path",
+					"name": "data-path",
+					"placeholder": "items.0.title",
+					"on": ["any"],
+					"with": ["[metafield]"]
+				},
+				{
+					"label": "JSON path, inside the element",
+					"name": "data-path",
+					"placeholder": "width",
+					"on": ["any"],
+					"inside": ["smootify-product [metafield]", "cart-item [metafield]"],
+					"note": "On elements inside a JSON [metafield]: one value each"
+				},
+				{
+					"label": "Color variable",
+					"name": "property",
+					"placeholder": "--metafield-color",
+					"on": ["any"],
+					"with": ["[metafield]"]
+				}
+			]
+		},
+		{
+			"id": "reference",
+			"label": "Reference parts",
+			"inside": [
+				"[metafield]",
+				"[variant-metafield]",
+				"[metaobject]",
+				"[customer-metafield]",
+				"[company-metafield]"
+			],
+			"name": "reference",
+			"on": ["text"],
+			"note": "For a product, variant, collection or page reference; hidden when it has none",
+			"items": [
+				{
+					"label": "Title",
+					"value": "title"
+				},
+				{
+					"label": "Handle",
+					"value": "handle"
+				},
+				{
+					"label": "Description",
+					"value": "description",
+					"on": ["rich", "container"]
+				},
+				{
+					"label": "Body",
+					"value": "body",
+					"on": ["rich", "container"]
+				},
+				{
+					"label": "Link",
+					"value": "url",
+					"on": ["link"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Link pattern",
+					"name": "metaobject-url",
+					"placeholder": "/path/{handle}",
+					"on": ["link"],
+					"note": "For a metaobject reference"
+				}
+			]
+		},
+		{
+			"id": "variant-metafield",
+			"label": "Variant metafield",
+			"inside": ["smootify-product", "smootify-variant"],
+			"items": [
+				{
+					"label": "Value",
+					"name": "variant-metafield",
+					"placeholder": "key, like material",
+					"on": ["text", "rich", "container", "link", "button", "image", "video"]
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"on": ["any"],
+					"with": ["[variant-metafield]"]
+				},
+				{
+					"label": "Into an attribute",
+					"name": "data-attr",
+					"placeholder": "href",
+					"on": ["any"],
+					"with": ["[variant-metafield]"]
+				},
+				{
+					"label": "Color variable",
+					"name": "property",
+					"placeholder": "--metafield-color",
+					"on": ["any"],
+					"with": ["[variant-metafield]"]
+				}
+			]
+		},
+		{
+			"id": "option-metafield",
+			"label": "Option metafield",
+			"inside": [
+				"variant-swatches",
+				"variant-dropdown",
+				"variant-popover",
+				"addon-swatches",
+				"smootify-product [product=\"option-values\"]"
+			],
+			"items": [
+				{
+					"label": "Value",
+					"name": "option-metafield",
+					"placeholder": "field of the option",
+					"on": ["text", "image", "container"]
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"on": ["any"],
+					"with": ["[option-metafield]"]
+				},
+				{
+					"label": "Color variable",
+					"name": "property",
+					"placeholder": "--metafield-color",
+					"on": ["any"],
+					"with": ["[option-metafield]"]
+				}
+			]
+		},
+		{
+			"id": "metaobject",
+			"label": "Metaobject field",
+			"inside": ["smootify-metaobject", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]"],
+			"items": [
+				{
+					"label": "Value",
+					"name": "metaobject",
+					"placeholder": "field key",
+					"on": ["text", "rich", "container", "link", "button", "image", "video"]
+				},
+				{
+					"label": "Color variable",
+					"name": "property",
+					"placeholder": "--metafield-color",
+					"on": ["any"],
+					"with": ["[metaobject]"]
+				},
+				{
+					"label": "Into an attribute",
+					"name": "data-attr",
+					"placeholder": "href",
+					"on": ["any"],
+					"with": ["[metaobject]"]
+				},
+				{
+					"label": "List separator",
+					"name": "separator",
+					"placeholder": ", ",
+					"note": "Used as written, spaces included: a comma and a space joins with a comma and a space",
+					"on": ["any"],
+					"with": ["[metaobject]"]
+				},
+				{
+					"label": "Decimal digits",
+					"name": "data-digits",
+					"placeholder": "2",
+					"on": ["any"],
+					"with": ["[metaobject]"]
+				},
+				{
+					"label": "JSON path",
+					"name": "data-path",
+					"placeholder": "items.0.name",
+					"on": ["any"],
+					"with": ["[metaobject]"]
+				}
+			]
+		},
+		{
+			"id": "metaobjects-list",
+			"label": "Metaobject list",
+			"inside": ["smootify-metaobjects"],
+			"name": "data-action",
+			"on": ["button"],
+			"items": [
+				{
+					"label": "Load more",
+					"value": "load-more",
+					"note": "Adds the next page below"
+				},
+				{
+					"label": "Next page",
+					"value": "next"
+				},
+				{
+					"label": "Previous page",
+					"value": "prev"
+				}
+			]
+		},
+		{
+			"id": "customer",
+			"label": "Customer",
+			"inside": [],
+			"name": "customer",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "First name",
+					"value": "first-name",
+					"aliases": ["firstName"]
+				},
+				{
+					"label": "Last name",
+					"value": "last-name",
+					"aliases": ["lastName"]
+				},
+				{
+					"label": "Display name",
+					"value": "display-name",
+					"aliases": ["displayName"]
+				},
+				{
+					"label": "Email",
+					"value": "email",
+					"note": "A link becomes mailto:",
+					"on": ["text", "link"]
+				},
+				{
+					"label": "Phone",
+					"value": "phone",
+					"note": "A link becomes tel:",
+					"on": ["text", "link"]
+				},
+				{
+					"label": "Default address",
+					"value": "defaultAddress"
+				},
+				{
+					"label": "Tags",
+					"value": "tags",
+					"on": ["text"],
+					"note": "One copy per tag"
+				},
+				{
+					"label": "Company name",
+					"name": "company",
+					"value": "name",
+					"note": "Removed without a company"
+				},
+				{
+					"label": "Leave out",
+					"name": "exclude",
+					"placeholder": "tag,other tag",
+					"on": ["text", "link"],
+					"with": ["[customer=\"tags\"]"],
+					"note": "A comma list; spaces around the values are ignored"
+				}
+			]
+		},
+		{
+			"id": "customer-metafield",
+			"label": "Customer metafield",
+			"inside": [],
+			"items": [
+				{
+					"label": "Customer value",
+					"name": "customer-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Company value",
+					"name": "company-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"on": ["any"],
+					"with": ["[customer-metafield]", "[company-metafield]"]
+				},
+				{
+					"label": "Color variable",
+					"name": "property",
+					"placeholder": "--metafield-color",
+					"on": ["any"],
+					"with": ["[customer-metafield]", "[company-metafield]"]
+				}
+			],
+			"on": ["text", "rich", "container", "link", "button", "image", "video"]
+		},
+		{
+			"id": "order",
+			"label": "Order",
+			"inside": ["customer-order", "order-page"],
+			"name": "order",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Number",
+					"value": "name"
+				},
+				{
+					"label": "Order number",
+					"value": "orderNumber",
+					"aliases": ["order-number"]
+				},
+				{
+					"label": "Email",
+					"value": "email"
+				},
+				{
+					"label": "Phone",
+					"value": "phone"
+				},
+				{
+					"label": "PO number",
+					"value": "poNumber",
+					"aliases": ["po-number"]
+				},
+				{
+					"label": "Location",
+					"value": "locationName",
+					"aliases": ["location-name"]
+				},
+				{
+					"label": "Date",
+					"value": "processedAt",
+					"aliases": ["processed-at"]
+				},
+				{
+					"label": "Status",
+					"value": "status",
+					"note": "The payment status, like Payment status"
+				},
+				{
+					"label": "Payment status",
+					"value": "financialStatus",
+					"aliases": ["financial-status"]
+				},
+				{
+					"label": "Fulfillment status",
+					"value": "fulfillmentStatus",
+					"aliases": ["fulfillment-status"]
+				},
+				{
+					"label": "Total",
+					"value": "totalPrice",
+					"aliases": ["total", "total-price"]
+				},
+				{
+					"label": "Subtotal",
+					"value": "subtotalPrice",
+					"aliases": ["subtotal", "subtotal-price"]
+				},
+				{
+					"label": "Shipping",
+					"value": "totalShipping",
+					"aliases": ["shipping-price", "shippingPrice", "total-shipping"]
+				},
+				{
+					"label": "Taxes",
+					"value": "totalTax",
+					"aliases": ["total-tax"]
+				},
+				{
+					"label": "Refunded",
+					"value": "totalRefunded",
+					"aliases": ["total-refunded"]
+				},
+				{
+					"label": "Shipping address",
+					"value": "shippingAddress",
+					"aliases": ["shipping-address"]
+				},
+				{
+					"label": "Billing address",
+					"value": "billingAddress",
+					"aliases": ["billing-address"]
+				},
+				{
+					"label": "Note",
+					"value": "note"
+				},
+				{
+					"label": "Cancel reason",
+					"value": "cancelReason",
+					"aliases": ["cancel-reason"]
+				},
+				{
+					"label": "Created on",
+					"value": "createdAt",
+					"note": "Removed when missing",
+					"aliases": ["created-at"]
+				},
+				{
+					"label": "Cancelled on",
+					"value": "canceledAt",
+					"aliases": ["canceled-at", "cancelled-at", "cancelledAt"]
+				},
+				{
+					"label": "Order page",
+					"value": "url",
+					"on": ["link"]
+				},
+				{
+					"label": "Status page",
+					"value": "statusUrl",
+					"on": ["link"],
+					"aliases": ["status-url"]
+				},
+				{
+					"label": "Buy again",
+					"name": "data-action",
+					"value": "buy-again",
+					"on": ["button"],
+					"note": "Adds the order lines to the cart"
+				},
+				{
+					"label": "Account page",
+					"value": "customerUrl",
+					"on": ["link"],
+					"aliases": ["customer-url"]
+				},
+				{
+					"label": "Buy again, to checkout",
+					"name": "data-buy-now",
+					"value": "true",
+					"on": ["button"],
+					"with": ["[data-action=\"buy-again\"]"]
+				}
+			]
+		},
+		{
+			"id": "account-lists",
+			"label": "Account list pages",
+			"inside": ["customer-orders", "customer-subscriptions"],
+			"name": "data-action",
+			"on": ["button"],
+			"items": [
+				{
+					"label": "Previous page",
+					"value": "prev",
+					"note": "Also previous, or name=previous",
+					"aliases": ["previous"]
+				},
+				{
+					"label": "Next page",
+					"value": "next",
+					"note": "Also name=next"
+				},
+				{
+					"label": "Load more",
+					"value": "load",
+					"note": "Adds the next page below; also name=load"
+				}
+			]
+		},
+		{
+			"id": "line-item",
+			"label": "Order line",
+			"inside": ["line-item"],
+			"name": "line-item",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Name",
+					"value": "name"
+				},
+				{
+					"label": "Title",
+					"value": "title"
+				},
+				{
+					"label": "Quantity",
+					"value": "quantity"
+				},
+				{
+					"label": "Vendor",
+					"value": "vendor"
+				},
+				{
+					"label": "SKU",
+					"value": "sku"
+				},
+				{
+					"label": "Unit price",
+					"value": "unitPrice",
+					"aliases": ["unit-price"]
+				},
+				{
+					"label": "Price",
+					"value": "price"
+				},
+				{
+					"label": "Discount",
+					"value": "totalDiscount",
+					"aliases": ["total-discount"]
+				},
+				{
+					"label": "Total",
+					"value": "totalPrice",
+					"aliases": ["total-price"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Options",
+					"value": "option",
+					"on": ["container"]
+				}
+			]
+		},
+		{
+			"id": "subscription-line-item",
+			"label": "Subscription line",
+			"inside": ["subscription-line-item"],
+			"name": "line-item",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Name",
+					"value": "name"
+				},
+				{
+					"label": "Title",
+					"value": "title"
+				},
+				{
+					"label": "Quantity",
+					"value": "quantity"
+				},
+				{
+					"label": "SKU",
+					"value": "sku"
+				},
+				{
+					"label": "Variant",
+					"value": "variantTitle",
+					"aliases": ["variant-title"]
+				},
+				{
+					"label": "Price",
+					"value": "price"
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				}
+			]
+		},
+		{
+			"id": "fulfillment",
+			"label": "Fulfillment",
+			"inside": ["order-fulfillment"],
+			"name": "fulfillment",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Status",
+					"value": "status"
+				},
+				{
+					"label": "Shipment status",
+					"value": "latestShipmentStatus",
+					"aliases": ["latest-shipment-status"]
+				},
+				{
+					"label": "Carrier",
+					"value": "trackingCompany",
+					"aliases": ["tracking-company"]
+				},
+				{
+					"label": "Tracking number",
+					"value": "trackingNumber",
+					"aliases": ["tracking-number"]
+				},
+				{
+					"label": "Estimated delivery",
+					"value": "estimatedDeliveryAt",
+					"aliases": ["estimated-delivery-at"]
+				},
+				{
+					"label": "Updated on",
+					"value": "updatedAt",
+					"aliases": ["updated-at"]
+				},
+				{
+					"label": "Cancelled on",
+					"value": "cancelledAt",
+					"note": "Shopify gives fulfillments no cancellation date: the element is removed",
+					"aliases": ["cancelled-at"]
+				},
+				{
+					"label": "Tracking link",
+					"value": "trackingUrl",
+					"on": ["link"],
+					"aliases": ["tracking-url"]
+				}
+			]
+		},
+		{
+			"id": "subscription",
+			"label": "Subscription",
+			"inside": ["customer-subscription", "subscription-page"],
+			"name": "subscription",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Name",
+					"value": "name"
+				},
+				{
+					"label": "Status",
+					"value": "status"
+				},
+				{
+					"label": "Next billing",
+					"value": "nextBillingDate",
+					"aliases": ["next-billing-date"]
+				},
+				{
+					"label": "Cancel reason",
+					"value": "cancelReason",
+					"aliases": ["cancel-reason"]
+				},
+				{
+					"label": "Total",
+					"value": "totalPrice",
+					"aliases": ["total-price"]
+				},
+				{
+					"label": "Subtotal",
+					"value": "subtotalPrice",
+					"aliases": ["subtotal-price"]
+				},
+				{
+					"label": "Billing interval",
+					"value": "billingInterval",
+					"aliases": ["billing-interval"]
+				},
+				{
+					"label": "Taxes",
+					"value": "totalTax",
+					"aliases": ["total-tax"]
+				},
+				{
+					"label": "Refunded",
+					"value": "totalRefunded",
+					"aliases": ["total-refunded"],
+					"note": "From the order that started the subscription"
+				},
+				{
+					"label": "Shipping",
+					"value": "shippingPrice",
+					"aliases": ["shipping-price"]
+				},
+				{
+					"label": "Shipping address",
+					"value": "shippingAddress",
+					"aliases": ["shipping-address"]
+				},
+				{
+					"label": "Billing address",
+					"value": "billingAddress",
+					"aliases": ["billing-address"]
+				},
+				{
+					"label": "Created on",
+					"value": "createdAt",
+					"aliases": ["created-at", "processed-at", "processedAt"]
+				},
+				{
+					"label": "Note",
+					"value": "note"
+				},
+				{
+					"label": "Subscription page",
+					"value": "url",
+					"on": ["link"]
+				},
+				{
+					"label": "Status page",
+					"value": "statusUrl",
+					"on": ["link"],
+					"aliases": ["status-url"]
+				},
+				{
+					"label": "Account page",
+					"value": "customerUrl",
+					"on": ["link"],
+					"aliases": ["customer-url"]
+				}
+			]
+		},
+		{
+			"id": "address",
+			"label": "Address",
+			"inside": ["customer-addresses customer-address"],
+			"name": "address",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Full address",
+					"value": "formatted"
+				},
+				{
+					"label": "Full name",
+					"value": "name"
+				},
+				{
+					"label": "First name",
+					"value": "firstName"
+				},
+				{
+					"label": "Last name",
+					"value": "lastName"
+				},
+				{
+					"label": "Company",
+					"value": "company"
+				},
+				{
+					"label": "Address",
+					"value": "address1"
+				},
+				{
+					"label": "Address line 2",
+					"value": "address2"
+				},
+				{
+					"label": "City",
+					"value": "city"
+				},
+				{
+					"label": "Province",
+					"value": "zoneCode"
+				},
+				{
+					"label": "ZIP code",
+					"value": "zip"
+				},
+				{
+					"label": "Country",
+					"value": "territoryCode"
+				},
+				{
+					"label": "Phone",
+					"value": "phoneNumber"
+				},
+				{
+					"label": "Address id",
+					"value": "id",
+					"note": "The Customer Account API id of the address"
+				}
+			]
+		},
+		{
+			"id": "store-credit",
+			"label": "Store credit",
+			"inside": ["store-credit"],
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Balance",
+					"name": "store-credit",
+					"value": "balance"
+				},
+				{
+					"label": "Expiring balance",
+					"name": "store-credit",
+					"value": "expirableBalance"
+				},
+				{
+					"label": "Transaction amount",
+					"name": "store-credit-transaction",
+					"value": "amount",
+					"inside": ["store-credit store-credit-transaction"]
+				},
+				{
+					"label": "Balance after it",
+					"name": "store-credit-transaction",
+					"value": "balanceAfterTransaction",
+					"inside": ["store-credit store-credit-transaction"]
+				},
+				{
+					"label": "Transaction type",
+					"name": "store-credit-transaction",
+					"value": "event",
+					"inside": ["store-credit store-credit-transaction"]
+				},
+				{
+					"label": "Transaction date",
+					"name": "store-credit-transaction",
+					"value": "createdAt",
+					"inside": ["store-credit store-credit-transaction"]
+				},
+				{
+					"label": "Expires on",
+					"name": "store-credit-transaction",
+					"value": "expiresAt",
+					"inside": ["store-credit store-credit-transaction"]
+				}
+			]
+		},
+		{
+			"id": "search-discovery",
+			"label": "Search and filters",
+			"inside": ["smootify-search-discovery"],
+			"items": [
+				{
+					"label": "Result count",
+					"name": "filter",
+					"value": "count",
+					"on": ["text"]
+				},
+				{
+					"label": "Active filters",
+					"name": "filter",
+					"value": "active",
+					"on": ["container", "link", "button"],
+					"note": "Template: one per active filter, a click removes it"
+				},
+				{
+					"label": "Active filter label",
+					"name": "filter",
+					"value": "active-label",
+					"on": ["text"]
+				},
+				{
+					"label": "Active filter count",
+					"name": "filter",
+					"value": "active-count",
+					"on": ["text"]
+				},
+				{
+					"label": "Empty state",
+					"name": "filter",
+					"value": "empty-state",
+					"on": ["container"]
+				},
+				{
+					"label": "Load more",
+					"name": "data-action",
+					"value": "load",
+					"on": ["button"],
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				},
+				{
+					"label": "Previous page",
+					"name": "data-action",
+					"value": "previous",
+					"on": ["button"],
+					"aliases": ["prev"],
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				},
+				{
+					"label": "Next page",
+					"name": "data-action",
+					"value": "next",
+					"on": ["button"],
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				},
+				{
+					"label": "Load when in view",
+					"name": "data-action",
+					"value": "load-in-view",
+					"on": ["button"],
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				},
+				{
+					"label": "Page number button",
+					"name": "data-action",
+					"value": "page",
+					"on": ["button"],
+					"note": "Template: one per page number shown; the current page gets is-active",
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				},
+				{
+					"label": "Page number",
+					"name": "filter",
+					"value": "page-number",
+					"on": ["text"],
+					"note": "Inside the page number button; without it, the button's text",
+					"inside": ["smootify-search-discovery [data-action=\"page\"]", "smootify-search-page [data-action=\"page\"]"]
+				},
+				{
+					"label": "Page gap",
+					"name": "filter",
+					"value": "page-ellipsis",
+					"on": ["text", "container"],
+					"note": "Template where page numbers are skipped; optional",
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				},
+				{
+					"label": "Current page",
+					"name": "filter",
+					"value": "page-current",
+					"on": ["text"],
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				},
+				{
+					"label": "Total pages",
+					"name": "filter",
+					"value": "page-total",
+					"on": ["text"],
+					"note": "Empty until the total is known",
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				},
+				{
+					"label": "Reset the filters",
+					"name": "type",
+					"value": "reset",
+					"on": ["button"],
+					"inside": ["smootify-search-discovery", "smootify-search-page"]
+				}
+			]
+		},
+		{
+			"id": "filter-price",
+			"label": "Price filter",
+			"inside": ["filter-price"],
+			"name": "filter-price",
+			"items": [
+				{
+					"label": "Range fill",
+					"value": "progress",
+					"on": ["container"]
+				},
+				{
+					"label": "From label",
+					"value": "from-label",
+					"on": ["text"]
+				},
+				{
+					"label": "To label",
+					"value": "to-label",
+					"on": ["text"]
+				}
+			]
+		},
+		{
+			"id": "filter-swatch",
+			"label": "Filter swatch",
+			"inside": ["filter-swatches"],
+			"name": "swatch",
+			"items": [
+				{
+					"label": "Value",
+					"value": "title",
+					"on": ["text"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Text in its color",
+					"value": "color",
+					"on": ["text"]
+				},
+				{
+					"label": "Background in its color",
+					"value": "bg-color",
+					"on": ["container", "text", "button", "link"]
+				}
+			]
+		},
+		{
+			"id": "search-page",
+			"label": "Search page",
+			"inside": ["smootify-search-page"],
+			"name": "search",
+			"items": [
+				{
+					"label": "Query",
+					"value": "query",
+					"on": ["text"]
+				},
+				{
+					"label": "Result count",
+					"value": "count",
+					"on": ["text"]
+				},
+				{
+					"label": "Empty state",
+					"value": "empty-state",
+					"on": ["container"]
+				}
+			]
+		},
+		{
+			"id": "predictive-search",
+			"label": "Predictive search",
+			"inside": ["smootify-search"],
+			"name": "search",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Query",
+					"value": "query"
+				},
+				{
+					"label": "Title",
+					"value": "title",
+					"inside": ["smootify-search search-result"]
+				},
+				{
+					"label": "Vendor",
+					"value": "vendor",
+					"inside": ["smootify-search search-result"]
+				},
+				{
+					"label": "Collection",
+					"value": "collection",
+					"inside": ["smootify-search search-result"]
+				},
+				{
+					"label": "Type",
+					"value": "type",
+					"inside": ["smootify-search search-result"]
+				},
+				{
+					"label": "Price",
+					"value": "price",
+					"inside": ["smootify-search search-result"]
+				},
+				{
+					"label": "Compare-at price",
+					"value": "compare-at-price",
+					"inside": ["smootify-search search-result"]
+				},
+				{
+					"label": "Suggested query",
+					"value": "suggested-query",
+					"inside": ["smootify-search search-suggestions", "smootify-search search-no-query"]
+				},
+				{
+					"label": "Link",
+					"value": "url",
+					"on": ["link"],
+					"inside": ["smootify-search search-result"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"],
+					"inside": ["smootify-search search-result"]
+				},
+				{
+					"label": "Link to the search page",
+					"value": "search-page",
+					"on": ["link"]
+				},
+				{
+					"label": "Close",
+					"name": "data-action",
+					"value": "close",
+					"on": ["button"]
+				}
+			]
+		},
+		{
+			"id": "wishlist",
+			"label": "Wishlist",
+			"inside": [],
+			"items": [
+				{
+					"label": "Item count",
+					"name": "wishlist",
+					"value": "count",
+					"on": ["text"]
+				}
+			]
+		},
+		{
+			"id": "policy",
+			"label": "Shop policy",
+			"inside": [],
+			"name": "policy",
+			"on": ["rich", "container"],
+			"items": [
+				{
+					"label": "Privacy",
+					"value": "privacy"
+				},
+				{
+					"label": "Refunds",
+					"value": "refund"
+				},
+				{
+					"label": "Shipping",
+					"value": "shipping"
+				},
+				{
+					"label": "Terms of service",
+					"value": "terms"
+				},
+				{
+					"label": "Subscriptions",
+					"value": "subscription"
+				}
+			]
+		},
+		{
+			"id": "store-locator",
+			"label": "Store",
+			"inside": ["store-locator store-location", "store-locator store-popup"],
+			"name": "location",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Name",
+					"value": "name"
+				},
+				{
+					"label": "Address",
+					"value": "address"
+				},
+				{
+					"label": "ZIP code",
+					"value": "zip"
+				},
+				{
+					"label": "Phone",
+					"value": "phone"
+				},
+				{
+					"label": "Country",
+					"value": "country"
+				},
+				{
+					"label": "Directions",
+					"value": "directions-link",
+					"on": ["link"]
+				}
+			]
+		},
+		{
+			"id": "pickup-location",
+			"label": "Pickup location",
+			"inside": ["store-availability store-location", "store-availability"],
+			"name": "location",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Name",
+					"value": "name"
+				},
+				{
+					"label": "Address",
+					"value": "address"
+				},
+				{
+					"label": "Quantity",
+					"value": "quantity"
+				},
+				{
+					"label": "Pickup time",
+					"value": "pick-up-time"
+				},
+				{
+					"label": "Directions",
+					"value": "directions-link",
+					"on": ["link"]
+				}
+			]
+		},
+		{
+			"id": "country-switcher",
+			"label": "Country switcher",
+			"inside": ["country-switcher"],
+			"name": "data-prop",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Country",
+					"value": "name"
+				},
+				{
+					"label": "Country code",
+					"value": "iso-code",
+					"aliases": ["countryIsoCode"]
+				},
+				{
+					"label": "Currency symbol",
+					"value": "currency-symbol"
+				},
+				{
+					"label": "Currency name",
+					"value": "currency-name"
+				},
+				{
+					"label": "Currency code",
+					"value": "currency-iso-code"
+				},
+				{
+					"label": "Flag",
+					"value": "flag",
+					"on": ["image", "container", "text"]
+				}
+			]
+		},
+		{
+			"id": "market-dialog",
+			"label": "Market suggestion",
+			"inside": ["[data-is=\"market-dialog\"]"],
+			"name": "market-dialog",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Country",
+					"value": "country"
+				},
+				{
+					"label": "Flag",
+					"value": "flag",
+					"on": ["image", "container", "text"]
+				},
+				{
+					"label": "Language",
+					"value": "language"
+				},
+				{
+					"label": "Currency code",
+					"value": "currency"
+				},
+				{
+					"label": "Currency symbol",
+					"value": "currency-symbol"
+				},
+				{
+					"label": "Currency name",
+					"value": "currency-name"
+				},
+				{
+					"label": "Continue",
+					"name": "data-action",
+					"value": "continue",
+					"on": ["button"]
+				}
+			]
+		},
+		{
+			"id": "location-switcher",
+			"label": "Location switcher",
+			"inside": ["location-switcher"],
+			"name": "location",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Name",
+					"value": "name"
+				},
+				{
+					"label": "Address",
+					"value": "address"
+				}
+			]
+		},
+		{
+			"id": "free-shipping",
+			"label": "Free shipping bar",
+			"inside": ["free-shipping-bar"],
+			"name": "data-prop",
+			"items": [
+				{
+					"label": "Amount left",
+					"value": "left",
+					"on": ["text"]
+				},
+				{
+					"label": "Bar width",
+					"value": "progress-width",
+					"on": ["container"]
+				}
+			]
+		},
+		{
+			"id": "countdown",
+			"label": "Cart countdown",
+			"inside": ["urgent-cart-countdown"],
+			"name": "data-prop",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Minutes",
+					"value": "minutes"
+				},
+				{
+					"label": "Seconds",
+					"value": "seconds"
+				}
+			]
+		},
+		{
+			"id": "magic-box",
+			"label": "Magic box",
+			"inside": ["smootify-magic-box-cart"],
+			"name": "data-prop",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Missing categories",
+					"value": "missingCategories"
+				},
+				{
+					"label": "Items in the box",
+					"value": "currentQuantity"
+				},
+				{
+					"label": "Minimum",
+					"value": "minQuantity"
+				},
+				{
+					"label": "Maximum",
+					"value": "maxQuantity"
+				},
+				{
+					"label": "Items left",
+					"value": "leftQuantity"
+				},
+				{
+					"label": "Left, as a percentage",
+					"value": "leftQuantityPercentage"
+				},
+				{
+					"label": "Discount percentage",
+					"value": "discount-percentage",
+					"aliases": ["discountPercentage"]
+				},
+				{
+					"label": "Discount amount",
+					"value": "discount-amount"
+				},
+				{
+					"label": "Left, as a bar width",
+					"value": "leftQuantityWidth",
+					"on": ["container"]
+				},
+				{
+					"label": "List separator",
+					"name": "separator",
+					"placeholder": ", ",
+					"note": "Used as written, spaces included: a comma and a space joins with a comma and a space",
+					"on": ["any"],
+					"with": ["[data-prop=\"missingCategories\"]"]
+				}
+			]
+		},
+		{
+			"id": "consent",
+			"label": "Cookie consent",
+			"inside": ["smootify-consent"],
+			"items": [
+				{
+					"label": "Accept all",
+					"name": "data-action",
+					"value": "accept",
+					"on": ["button", "link"]
+				},
+				{
+					"label": "Decline all",
+					"name": "data-action",
+					"value": "decline",
+					"on": ["button", "link"]
+				},
+				{
+					"label": "Save the choices",
+					"name": "data-action",
+					"value": "save",
+					"on": ["button", "link"]
+				},
+				{
+					"label": "Open the preferences",
+					"name": "data-action",
+					"value": "preferences",
+					"on": ["button", "link"]
+				},
+				{
+					"label": "Close",
+					"name": "data-action",
+					"value": "close",
+					"on": ["button", "link"]
+				},
+				{
+					"label": "Marketing",
+					"name": "name",
+					"value": "marketing",
+					"on": ["input"],
+					"note": "A checkbox"
+				},
+				{
+					"label": "Analytics",
+					"name": "name",
+					"value": "analytics",
+					"on": ["input"],
+					"note": "A checkbox"
+				},
+				{
+					"label": "Preferences",
+					"name": "name",
+					"value": "preferences",
+					"on": ["input"],
+					"note": "A checkbox"
+				},
+				{
+					"label": "Sale of data",
+					"name": "name",
+					"value": "sale_of_data",
+					"on": ["input"],
+					"note": "A checkbox"
+				},
+				{
+					"label": "Banner panel",
+					"name": "consent-panel",
+					"value": "banner",
+					"on": ["container"]
+				},
+				{
+					"label": "Preferences panel",
+					"name": "consent-panel",
+					"value": "preferences",
+					"on": ["container"]
+				}
+			]
+		},
+		{
+			"id": "upload",
+			"label": "File upload",
+			"inside": ["file-uploader", "file-input", "configurator-file-input"],
+			"name": "upload",
+			"items": [
+				{
+					"label": "Drop zone",
+					"value": "dropzone",
+					"on": ["container"]
+				},
+				{
+					"label": "File list",
+					"value": "list",
+					"on": ["container"]
+				},
+				{
+					"label": "File row",
+					"value": "item",
+					"on": ["container"],
+					"note": "Template: one per file"
+				},
+				{
+					"label": "Preview",
+					"value": "preview",
+					"on": ["image", "container"]
+				},
+				{
+					"label": "File name",
+					"value": "name",
+					"on": ["text"]
+				},
+				{
+					"label": "File size",
+					"value": "size",
+					"on": ["text"]
+				},
+				{
+					"label": "Progress",
+					"value": "progress",
+					"on": ["container"]
+				},
+				{
+					"label": "Error",
+					"value": "error",
+					"on": ["text"]
+				},
+				{
+					"label": "Remove",
+					"value": "remove",
+					"on": ["button", "link"]
+				},
+				{
+					"label": "Errors",
+					"value": "errors",
+					"on": ["container"]
+				}
+			]
+		},
+		{
+			"id": "modal-backdrop",
+			"label": "Off-canvas panel",
+			"inside": [],
+			"name": "data-action",
+			"on": ["button"],
+			"items": [
+				{
+					"label": "Close the panel",
+					"value": "close",
+					"note": "Inside a <details> panel opened with modal-backdrop"
+				}
+			]
+		}
+	],
+	"conditions": [
+		{
+			"id": "product",
+			"label": "Product",
+			"inside": ["smootify-product", "smootify-variant"],
+			"name": "condition",
+			"note": "Shown only while the product is in that state",
+			"items": [
+				{
+					"label": "In stock",
+					"value": "in-stock"
+				},
+				{
+					"label": "Out of stock",
+					"value": "out-of-stock"
+				},
+				{
+					"label": "Last in stock",
+					"value": "last-in-stock"
+				},
+				{
+					"label": "Low stock",
+					"value": "low-stock"
+				},
+				{
+					"label": "Low, not the last",
+					"value": "low-not-last-stock",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Many in stock",
+					"value": "many-in-stock",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "In backorder",
+					"value": "in-backorder",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Not in backorder",
+					"value": "not-in-backorder",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "On sale",
+					"value": "on-sale"
+				},
+				{
+					"label": "Free",
+					"value": "is-free",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Not free",
+					"value": "is-paid",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "New",
+					"value": "is-new",
+					"inside": ["smootify-product"],
+					"note": "Published in the last 30 days"
+				},
+				{
+					"label": "Not new",
+					"value": "not-new",
+					"inside": ["smootify-product"]
+				},
+				{
+					"label": "Has variants",
+					"value": "is-variable"
+				},
+				{
+					"label": "Has no variants",
+					"value": "is-not-variable"
+				},
+				{
+					"label": "Price is fixed",
+					"value": "fixed-price"
+				},
+				{
+					"label": "Price varies",
+					"value": "variable-price"
+				},
+				{
+					"label": "Variant not purchasable",
+					"value": "disabled"
+				},
+				{
+					"label": "Is a subscription",
+					"value": "subscription"
+				},
+				{
+					"label": "Is not a subscription",
+					"value": "no-subscription"
+				},
+				{
+					"label": "Not for local pickup",
+					"value": "not-available-as-local-pickup",
+					"inside": ["smootify-product"]
+				}
+			]
+		},
+		{
+			"id": "product-tags",
+			"label": "Product tags",
+			"inside": ["smootify-product"],
+			"items": [
+				{
+					"label": "Has the tags",
+					"name": "tagged",
+					"placeholder": "tag,other tag",
+					"note": "A comma list; spaces around the tags are ignored"
+				},
+				{
+					"label": "Has none of the tags",
+					"name": "not-tagged",
+					"placeholder": "tag,other tag",
+					"note": "A comma list; spaces around the tags are ignored"
+				},
+				{
+					"label": "Any tag is enough",
+					"name": "any",
+					"value": "true",
+					"with": ["[tagged]", "[not-tagged]"]
+				},
+				{
+					"label": "Only these tags",
+					"name": "exclusive",
+					"value": "true",
+					"with": ["[tagged]"],
+					"note": "Exactly the listed tags, and no other tag on it"
+				}
+			]
+		},
+		{
+			"id": "add-to-cart",
+			"label": "Add to cart",
+			"inside": ["smootify-add-to-cart"],
+			"items": [
+				{
+					"label": "Below the bundle limits",
+					"name": "condition",
+					"value": "below-bundle-limits"
+				},
+				{
+					"label": "Above the bundle limits",
+					"name": "condition",
+					"value": "above-bundle-limits"
+				},
+				{
+					"label": "Has the option",
+					"name": "has-option",
+					"placeholder": "0 for the first option",
+					"note": "Removed when the product has no such option"
+				}
+			]
+		},
+		{
+			"id": "pickup",
+			"label": "Pickup",
+			"inside": ["store-availability"],
+			"name": "condition",
+			"items": [
+				{
+					"label": "Available at the location",
+					"value": "available-at-location"
+				},
+				{
+					"label": "Not available at the location",
+					"value": "not-available-at-location"
+				}
+			]
+		},
+		{
+			"id": "store-locator",
+			"label": "Store locator",
+			"inside": ["store-locator"],
+			"name": "condition",
+			"items": [
+				{
+					"label": "No stores found",
+					"value": "no-stores"
+				}
+			]
+		},
+		{
+			"id": "page",
+			"label": "Page",
+			"inside": [],
+			"name": "condition",
+			"items": [
+				{
+					"label": "Has cart upsells",
+					"value": "has-cart-upsells"
+				},
+				{
+					"label": "Has complementary products",
+					"value": "has-complementary"
+				},
+				{
+					"label": "Has related products",
+					"value": "has-related"
+				},
+				{
+					"label": "Wishlist has items",
+					"value": "has-items-in-wishlist"
+				},
+				{
+					"label": "Wishlist is empty",
+					"value": "no-items-in-wishlist"
+				},
+				{
+					"label": "Has recently viewed",
+					"value": "has-items-in-last-viewed"
+				},
+				{
+					"label": "No recently viewed",
+					"value": "no-items-in-last-viewed"
+				},
+				{
+					"label": "Page's product not available",
+					"value": "product-unavailable"
+				},
+				{
+					"label": "Page's product available",
+					"value": "product-available"
+				}
+			]
+		},
+		{
+			"id": "customer",
+			"label": "Customer",
+			"inside": [],
+			"name": "customer-condition",
+			"items": [
+				{
+					"label": "Logged in",
+					"value": "logged-in"
+				},
+				{
+					"label": "Not logged in",
+					"value": "not-logged-in"
+				},
+				{
+					"label": "Has a name",
+					"value": "has-names"
+				},
+				{
+					"label": "Has no name",
+					"value": "no-names"
+				},
+				{
+					"label": "Has addresses",
+					"value": "has-addresses"
+				},
+				{
+					"label": "Has no addresses",
+					"value": "no-addresses"
+				},
+				{
+					"label": "Has orders",
+					"value": "has-orders"
+				},
+				{
+					"label": "Has no orders",
+					"value": "no-orders"
+				},
+				{
+					"label": "Has subscriptions",
+					"value": "has-subscriptions"
+				},
+				{
+					"label": "Has no subscriptions",
+					"value": "no-subscriptions"
+				},
+				{
+					"label": "Subscribed to emails",
+					"value": "email-subscribed"
+				},
+				{
+					"label": "Not subscribed to emails",
+					"value": "email-not-subscribed"
+				}
+			]
+		},
+		{
+			"id": "customer-tags",
+			"label": "Customer tags",
+			"inside": [],
+			"items": [
+				{
+					"label": "Has the tags",
+					"name": "customer-tagged",
+					"placeholder": "tag,other tag",
+					"note": "A comma list; spaces around the tags are ignored"
+				},
+				{
+					"label": "Has none of the tags",
+					"name": "customer-not-tagged",
+					"placeholder": "tag,other tag",
+					"note": "A comma list; spaces around the tags are ignored"
+				},
+				{
+					"label": "Any tag is enough",
+					"name": "any",
+					"value": "true",
+					"with": ["[customer-tagged]", "[customer-not-tagged]"]
+				},
+				{
+					"label": "Only these tags",
+					"name": "exclusive",
+					"value": "true",
+					"with": ["[customer-tagged]"],
+					"note": "Exactly the listed tags, and no other tag on it"
+				}
+			]
+		},
+		{
+			"id": "cart",
+			"label": "Cart",
+			"inside": ["smootify-cart"],
+			"name": "cart-condition",
+			"items": [
+				{
+					"label": "Items in the quote",
+					"value": "items-in-quote"
+				},
+				{
+					"label": "No items in the quote",
+					"value": "no-items-in-quote"
+				}
+			]
+		},
+		{
+			"id": "magic-box",
+			"label": "Magic box",
+			"inside": ["smootify-magic-box-cart"],
+			"name": "box-condition",
+			"items": [
+				{
+					"label": "Can be bought",
+					"value": "can-purchase"
+				},
+				{
+					"label": "Cannot be bought yet",
+					"value": "cannot-purchase"
+				}
+			]
+		},
+		{
+			"id": "order",
+			"label": "Order",
+			"inside": ["order-page"],
+			"items": [
+				{
+					"label": "Has fulfillments",
+					"name": "order-condition",
+					"value": "has-fulfillments"
+				}
+			]
+		},
+		{
+			"id": "address-form",
+			"label": "Address form",
+			"inside": ["create-address", "edit-address"],
+			"items": [
+				{
+					"label": "Country has zones",
+					"name": "address-condition",
+					"value": "zone",
+					"note": "Hidden for countries without provinces"
+				}
+			]
+		},
+		{
+			"id": "consent",
+			"label": "Cookie banner",
+			"inside": ["smootify-consent"],
+			"items": [
+				{
+					"label": "Sale of data region",
+					"name": "consent-condition",
+					"value": "sale-of-data"
+				}
+			]
+		},
+		{
+			"id": "store-credit",
+			"label": "Store credit",
+			"inside": ["store-credit"],
+			"items": [
+				{
+					"label": "Balance expires",
+					"name": "if-credit",
+					"value": "expires"
+				},
+				{
+					"label": "Transaction expires",
+					"name": "if-credit-transaction",
+					"value": "expires",
+					"inside": ["store-credit store-credit-transaction"]
+				}
+			]
+		},
+		{
+			"id": "product-metafield",
+			"label": "Product metafield",
+			"inside": ["smootify-product", "cart-item"],
+			"items": [
+				{
+					"label": "If it has a value",
+					"name": "if-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Unless it has a value",
+					"name": "unless-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Equal to",
+					"name": "data-check-value",
+					"placeholder": "value to match",
+					"with": ["[if-metafield]", "[unless-metafield]"]
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"with": ["[if-metafield]", "[unless-metafield]"]
+				}
+			]
+		},
+		{
+			"id": "variant-metafield",
+			"label": "Variant metafield",
+			"inside": ["smootify-product", "smootify-variant"],
+			"items": [
+				{
+					"label": "If it has a value",
+					"name": "if-variant-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Unless it has a value",
+					"name": "unless-variant-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Equal to",
+					"name": "data-check-value",
+					"placeholder": "value to match",
+					"with": ["[if-variant-metafield]", "[unless-variant-metafield]"]
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"with": ["[if-variant-metafield]", "[unless-variant-metafield]"]
+				}
+			]
+		},
+		{
+			"id": "customer-metafield",
+			"label": "Customer metafield",
+			"inside": [],
+			"items": [
+				{
+					"label": "If the customer has it",
+					"name": "if-customer-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Unless the customer has it",
+					"name": "unless-customer-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "If the company has it",
+					"name": "if-company-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Unless the company has it",
+					"name": "unless-company-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Equal to",
+					"name": "data-check-value",
+					"placeholder": "value to match",
+					"with": [
+						"[if-customer-metafield]",
+						"[unless-customer-metafield]",
+						"[if-company-metafield]",
+						"[unless-company-metafield]"
+					]
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"with": [
+						"[if-customer-metafield]",
+						"[unless-customer-metafield]",
+						"[if-company-metafield]",
+						"[unless-company-metafield]"
+					]
+				}
+			]
+		},
+		{
+			"id": "metaobject",
+			"label": "Metaobject field",
+			"inside": ["smootify-metaobject", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]"],
+			"items": [
+				{
+					"label": "If it has a value",
+					"name": "if-metaobject",
+					"placeholder": "field key"
+				},
+				{
+					"label": "Unless it has a value",
+					"name": "unless-metaobject",
+					"placeholder": "field key"
+				},
+				{
+					"label": "Equal to",
+					"name": "data-check-value",
+					"placeholder": "value to match",
+					"with": ["[if-metaobject]", "[unless-metaobject]"]
+				}
+			]
+		},
+		{
+			"id": "free-shipping",
+			"label": "Free shipping",
+			"inside": ["free-shipping-bar"],
+			"name": "free-shipping-condition",
+			"items": [
+				{
+					"label": "Reached",
+					"value": "free-shipping"
+				},
+				{
+					"label": "Not reached",
+					"value": "needs-more"
+				}
+			]
+		},
+		{
+			"id": "subscription-group",
+			"label": "Subscription choices",
+			"inside": ["subscription-swatches"],
+			"name": "group-condition",
+			"items": [
+				{
+					"label": "One option",
+					"value": "one-option"
+				},
+				{
+					"label": "More options",
+					"value": "more-options"
+				}
+			]
+		}
+	]
+}

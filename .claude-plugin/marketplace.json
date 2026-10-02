@@ -1,0 +1,11 @@
+{
+  "name": "smootify",
+  "owner": { "name": "Smootify", "url": "https://www.smootify.io" },
+  "plugins": [
+    {
+      "name": "smootify",
+      "source": "./",
+      "description": "Smootify 2.0 skills: Figma annotation, Figma to Webflow, site audit, custom scripts."
+    }
+  ]
+}

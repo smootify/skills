@@ -1,0 +1,21 @@
+{
+  "name": "smootify",
+  "displayName": "Smootify",
+  "version": "2.0.0-beta.1",
+  "description": "Skills for building Webflow stores on Shopify with Smootify 2.0: annotate a Figma design, build it in Webflow, audit the site, write its custom scripts.",
+  "author": {
+    "name": "Smootify",
+    "url": "https://www.smootify.io"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://www.smootify.io/skills",
+  "repository": "https://github.com/smootify/skills",
+  "keywords": [
+    "smootify",
+    "webflow",
+    "shopify",
+    "figma",
+    "headless",
+    "ecommerce"
+  ]
+}
