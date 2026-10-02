@@ -1,6 +1,10 @@
 {
   "name": "smootify",
-  "owner": { "name": "Smootify", "url": "https://www.smootify.io" },
+  "owner": {
+    "name": "Smootify",
+    "url": "https://www.smootify.io"
+  },
+  "description": "The Smootify 2.0 skills: Figma annotation, Figma to Webflow, site audit and custom scripts, for Webflow stores on Shopify.",
   "plugins": [
     {
       "name": "smootify",
