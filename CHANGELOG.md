@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.0-beta.8
+
+- `@inline: <master>`: an instance of a primitive that is not a Webflow component (a popover, a checkbox) is built as a
+  copy of the master's annotated markup. It replaces the notes that said "inline", which the builder never read.
+- `@element: FormSuccess` and `FormError`: the Success and Error messages of a Form Block.
+- Glossary errata: `hide-if-product-in-cart=false` keeps the card visible, so a boolean prop can drive it.
+
 ## 2.0.0-beta.7
 
 From the review of the first annotated starter.

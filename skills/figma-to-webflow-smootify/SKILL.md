@@ -102,6 +102,8 @@ How each directive is built:
 | `@attr: name=<Name>` on a form field | The field's Name setting (element settings), not a custom attribute; keep the case |
 | `@set: P = v` (and `@set: Variant = N`) | `set_component_instance_prop_values`; the variant takes its id from `get_component` with `includeVariants` |
 | `@cms: P = Collection.Field` · `@cms: attr:<name>\|text\|image\|link = Collection.Field` | Bind the instance prop to the CMS field; the `attr:`/`text`/`image`/`link` form binds a plain page element (a wrap too). On a plain element, the attribute's CMS recipe (`static_json` with `sourceType: "cms"`, see Limitations). If binding an instance prop to CMS fails through the MCP, report it as a manual step with the exact field |
+| `@inline: Master` | Build a copy of that master's annotated elements in place of the instance (not a component instance); bind its `@bind`s to the props of the component it lands in, matched by name |
+| `@element: FormSuccess` / `FormError` | The content of the Form Block's Success / Error message (the one you add for the tag, or the drawn one) |
 | `@use: Component` | Insert an instance of that component instead of building the frame. On a main component: build no component for it, and place the target (with its `@set` values) wherever its instances are |
 | `@page: template C` | Build on the CMS template page of collection C |
 | `@list: C limit=… sort=…` | A Collection List (`DynamoWrapper`) with `source`, `limit`, `sort` set through `set_settings` |

@@ -227,7 +227,8 @@ the first checkpoint with the person.
    opens its component page can tell a decision from a forgotten component:
    - page structure: `@note: page structure, annotated on <page> › <frame> (<node id>)`, naming the frame where its
      markup is written;
-   - a primitive built inline (an input, a tab): `@note: not a component, each instance is annotated where it is placed`.
+   - a primitive built inline (an input, a tab, a popover): `@note: not a component, each instance is annotated where it is placed`,
+     and every instance of it gets `@inline: <master>`, never a `@note` saying "inline": the builder reads `@inline`.
    Icons and other plain graphics need nothing.
 5. **Nesting and build order.** A component used inside another (the price inside the card, the swatches inside
    the add to cart) is built first and placed as an instance. Where the outer component takes one of several

@@ -55,7 +55,7 @@ directives onto instances.
 
 | Directive | Meaning | Example |
 |---|---|---|
-| `@element: <type>` | Webflow element type. **Omit it** when `@tag` names a custom tag (it is then a custom-tag element) and when the Figma type makes it obvious. Values: `Paragraph` `Heading` `TextBlock` `TextLink` `LinkBlock` `Button` `Image` `DivBlock` `Section` `Container` `DOM` `RichText` `Slider` `Lightbox` `Tabs` `Dropdown` `FormBlock` `FormTextInput` `FormTextarea` `FormSelect` `FormCheckboxInput` `FormRadioInput` `FormButton` `CollectionList` | `@element: Heading` |
+| `@element: <type>` | Webflow element type. **Omit it** when `@tag` names a custom tag (it is then a custom-tag element) and when the Figma type makes it obvious. Values: `Paragraph` `Heading` `TextBlock` `TextLink` `LinkBlock` `Button` `Image` `DivBlock` `Section` `Container` `DOM` `RichText` `Slider` `Lightbox` `Tabs` `Dropdown` `FormBlock` `FormTextInput` `FormTextarea` `FormSelect` `FormCheckboxInput` `FormRadioInput` `FormButton` `FormSuccess` `FormError` `CollectionList`. `FormSuccess` and `FormError` are the Success and Error messages of the Form Block around them (a state variant "Sent" or "Error" usually draws them) | `@element: Heading` |
 | `@tag: <tag>` | A Smootify custom tag from the catalogue, or the HTML tag of a `DOM` element | `@tag: variant-swatches` · `@element: DOM @tag: button` |
 | `@style: <class>\|<combo>` | Classes, base first. Library classes start with `sm-` | `@style: sm-swatch\|sm-swatch-large` |
 | `@attr: <name>=<value>` | A static attribute | `@attr: product=title` |
@@ -100,6 +100,7 @@ FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
 | Directive | Meaning | Example |
 |---|---|---|
 | `@use: <Component>` | This hand-drawn frame is an instance of that component | `@use: Product card` |
+| `@inline: <master>` | On an instance of a primitive that is not a Webflow component (a popover, a checkbox): build a copy of that master's annotated markup here, not an instance. Its `@bind`s bind to the props of the component the copy lands in, by name | `@inline: Base / Popover` |
 | `@set: <Prop> = <value>` | This instance's value. The variant is a prop too | `@set: Option = 2` · `@set: Variant = Compact` |
 | `@cms: <Prop> = <Collection>.<Field>` | On a CMS template or inside a collection list: the prop takes its value from a CMS field | `@cms: Product ID = Products.Shopify ID` |
 | `@cms: attr:<name>\|text\|image\|link = <Collection>.<Field>` | The same on a page element that is not a component: an attribute, its text, image or link takes the CMS field. Only `body` cannot take attributes; a `smootify-product` around the page content can | `@cms: attr:data-collection = Collections.Shopify ID` |

@@ -82,9 +82,9 @@ Checked against the 2.0 source on 2026-10-05.
 
 ## 1.x functions that are back in 2.0
 
-- `hide-if-product-in-cart` on `smootify-product` hides the card while the cart holds its product. It counts when
-  the attribute is **present**, whatever its value: `hide-if-product-in-cart=false` hides the card too. A prop cannot
-  switch it through the value: use a variant of the component with the attribute and one without, or keep it fixed.
+- `hide-if-product-in-cart` on `smootify-product` hides the card while the cart holds its product. Any value hides
+  it except `false`, so a boolean prop can drive it: `@prop: boolean Hide if in cart` + `@bind:
+  attr:hide-if-product-in-cart = Hide if in cart`.
 - `remove-parent` on a `variant=option1-value` … `option3-value` element removes its parent when the variant has no
   such option (a "Size: M" row); `option1-label` … `option3-label` are aliases of `optionN-name`.
 - The subscription totals (`subtotalPrice`, `totalPrice`, `totalTax`…) show the order that started the subscription.
