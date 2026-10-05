@@ -48,6 +48,10 @@ You must ask when:
   would pick first and say why in half a line. Use a multiple-choice question tool if the client has one.
 - Show where the thing is: the layer path, and a screenshot of the node when it helps.
 - Never ask what the references already answer. That wastes the person's attention on the wrong questions.
+- **Propose shop values from the context instead of asking.** A metafield key, a metaobject type, a collection or box
+  handle that the design does not show: derive it from the visible label (`VAT number` → `company-metafield=vat_number`,
+  a reviews list → type `review`, a "Best sellers" carousel → handle `best-sellers`), write it, and list it in the
+  report under assumptions. Ask only when nothing in the design suggests a value.
 - If the person does not know yet, write `@ask: <the question>` on the node and move on. An `@ask` stops the
   build skill on that node, which is the point.
 - When an answer settles a whole class of cases ("every Webflow Dropdown in this file is a popover"), apply it
@@ -213,6 +217,9 @@ the first checkpoint with the person.
    - two components that differ only in styles or in one optional part → probably one component with a
      variant or a boolean prop;
    - the same thing drawn at desktop and mobile size → one component, responsive styles.
+   - **in a starter or a kit** (a library the Designer App will offer), every drawn alternative becomes its own
+     component: the Dropdown, the native select and the popover version of a filter are three components, not one
+     chosen version. On a shop's own site, build only the versions the shop uses.
 4. **Find what is not a component.** A component is justified when a structure **repeats**. The layout of a
    product page or of an account page does not repeat: it is page structure, not a component. The 404, policy
    pages, header and footer are Webflow; the skeletons and the banners Smootify injects are not drawn at all.
@@ -263,8 +270,10 @@ from, so classify each one explicitly and ask whenever it is not obvious:
 
 Cases from the kit that show the difference:
 
-- `Prodotto / Card`, *Stati* Default | Caricamento | Esaurito | In offerta | Nuovo → **state**: `loaded`,
-  `is-currently-out-of-stock`, `is-on-sale`, `is-new` on the root, and badges with `condition=…`. *Formato* =
+- `Prodotto / Card`, *Stati* Default | Caricamento | Esaurito | In offerta | Nuovo → **state**, and what each state
+  shows is a **badge with a condition attribute**, not a `@state` class: a Badge component with `@prop: string
+  Condition` bound to `attr:condition` (`is-new`, `on-sale`, `out-of-stock`), placed with `@set`. Use `@state` only
+  for what the state restyles on the card itself (a faded image when sold out). *Formato* =
   Griglia | Orizzontale | Mini → **variant** if only the layout changes; if Mini drops parts, those parts get
   boolean props — ask. *Aggiunta* = Nessuna | Form | Quick view → the structure changes: a **slot** for the
   bottom of the card, or **split** — ask.
@@ -395,7 +404,8 @@ For every page:
 - **Page elements and wraps take CMS fields too.** On a template page, any element except `body` can take a CMS
   field: `@cms: attr:<name> = <Collection>.<Field>` (or `text`, `image`, `link`). A product page is
   `body > header, main, footer`, and the `smootify-product` around the main content is usually a wrap:
-  `@wrap: smootify-product over <first>..<last> @cms: wrap attr:data-id = Products.Shopify ID`. The same for a
+  `@wrap: smootify-product over <first>..<last> @cms: wrap attr:data-id = Products.Shopify ID`, spanning **the whole
+  main content** between header and footer (gallery, buy column, description, carousels), not only the buy area. The same for a
   collection page: `@cms: wrap attr:data-collection = Collections.Shopify ID` on the `smootify-search-discovery`
   wrap, and `@cms: text = Collections.Name` on its heading.
 - **One template per collection.** Webflow has one Products template: product pages drawn differently
@@ -420,9 +430,10 @@ Before writing, check every annotated node:
   page with no annotation at all is a failed check;
 - no node carries both `@ask` and the directive it asks about, nor `@ask` together with `@skip` (the builder skips the
   node and the question disappears);
-- **nothing the build needs lives only in a `@note`**: a Form Block a tag requires, a popover panel, an inline part
-  or a missing container is a `@manual: other:` naming the nodes. The builder ignores notes, and Smootify removes an
-  element whose required part is missing;
+- **nothing the build needs lives only in a `@note`** (the builder ignores notes):
+  - a Form Block a tag requires (its catalogue row says it must contain `form`) needs no directive: the builder adds it;
+  - a missing container the MCP can build (a panel, a wrapper) is a `@wrap`, with `@attr: wrap …` for its attributes;
+  - only what no tool can do is `@manual`;
 - a `@tag` that is also an HTML tag (`map`) carries `@element: DOM`, so it is not read as plain HTML;
 - no value contains a double quote, a newline or an `@`, and no class contains an underscore.
 
@@ -480,7 +491,8 @@ question.
 
 Almost nothing does now. Through the Webflow MCP the build skill does per-instance prop values and variants,
 attributes bound to props and to CMS fields, visibility bound to props, slots, collection-list source, filters,
-sort and limit, interactions and fonts. Write `@manual` only for:
+sort and limit, interactions and fonts, **Form Blocks and wrappers**. Never write `@manual` for a Form Block a tag
+requires (the builder adds it from the catalogue) or for a container a `@wrap` can make. Write `@manual` only for:
 
 - `conditional` — Webflow conditional visibility: an element that depends on the active component variant
   (prefer a boolean prop or a split, and write it only if the person insists), or a block of a CMS template

@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0-beta.7
+
+From the review of the first annotated starter.
+
+- A Form Block that a tag requires is built by `figma-to-webflow-smootify` from the catalogue: no `@manual`, no directive.
+  `@wrap` also takes Webflow element types (`DivBlock`, `FormBlock`) for the containers the design lacks.
+- What a product state shows is a badge with a `condition` attribute (a Condition prop), not a `@state` class.
+- Shop values the design does not show (metafield keys, metaobject types, handles) are proposed from the visible labels
+  and listed as assumptions, instead of asked.
+- In a starter or a kit every drawn alternative (Dropdown, select, popover) becomes its own component.
+- On a product template the `smootify-product` wrap spans the whole main content.
+- Predictive search results use `smootify-product[data-id=search]` cards.
+
 ## 2.0.0-beta.6
 
 - A part the build needs (a Form Block a tag requires, a popover panel, an inline part) is a `@manual`, never a `@note`:

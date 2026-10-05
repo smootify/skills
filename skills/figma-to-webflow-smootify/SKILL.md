@@ -85,7 +85,7 @@ How each directive is built:
 | `@ask` | **Do not build** the node's Smootify part. List it first in the summary: the annotation is not finished |
 | `@skip` | Do not build the node |
 | `@repeat` | Build this node once; Smootify repeats it. Its `@skip` siblings are drawn copies |
-| `@wrap: <tag> over <a>..<b>` | Create the wrapper element with that tag and move the siblings from `a` to `b` inside it. Then `@attr: wrap …` and `@cms: wrap attr:…` on the same node go on the wrapper |
+| `@wrap: <tag or element> over <a>..<b>` | Create the wrapper (a custom tag, or a Webflow element type such as `DivBlock` or `FormBlock`) and move the siblings from `a` to `b` inside it. Then `@attr: wrap …` and `@cms: wrap attr:…` on the same node go on the wrapper |
 | `@target: <layer>` | Apply the node's directives to that descendant (a group that could not hold them) |
 | `@component` `@group` `@desc` | `transform_element_to_component` with `group` and `description` at creation |
 | `@prop` + `@tip` | `create_prop` with the tooltip |
@@ -106,6 +106,7 @@ How each directive is built:
 | `@page: template C` | Build on the CMS template page of collection C |
 | `@list: C limit=… sort=…` | A Collection List (`DynamoWrapper`) with `source`, `limit`, `sort` set through `set_settings` |
 | `@manual` | Collect for the summary |
+| *(no directive)* a tag whose catalogue row must contain `form` | If the design has no form inside it, wrap the tag's content in a Form Block yourself (FormWrapper > FormForm, with its Success and Error messages), then put the fields inside. It is never a manual step |
 | `@note` | Ignore |
 
 The sections below describe the older syntax; where they differ from the format file, the format file wins.

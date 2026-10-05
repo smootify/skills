@@ -59,7 +59,7 @@ directives onto instances.
 | `@tag: <tag>` | A Smootify custom tag from the catalogue, or the HTML tag of a `DOM` element | `@tag: variant-swatches` · `@element: DOM @tag: button` |
 | `@style: <class>\|<combo>` | Classes, base first. Library classes start with `sm-` | `@style: sm-swatch\|sm-swatch-large` |
 | `@attr: <name>=<value>` | A static attribute | `@attr: product=title` |
-| `@wrap: <tag> over <first>..<last>` | A new ancestor that does not exist in the design, spanning the named siblings. `@attr: wrap <name>=<value>` and `@cms: wrap attr:<name> = <Collection>.<Field>` on the same node go on the wrapper, not on the node | `@wrap: smootify-product over Header..Footer @cms: wrap attr:data-id = Products.Shopify ID` |
+| `@wrap: <tag or element> over <first>..<last>` | A new ancestor that does not exist in the design, spanning the named siblings: a custom tag, or a Webflow element type (`DivBlock`, `FormBlock`). `@attr: wrap <name>=<value>` and `@cms: wrap attr:<name> = <Collection>.<Field>` on the same node go on the wrapper, not on the node | `@wrap: smootify-product over Header..Footer @cms: wrap attr:data-id = Products.Shopify ID` |
 | `@repeat: <what>` | This node is the template Smootify repeats at runtime | `@repeat: one per product image` |
 | `@skip: <why>` | Do not build this node | `@skip: copy of Thumbnail, drawn to show the row` |
 | `@target: <layer>` | The directives are about this descendant (a group or section that cannot hold an annotation) | `@target: Price row` |
@@ -118,7 +118,7 @@ FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
 |---|---|---|
 | `@ask: <question>` | An open question. **The builder does not build the node's Smootify part while it stands.** Never together with the directive it asks about | `@ask: does this pick a variant or an add-on?` |
 | `@manual: <kind>: <detail>` | A step no tool can do. Kinds: `conditional` (Webflow conditional visibility: on a component variant, or on a CMS field of the template item, such as one Products template that shows the configurator block only on configurable products), `popover`, `other`. Everything else is buildable — see the build skill | `@manual: conditional: show Configurator only when Products.Type is Configurable` |
-| `@note: <text>` | For people. The builder ignores it, so never put in a note something the build needs (a Form Block a tag requires, a panel, an inline part): that is `@manual: other: …` | `@note: same element as the Desktop variant` |
+| `@note: <text>` | For people. The builder ignores it, so never put in a note something the build needs: a container is a `@wrap`; a Form Block a tag requires needs nothing (the builder adds it) | `@note: same element as the Desktop variant` |
 
 ## A complete component
 

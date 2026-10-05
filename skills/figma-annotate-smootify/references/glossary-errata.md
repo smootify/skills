@@ -76,6 +76,9 @@ Checked against the 2.0 source on 2026-10-05.
   the item's Shopify ID. Lists that do not come from the CMS (related, best sellers) need no `product-slider`:
   their `smootify-product` in the first slide clones the slide.
 - **Search page cards** are `smootify-product[data-id=search]`; search & discovery cards `[data-id=filter]`.
+- **Predictive search results** are product cards too: inside `search-with-query`, a `smootify-product[data-id=search]`
+  is the result template, with the card's own price and buttons. Prefer it to the `search-result` template with
+  `search=…` bindings.
 
 ## 1.x functions that are back in 2.0
 
