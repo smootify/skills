@@ -216,6 +216,12 @@ the first checkpoint with the person.
 4. **Find what is not a component.** A component is justified when a structure **repeats**. The layout of a
    product page or of an account page does not repeat: it is page structure, not a component. The 404, policy
    pages, header and footer are Webflow; the skeletons and the banners Smootify injects are not drawn at all.
+   **A master you do not build as a component still gets one line saying why**, on the master itself, so whoever
+   opens its component page can tell a decision from a forgotten component:
+   - page structure: `@note: page structure, annotated on <page> › <frame> (<node id>)`, naming the frame where its
+     markup is written;
+   - a primitive built inline (an input, a tab): `@note: not a component, each instance is annotated where it is placed`.
+   Icons and other plain graphics need nothing.
 5. **Nesting and build order.** A component used inside another (the price inside the card, the swatches inside
    the add to cart) is built first and placed as an instance. Where the outer component takes one of several
    inner components (a card that ends with a form, a quick-view button or nothing), prefer a **slot**
@@ -409,6 +415,9 @@ Before writing, check every annotated node:
 - every `@bind` names a `@prop` of the nearest `@component` above it, and every `@prop` is bound somewhere;
 - every `@set` and `@cms` names a prop of the instance's component;
 - every Figma property of every set has an `@axis`;
+- **every main component and set in the file carries a Smootify annotation**: its directives, `@use` + `@set`, or
+  the `@note` that says why it is not a component. Icons and plain graphics are the only exception. A component
+  page with no annotation at all is a failed check;
 - no node carries both `@ask` and the directive it asks about;
 - no value contains a double quote, a newline or an `@`, and no class contains an underscore.
 
@@ -451,7 +460,8 @@ In this order:
    components, used on which pages. This is what the build skill will do.
 2. **Open questions**: every `@ask` left, phrased so the person can answer it.
 3. **Assumptions** to confirm: CMS collections and fields, translated names, file-wide conventions.
-4. **`@wrap` introduced**: they become Webflow elements that do not exist in the design.
+4. **`@wrap` introduced**: they become Webflow elements that do not exist in the design. Then the masters left as
+   page structure, each with the frame its `@note` points to.
 5. **Manual steps**: every `@manual`.
 6. **Disagreements**: kit list vs glossary, names or descriptions vs context, nodes annotated on an ancestor
    because the right node was a group.

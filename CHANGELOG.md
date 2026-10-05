@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0-beta.5
+
+- `figma-annotate-smootify`: a main component that is not built as a component still gets one line saying why — the
+  frame where its page-structure markup is written, or that its instances are annotated where they are placed — and
+  the final check fails when a component page has no annotation at all. Icons need nothing.
+
 ## 2.0.0-beta.4
 
 - The catalogue's list of attribute values leaves out the deprecated ones (`address=territoryCode`, `product=images`
