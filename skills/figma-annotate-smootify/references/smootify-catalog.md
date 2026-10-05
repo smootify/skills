@@ -212,9 +212,9 @@ Dal glossario (`https://cdn.smootify.io/components-v2/glossary.json`), lo stesso
 nomi, attributo per attributo; dove va ogni valore (`inside`), su che elemento (`on`: `button` è solo un
 elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attributes` in `rules.json`.
 
-### `address=…` (14)
+### `address=…` (13)
 
-`address1` · `address2` · `city` · `company` · `countryCode` · `firstName` · `formatted` · `id` · `lastName` · `name` · `phoneNumber` · `territoryCode` · `zip` · `zoneCode`
+`address1` · `address2` · `city` · `company` · `countryCode` · `firstName` · `formatted` · `id` · `lastName` · `name` · `phoneNumber` · `zip` · `zoneCode`
 
 ### `address-condition=…` (1)
 
@@ -364,9 +364,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `privacy` · `refund` · `shipping` · `subscription` · `terms`
 
-### `product=…` (28)
+### `product=…` (26)
 
-`category` · `collections` · `created-at` · `description` · `external-video` · `external-videos` · `first-collection` · `gallery` · `images` · `link` · `max-compare-at-price` · `max-price` · `media` · `min-available-price` · `min-compare-at-price` · `min-price` · `model` · `option-values` · `published-at` · `specific-image` · `stock` · `tags` · `title` · `type` · `url` · `vendor` · `video` · `videos`
+`category` · `collections` · `created-at` · `description` · `external-video` · `external-videos` · `first-collection` · `gallery` · `link` · `max-compare-at-price` · `max-price` · `min-available-price` · `min-compare-at-price` · `min-price` · `model` · `option-values` · `published-at` · `specific-image` · `stock` · `tags` · `title` · `type` · `url` · `vendor` · `video` · `videos`
 
 ### `reference=…` (6)
 
@@ -415,6 +415,14 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 ### `wishlist=…` (1)
 
 `count`
+
+### Valori deprecati: non annotarli (3)
+
+Venivano dalla 1.x o dalle prime 2.0: qualcuno funziona ancora, qualcuno non più. In un progetto si scrive sempre il sostituto.
+
+- `product=images` → `[product="gallery"]`
+- `product=media` → `[product="gallery"]`
+- `address=territoryCode` → `[address="countryCode"]`
 
 ## Classi di stato
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.4
+
+- The catalogue's list of attribute values leaves out the deprecated ones (`address=territoryCode`, `product=images`
+  as a gallery piece) and lists them apart, each with the value to write instead.
+
 ## 2.0.0-beta.3
 
 - A submit button outside its form (a sticky add to cart, tied with `form=<form id>`) now works like one inside, with
