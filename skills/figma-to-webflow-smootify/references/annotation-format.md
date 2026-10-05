@@ -33,6 +33,8 @@ match. Then unescape `\_` → `_`, `&lt;` → `<`, `&gt;` → `>`, and trim. A d
 | A node **inside** a component | element directives, `@bind`, `@slot`, `@repeat`, `@skip` |
 | An **instance** placed on a page or inside another component | only what differs for this placement: `@set`, `@cms` |
 | A **frame drawn by hand** that should have been an instance | `@use` + `@set` |
+| A **main component** that duplicates another (nine card masters that are one card) | `@use` + `@set` on the main component: every instance of it is built as an instance of the target, with those values |
+| A **page element** that is not a component (a heading, a `@wrap`) on a CMS template or in a collection list | `@cms: attr:<name>`, `text`, `image` or `link`, as below |
 | The **top frame of a page** | `@page`, `@list` |
 | The **top frame of the file's first page** | `@setup`, once for the whole file |
 
@@ -57,10 +59,12 @@ directives onto instances.
 | `@tag: <tag>` | A Smootify custom tag from the catalogue, or the HTML tag of a `DOM` element | `@tag: variant-swatches` · `@element: DOM @tag: button` |
 | `@style: <class>\|<combo>` | Classes, base first. Library classes start with `sm-` | `@style: sm-swatch\|sm-swatch-large` |
 | `@attr: <name>=<value>` | A static attribute | `@attr: product=title` |
-| `@wrap: <tag> over <first>..<last>` | A new ancestor that does not exist in the design, spanning the named siblings | `@wrap: smootify-add-to-cart over Options..Buy button` |
+| `@wrap: <tag> over <first>..<last>` | A new ancestor that does not exist in the design, spanning the named siblings. `@attr: wrap <name>=<value>` and `@cms: wrap attr:<name> = <Collection>.<Field>` on the same node go on the wrapper, not on the node | `@wrap: smootify-product over Header..Footer @cms: wrap attr:data-id = Products.Shopify ID` |
 | `@repeat: <what>` | This node is the template Smootify repeats at runtime | `@repeat: one per product image` |
 | `@skip: <why>` | Do not build this node | `@skip: copy of Thumbnail, drawn to show the row` |
 | `@target: <layer>` | The directives are about this descendant (a group or section that cannot hold an annotation) | `@target: Price row` |
+
+**A form field's Name is `@attr: name=<Name>`** on a `FormTextInput`, `FormTextarea`, `FormSelect`, `FormCheckboxInput` or `FormRadioInput`. It is the field's Name setting in Webflow, not a custom attribute, and Smootify reads it as written: case included (`email`, not `Email`). The names each form element reads are in the catalogue, *Campi dei form*.
 
 **A real `<button>` is `@element: DOM @tag: button`.** Webflow's Button element publishes an `<a>` and the
 FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
@@ -85,9 +89,11 @@ FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
 | `interaction` | Hover, focus, pressed | Pseudo-state styles on the class |
 | `breakpoint` | The value names a size: Desktop, Tablet, Mobile, Compact-for-mobile | Responsive styles on the same element. Never a second element |
 | `variant` | The person placing the component chooses it, and only styles change | A Webflow variant (style overrides) |
-| `prop` | The person placing it chooses whether a part shows (a Figma BOOLEAN property, or a variant that only hides a part) | A `boolean` prop bound to `visibility` |
+| `prop` | The person placing it chooses whether a part shows (a Figma BOOLEAN property, or a variant that only hides a part), or a value that becomes an attribute (`Option = 1 \| 2 \| 3`) | A `boolean` prop bound to `visibility`, or a `string` prop bound to `attr:<name>`: `@prop: string Option = 1` + `@bind: attr:data-option = Option`, and `@set: Option = 2` on the instances |
 | `split` | The Smootify tag, the attributes of the children or the structure change | One Webflow component per value, each with its own `@component` on the variant |
 | `sample` | Only the sample content changes (long title, short title) | Nothing |
+
+**A popover inside a component** needs an id that is unique on the page, and a component placed twice would repeat it. Give the component `@prop: string Popover ID`, bind it with `@bind: attr:popovertarget = Popover ID` on the trigger and `@bind: domId = Popover ID` on the panel, and `@set: Popover ID = <unique value>` on every instance.
 
 ### Placement — where the component is connected
 
@@ -96,6 +102,7 @@ FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
 | `@use: <Component>` | This hand-drawn frame is an instance of that component | `@use: Product card` |
 | `@set: <Prop> = <value>` | This instance's value. The variant is a prop too | `@set: Option = 2` · `@set: Variant = Compact` |
 | `@cms: <Prop> = <Collection>.<Field>` | On a CMS template or inside a collection list: the prop takes its value from a CMS field | `@cms: Product ID = Products.Shopify ID` |
+| `@cms: attr:<name>\|text\|image\|link = <Collection>.<Field>` | The same on a page element that is not a component: an attribute, its text, image or link takes the CMS field. Only `body` cannot take attributes; a `smootify-product` around the page content can | `@cms: attr:data-collection = Collections.Shopify ID` |
 | `@page: <kind> [<Collection>]` | `static`, or `template <Collection>` for a CMS template page | `@page: template Products` |
 | `@list: <Collection> [limit=N] [sort=<field> asc\|desc]` | This node is a Webflow collection list | `@list: Products limit=8 sort=created desc` |
 
@@ -110,7 +117,7 @@ FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
 | Directive | Meaning | Example |
 |---|---|---|
 | `@ask: <question>` | An open question. **The builder does not build the node's Smootify part while it stands.** Never together with the directive it asks about | `@ask: does this pick a variant or an add-on?` |
-| `@manual: <kind>: <detail>` | A step no tool can do. Kinds: `conditional`, `popover`, `other`. Everything else is buildable — see the build skill | `@manual: popover: native Popover element around Size values` |
+| `@manual: <kind>: <detail>` | A step no tool can do. Kinds: `conditional` (Webflow conditional visibility: on a component variant, or on a CMS field of the template item, such as one Products template that shows the configurator block only on configurable products), `popover`, `other`. Everything else is buildable — see the build skill | `@manual: conditional: show Configurator only when Products.Type is Configurable` |
 | `@note: <text>` | For people. The builder ignores it | `@note: same element as the Desktop variant` |
 
 ## A complete component

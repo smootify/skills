@@ -85,7 +85,7 @@ How each directive is built:
 | `@ask` | **Do not build** the node's Smootify part. List it first in the summary: the annotation is not finished |
 | `@skip` | Do not build the node |
 | `@repeat` | Build this node once; Smootify repeats it. Its `@skip` siblings are drawn copies |
-| `@wrap: <tag> over <a>..<b>` | Create the wrapper element with that tag and move the siblings from `a` to `b` inside it |
+| `@wrap: <tag> over <a>..<b>` | Create the wrapper element with that tag and move the siblings from `a` to `b` inside it. Then `@attr: wrap …` and `@cms: wrap attr:…` on the same node go on the wrapper |
 | `@target: <layer>` | Apply the node's directives to that descendant (a group that could not hold them) |
 | `@component` `@group` `@desc` | `transform_element_to_component` with `group` and `description` at creation |
 | `@prop` + `@tip` | `create_prop` with the tooltip |
@@ -98,10 +98,11 @@ How each directive is built:
 | `@axis: X = interaction` | Pseudo-state styles (`hover`, `focus`, `pressed`) on the class |
 | `@axis: X = breakpoint` | Responsive styles on the same element, from the other frame's values. Never a second element |
 | `@axis: X = split` | Each variant carrying `@component` is a separate component |
-| `@axis: X = prop` / `sample` | Already covered by the boolean prop / nothing |
+| `@axis: X = prop` / `sample` | Already covered by the prop it names (a `boolean` bound to visibility, or a `string` bound to `attr:`) / nothing |
+| `@attr: name=<Name>` on a form field | The field's Name setting (element settings), not a custom attribute; keep the case |
 | `@set: P = v` (and `@set: Variant = N`) | `set_component_instance_prop_values`; the variant takes its id from `get_component` with `includeVariants` |
-| `@cms: P = Collection.Field` | Bind the instance prop to the CMS field. On a plain element, the attribute's CMS recipe (`static_json` with `sourceType: "cms"`, see Limitations). If binding an instance prop to CMS fails through the MCP, report it as a manual step with the exact field |
-| `@use: Component` | Insert an instance of that component instead of building the frame |
+| `@cms: P = Collection.Field` · `@cms: attr:<name>\|text\|image\|link = Collection.Field` | Bind the instance prop to the CMS field; the `attr:`/`text`/`image`/`link` form binds a plain page element (a wrap too). On a plain element, the attribute's CMS recipe (`static_json` with `sourceType: "cms"`, see Limitations). If binding an instance prop to CMS fails through the MCP, report it as a manual step with the exact field |
+| `@use: Component` | Insert an instance of that component instead of building the frame. On a main component: build no component for it, and place the target (with its `@set` values) wherever its instances are |
 | `@page: template C` | Build on the CMS template page of collection C |
 | `@list: C limit=… sort=…` | A Collection List (`DynamoWrapper`) with `source`, `limit`, `sort` set through `set_settings` |
 | `@manual` | Collect for the summary |

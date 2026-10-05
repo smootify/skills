@@ -59,7 +59,7 @@ You must ask when:
 |---|---|
 | `references/annotation-format.md` | **The format.** Every directive, where it goes, and the transport rules that keep it intact. Shared with the build skill |
 | `references/ui-kit-components.md` | The 2.0 kit: every component, where it appears, its Figma variants and states, the props it expects in Webflow, its markup. Written in Italian; **names and props go to Webflow in English** |
-| `references/smootify-catalog.md` | **Tags**: every legal Smootify tag, what it must be inside, its host attributes, the state classes Smootify toggles. Generated from the 2.0 markup contract |
+| `references/smootify-catalog.md` | **Tags**: every legal Smootify tag, what it must be inside, all its host attributes, the state classes Smootify toggles, and the field Names each form element reads (*Campi dei form*). Generated from the 2.0 markup contract |
 | `references/glossary.json` | **Attribute values**: for each value, the element it must be inside (`inside`), the kind of Webflow element it goes on (`on`), whether it repeats the element (`note`). **Load it live first** — see *Load the glossary* below; the copy in `references/` is the fallback |
 | `references/glossary-errata.md` | What the glossary does not say: `button` means the button tag, how swatches pick their option, legal attributes it lacks, the 1.x functions still being ported, the two names the kit list gets wrong. **It wins over the kit list** |
 
@@ -68,6 +68,11 @@ of another project or of Smootify 1.x.
 
 When the kit list and the catalogue or glossary disagree on markup, the glossary wins, then the catalogue.
 Report the disagreement so the list can be fixed.
+
+**Attribute values come from the glossary.** The catalogue's *Valori leciti* is a list of names that also holds
+aliases (`cart=totalQuantity` is `cart=count`): when both name a value, write the glossary's. A value that only
+the catalogue has is legal but not described: ask before using it. A value the kit uses and neither has does
+not exist: remove it and say so in the report.
 
 ## Before you start
 
@@ -98,7 +103,7 @@ copy in this skill. Before proposing any attribute, get it in this order and **s
    if (!res.ok) throw new Error('glossary ' + res.status);
    return { lastModified: res.headers.get('last-modified'), glossary: await res.json() };
    ```
-3. **`references/glossary.json`**, the copy of 2026-09-29, when neither works. Tell the person you are
+3. **`references/glossary.json`**, the copy of 2026-10-05, when neither works. Tell the person you are
    working from the copy.
 
 Check that what you got has `"runtime": "2.0"` and the `attributes` and `conditions` arrays; otherwise treat it
@@ -203,6 +208,8 @@ the first checkpoint with the person.
 3. **Find the duplicates** — each is a question, never a silent merge:
    - two components with the same structure and different names;
    - a frame drawn by hand with the structure of an existing component (a detached instance) → `@use`;
+   - several main components that are one Webflow component (nine card masters for one card) → keep one, and
+     write `@use` + `@set` on each of the others: their instances are built as instances of the one you keep;
    - two components that differ only in styles or in one optional part → probably one component with a
      variant or a boolean prop;
    - the same thing drawn at desktop and mobile size → one component, responsive styles.
@@ -244,6 +251,7 @@ from, so classify each one explicitly and ask whenever it is not obvious:
 | names a size or a device: Desktop, Tablet, Mobile | `breakpoint` | Responsive styles. Annotate both frames and say on each `@note: same element as <other> at another size` |
 | is chosen by whoever places the component, and **only styles** change | `variant` | A Webflow variant: `@variant: <Name>` on each variant |
 | is chosen by whoever places it, and **a part shows or not** | `prop` | `@prop: boolean <Name>` + `@bind: visibility = <Name>` on the part |
+| is chosen by whoever places it, and **its value becomes an attribute** (Option 1 \| 2 \| 3) | `prop` | `@prop: string <Name> = <default>` + `@bind: attr:<name> = <Name>`; each instance `@set: <Name> = <value>` |
 | is chosen by whoever places it, and **the Smootify tag, the attributes of the children or the structure** change | `split` | One component per value, each with its own `@component` on the variant |
 | only changes the sample content | `sample` | Nothing |
 
@@ -285,6 +293,11 @@ shows and the list misses, and ask about it.
 
 A Smootify attribute bound to a prop is built without manual steps (the build skill has the recipe). So one
 component with a `string` prop always beats three components that differ by one attribute.
+
+**Popovers inside a component.** A trigger and its panel are tied by an id, and a component placed twice would
+repeat it. Add `@prop: string Popover ID`, bind it with `@bind: attr:popovertarget = Popover ID` on the trigger
+and `@bind: domId = Popover ID` on the panel, and give each instance its own value with `@set`. Never ask about
+it again in the same file.
 
 ## Step 4 — The Smootify markup inside each component
 
@@ -373,6 +386,15 @@ For every page:
   requires (for example `filter`).
 - A wrapper the page needs and no component provides (the `smootify-add-to-cart` around a PDP's pickers) is a
   `@wrap` on the page, not a new component.
+- **Page elements and wraps take CMS fields too.** On a template page, any element except `body` can take a CMS
+  field: `@cms: attr:<name> = <Collection>.<Field>` (or `text`, `image`, `link`). A product page is
+  `body > header, main, footer`, and the `smootify-product` around the main content is usually a wrap:
+  `@wrap: smootify-product over <first>..<last> @cms: wrap attr:data-id = Products.Shopify ID`. The same for a
+  collection page: `@cms: wrap attr:data-collection = Collections.Shopify ID` on the `smootify-search-discovery`
+  wrap, and `@cms: text = Collections.Name` on its heading.
+- **One template per collection.** Webflow has one Products template: product pages drawn differently
+  (standard, configurator, subscription) are one page with every block, and each block shows according to the
+  product with Webflow conditional visibility, which no tool can set: `@manual: conditional: <block> when <field>`.
 
 Collection and field names: use what the Webflow site has if you can read it; otherwise the Smootify defaults
 (`Products` with `Shopify ID`, `Collections`, `Vendors`) — and list them in the report as assumptions to confirm.
@@ -445,8 +467,10 @@ Almost nothing does now. Through the Webflow MCP the build skill does per-instan
 attributes bound to props and to CMS fields, visibility bound to props, slots, collection-list source, filters,
 sort and limit, interactions and fonts. Write `@manual` only for:
 
-- `conditional` — showing an element depending on the active variant. The MCP cannot read or write it.
-  Prefer a boolean prop or a split; write it only if the person insists;
+- `conditional` — Webflow conditional visibility: an element that depends on the active component variant
+  (prefer a boolean prop or a split, and write it only if the person insists), or a block of a CMS template
+  that shows only for some items (one Products template for several kinds of product). The MCP cannot read or
+  write it;
 - `popover` — the native Popover element of Webflow (beta). The MCP cannot create it; the same markup works
   with the `popover` / `popovertarget` attributes, which it can;
 - `other` — anything else, described so precisely that someone (or an agent driving the Designer in Chrome)

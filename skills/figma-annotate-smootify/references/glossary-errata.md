@@ -40,6 +40,43 @@ is a native `<select>` whose options hold text only: the price difference goes i
 - `[customer-condition=has-orders]` and `has-subscriptions` resolve only when `customer-orders` /
   `customer-subscriptions` is on the page.
 
+## Runtime facts the kit keeps needing
+
+Checked against the 2.0 source on 2026-10-05.
+
+- **Status pills.** `subscription=status`, `order=fulfillmentStatus`, `order=cancelReason` and
+  `fulfillment=latestShipmentStatus` write the status text **and add the status as a class** on the same element,
+  in camelCase: `active`, `paused`, `cancelled`, `expired`, `failed`, `stale` for subscriptions; Shopify's status
+  for orders and shipments (`fulfilled`, `partiallyFulfilled`, `inTransit`, `delivered`…). Style each with a combo
+  class on the pill: `@state: <class> on <pill>`. The subscription row also gets `data-status`.
+- **`wishlist-toggle`.** The host gets `is-in-wishlist` (and `is-inited`), a `button` inside gets `is-active`:
+  draw the heart as an SVG and style the saved state with a combo class. A Webflow Rive element inside the toggle
+  also works, with `data-animation-on` / `data-animation-off` naming its two animations; `data-rive-url` is
+  Webflow's own attribute, never annotated.
+- **New products.** `smootify-product[data-new-days=<n>]` changes the 30 days of `condition=is-new` /
+  `not-new` and of the `is-new` class.
+- **No card-level pickup condition.** `condition=in-stock` is the online stock of the variant, not a shop's;
+  pickup availability exists only inside `store-availability`.
+- **Opening the cart.** `button[data-action=open]` (or `open-cart`) must be **inside** `smootify-cart`: the
+  navbar's cart icon is a real button there (`@element: DOM @tag: button`, with an accessible label). A popover
+  cart keeps its `[popover]` panel inside `smootify-cart`.
+- **Line properties.** A cart line's options and properties are a `cart-item=options` template, one copy per
+  option, with `option=name` and `option=value` inside; properties starting with `_` never show.
+- **Bundles in the cart.** A Magic Box line lists its products with a `box-item` template; a line bundled with
+  add-ons, with a `bundle-item` template. Both go inside `cart-item`, with their own `[box-item=…]` /
+  `[bundle-item=…]` values.
+- **The default address** has no marker in the address list: the row's `delete-address` disappears on it, and
+  `customer=defaultAddress` shows it anywhere. The address form's checkbox Name is `defaultAddress`, the phone
+  `phoneNumber`.
+- **Sticky add to cart.** Keep the sticky bar inside `smootify-add-to-cart` and position it with CSS. A submit
+  button outside it with `form=<id>` does add to the cart, but Smootify neither shows its loading label nor
+  disables it when the variant cannot be bought.
+- **`product-slider`** turns each item of a Webflow Collection list into a slide: the list (Products, with the
+  limit you want) sits in the slider's first slide, and each item holds a `smootify-product` whose `data-id` is
+  the item's Shopify ID. Lists that do not come from the CMS (related, best sellers) need no `product-slider`:
+  their `smootify-product` in the first slide clones the slide.
+- **Search page cards** are `smootify-product[data-id=search]`; search & discovery cards `[data-id=filter]`.
+
 ## 1.x functions the 2.0 port is still missing
 
 `hide-if-product-in-cart` (the kit's `Nascondi se nel carrello` prop), `remove-parent`, `option1-label` …

@@ -2017,7 +2017,12 @@
 				},
 				{
 					"label": "Country",
-					"value": "territoryCode"
+					"value": "countryCode"
+				},
+				{
+					"label": "Country (before 2.0)",
+					"value": "territoryCode",
+					"deprecated": "[address=\"countryCode\"]"
 				},
 				{
 					"label": "Phone",
