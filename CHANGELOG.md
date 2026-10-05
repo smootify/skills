@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.3
+
+- A submit button outside its form (a sticky add to cart, tied with `form=<form id>`) now works like one inside, with
+  its loading label and disabled state: the errata says how to annotate it.
+
 ## 2.0.0-beta.2
 
 From the first run of the annotation skill on the Smootify 2.0 starter.

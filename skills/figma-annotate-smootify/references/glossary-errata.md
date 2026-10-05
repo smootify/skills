@@ -68,9 +68,9 @@ Checked against the 2.0 source on 2026-10-05.
 - **The default address** has no marker in the address list: the row's `delete-address` disappears on it, and
   `customer=defaultAddress` shows it anywhere. The address form's checkbox Name is `defaultAddress`, the phone
   `phoneNumber`.
-- **Sticky add to cart.** Keep the sticky bar inside `smootify-add-to-cart` and position it with CSS. A submit
-  button outside it with `form=<id>` does add to the cart, but Smootify neither shows its loading label nor
-  disables it when the variant cannot be bought.
+- **Sticky add to cart.** A submit button outside the form works like one inside, loading label and disabled
+  state included: `@element: DOM @tag: button @attr: type=submit @attr: form=<form id>`, and the Form gets that ID
+  (unique on the page: on the product page, never inside a list of cards).
 - **`product-slider`** turns each item of a Webflow Collection list into a slide: the list (Products, with the
   limit you want) sits in the slider's first slide, and each item holds a `smootify-product` whose `data-id` is
   the item's Shopify ID. Lists that do not come from the CMS (related, best sellers) need no `product-slider`:
