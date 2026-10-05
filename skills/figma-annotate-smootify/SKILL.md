@@ -418,7 +418,12 @@ Before writing, check every annotated node:
 - **every main component and set in the file carries a Smootify annotation**: its directives, `@use` + `@set`, or
   the `@note` that says why it is not a component. Icons and plain graphics are the only exception. A component
   page with no annotation at all is a failed check;
-- no node carries both `@ask` and the directive it asks about;
+- no node carries both `@ask` and the directive it asks about, nor `@ask` together with `@skip` (the builder skips the
+  node and the question disappears);
+- **nothing the build needs lives only in a `@note`**: a Form Block a tag requires, a popover panel, an inline part
+  or a missing container is a `@manual: other:` naming the nodes. The builder ignores notes, and Smootify removes an
+  element whose required part is missing;
+- a `@tag` that is also an HTML tag (`map`) carries `@element: DOM`, so it is not read as plain HTML;
 - no value contains a double quote, a newline or an `@`, and no class contains an underscore.
 
 A proposal that fails a check is wrong: fix it or ask — never write it and let the build skill find out.

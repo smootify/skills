@@ -77,11 +77,15 @@ Checked against the 2.0 source on 2026-10-05.
   their `smootify-product` in the first slide clones the slide.
 - **Search page cards** are `smootify-product[data-id=search]`; search & discovery cards `[data-id=filter]`.
 
-## 1.x functions the 2.0 port is still missing
+## 1.x functions that are back in 2.0
 
-`hide-if-product-in-cart` (the kit's `Nascondi se nel carrello` prop), `remove-parent`, `option1-label` …
-`option3-label` and the subscription totals (`totalPrice`, `subtotalPrice`, `totalTax`, `canceledAt`) are 1.x
-functions being put back into 2.0. **Annotate them normally** where the design needs them.
+- `hide-if-product-in-cart` on `smootify-product` hides the card while the cart holds its product. It counts when
+  the attribute is **present**, whatever its value: `hide-if-product-in-cart=false` hides the card too. A prop cannot
+  switch it through the value: use a variant of the component with the attribute and one without, or keep it fixed.
+- `remove-parent` on a `variant=option1-value` … `option3-value` element removes its parent when the variant has no
+  such option (a "Size: M" row); `option1-label` … `option3-label` are aliases of `optionN-name`.
+- The subscription totals (`subtotalPrice`, `totalPrice`, `totalTax`…) show the order that started the subscription.
+  `subscription=canceledAt` is not read in 2.0: never annotate it.
 
 ## Two names the kit list gets wrong
 

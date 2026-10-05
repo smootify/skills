@@ -118,7 +118,7 @@ FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
 |---|---|---|
 | `@ask: <question>` | An open question. **The builder does not build the node's Smootify part while it stands.** Never together with the directive it asks about | `@ask: does this pick a variant or an add-on?` |
 | `@manual: <kind>: <detail>` | A step no tool can do. Kinds: `conditional` (Webflow conditional visibility: on a component variant, or on a CMS field of the template item, such as one Products template that shows the configurator block only on configurable products), `popover`, `other`. Everything else is buildable — see the build skill | `@manual: conditional: show Configurator only when Products.Type is Configurable` |
-| `@note: <text>` | For people. The builder ignores it | `@note: same element as the Desktop variant` |
+| `@note: <text>` | For people. The builder ignores it, so never put in a note something the build needs (a Form Block a tag requires, a panel, an inline part): that is `@manual: other: …` | `@note: same element as the Desktop variant` |
 
 ## A complete component
 

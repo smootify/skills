@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0-beta.6
+
+- A part the build needs (a Form Block a tag requires, a popover panel, an inline part) is a `@manual`, never a `@note`:
+  the builder ignores notes. The final check also refuses `@ask` with `@skip`, and a tag named like an HTML tag (`map`)
+  without `@element: DOM`.
+- Glossary errata: `hide-if-product-in-cart` (it counts when present, whatever its value), `remove-parent`, the option
+  labels and the subscription totals are in 2.0; `subscription=canceledAt` is not.
+
 ## 2.0.0-beta.5
 
 - `figma-annotate-smootify`: a main component that is not built as a component still gets one line saying why — the
