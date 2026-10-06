@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.0-beta.11
+
+- The catalogue covers the elements added to 2.0 on 2026-10-06: `wishlist-share` (a wishlist shared through a link, with
+  the conditions `shared-wishlist` and `own-wishlist`), `configurator-share` (a configuration in a link),
+  `smootify-metaobject[data-handle-param]` (the entry named in the page link) and `booking-calendar[data-required]`.
+- The glossary has the metafield modifiers (`data-attr`, `separator`, `data-digits`, `data-path`) on customer and company
+  metafields.
+- A `@wrap` is written on the first layer of its span, never on the parent (the annotation format says so; the Smootify
+  MCP flags it as `annotation.wrap-on-parent`).
+
 ## 2.0.0-beta.10
 
 From the review of the second annotated starter.

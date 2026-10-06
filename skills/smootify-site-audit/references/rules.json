@@ -697,7 +697,7 @@
       "kind": "element",
       "registered": true,
       "selector": true,
-      "purpose": "Shows how many items the wishlist holds (products and variants).",
+      "purpose": "Shows how many items the wishlist holds (products and variants); on a wishlist page opened from a shared link, how many the shared list holds.",
       "source": "v2/src/components/extensions/wishlist-renderer.ts:91",
       "section": "Extensions",
       "context": {
@@ -1025,7 +1025,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Shows the slots of a bookable product (its Booking schedule, set in the Shopify admin) for days days, the places left of each, the day in the site's language and the time in the place's time zone; picking a free slot books it as its container says. In a booking-form: the form books it. In a product's add to cart: adding the product holds the slot for the quantity and writes it on the product's lines (a paid appointment); no slot or a full one stops the addition with the message. In the cart: the slot is held when picked and written on the cart (a pickup or delivery window); a slot taken by someone else meanwhile is refused at checkout. The places are counted by Smootify: two visitors cannot book the last one. The availability is kept a minute, so pages opened again ask nothing.",
+      "purpose": "Shows the slots of a bookable product (its Booking schedule, set in the Shopify admin) for days days, the places left of each, the day in the site's language and the time in the place's time zone; picking a free slot books it as its container says. In a booking-form: the form books it. In a product's add to cart: adding the product holds the slot for the quantity and writes it on the product's lines (a paid appointment); no slot or a full one stops the addition with the message. In the cart: the slot is held when picked and written on the cart (a pickup or delivery window); a slot taken by someone else meanwhile is refused at checkout, and with data-required the checkout stops until a slot is picked. The places are counted by Smootify: two visitors cannot book the last one. The availability is kept a minute, so pages opened again ask nothing.",
       "source": "v2/src/components/booking/booking-calendar-element.ts:17",
       "section": "Server extensions (plan server)",
       "context": {
@@ -1060,7 +1060,9 @@
       "hostAttributes": [
         "data-product-id",
         "days",
-        "property"
+        "property",
+        "data-required",
+        "data-error-required"
       ],
       "ancestorAttributes": [],
       "writes": [
@@ -1461,7 +1463,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Groups configurator fields; has no effect of its own.",
+      "purpose": "Groups configurator fields; has no effect of its own. Every configurator field counts the value it already has when it mounts (typed before the configurator loaded, restored by the browser on Back, a default value / checked / selected), as the add to cart sends it (v2/src/components/server-extensions/configurator/configurator-field.ts:35).",
       "source": "v2/src/components/server-extensions/configurator/configurator-field-element.ts:8",
       "section": "Server extensions (plan server)",
       "context": {
@@ -1711,6 +1713,48 @@
       "ancestorAttributes": [],
       "writes": [
         "data-formula"
+      ]
+    },
+    {
+      "tag": "configurator-share",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "Shares a link to this page with the visitor's configuration: one url parameter per configurator field, named as its control (name: ?Engraving=abc&Finish=gloss&width=120), plus ?variant= when the product has more than one. A page opened from such a link starts every configurator field from its parameter, applied as a visitor would (the same input / change, so a value the field refuses stays off: below min, an option the select does not have; text cut at maxlength), and the price follows; names the page does not have are ignored, and a file stays out of the link (uploaded again). The device's share sheet where there is one, else the link is copied (data-copy: always copied).",
+      "source": "v2/src/components/server-extensions/configurator/configurator-share-element.ts:14",
+      "section": "Server extensions (plan server)",
+      "context": {
+        "anywhere": false,
+        "requiresAncestorOneOf": [
+          "smootify-add-to-cart"
+        ],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": ""
+      },
+      "requires": {
+        "plan": "server",
+        "extensions": [
+          "Product configurator"
+        ],
+        "accounts": false
+      },
+      "serverPlanOnly": true,
+      "hostAttributes": [
+        "data-copy",
+        "data-title"
+      ],
+      "ancestorAttributes": [],
+      "writes": [
+        "is-shared",
+        "is-copied"
       ]
     },
     {
@@ -4702,8 +4746,8 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "One metaobject, written into its [metaobject] descendants.",
-      "source": "v2/src/components/extensions/metaobject/metaobject-element.ts:11",
+      "purpose": "One metaobject, written into its [metaobject] descendants. With data-handle-param the handle comes from that parameter of the page url (data-handle-param=\"l\" on /list?l=giulia-birthday: a link to one entry, such as one a metaobject-creator form created), before data-id and data-handle, which stay the fallback; the handle only goes to the query, never into the page. Without the parameter (and no fallback) or with an unknown handle the element is removed like any not found: a message next to it can show with :has() (.list:not(:has(smootify-metaobject)) .not-found).",
+      "source": "v2/src/components/extensions/metaobject/metaobject-element.ts:12",
       "section": "Extensions",
       "context": {
         "anywhere": true,
@@ -4717,7 +4761,7 @@
       "outsideContext": {
         "effect": "removed",
         "debugger": false,
-        "detail": "also without data-id or data-handle plus data-type, or not found"
+        "detail": "also without data-id or data-handle (or the data-handle-param parameter) plus data-type, or not found"
       },
       "requires": {
         "plan": null,
@@ -4728,6 +4772,7 @@
       "hostAttributes": [
         "data-id",
         "data-handle",
+        "data-handle-param",
         "data-type"
       ],
       "ancestorAttributes": [],
@@ -5109,7 +5154,7 @@
       "kind": "element",
       "registered": true,
       "selector": true,
-      "purpose": "Card template repeated once per saved product (the first one in the page); without a smootify-variant[data-product-id=\"wishlist\"] also once per saved variant, as its product's card on that variant.",
+      "purpose": "Card template repeated once per saved product (the first one in the page); without a smootify-variant[data-product-id=\"wishlist\"] also once per saved variant, as its product's card on that variant. A page opened from a wishlist-share link (?w=) shows that list instead of the visitor's, with body.is-shared-wishlist.",
       "source": "v2/src/components/extensions/wishlist-renderer.ts:34",
       "section": "Extensions",
       "context": {
@@ -6414,6 +6459,49 @@
       "writes": []
     },
     {
+      "tag": "wishlist-share",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "Shares a link to the wishlist page (data-page, else this page) that shows the visitor's saved products and variants to whoever opens it, no account needed (?w=: numbers for products, v + number for variants, at most 100, only ids read): the device's share sheet where there is one, else the link is copied (data-copy: always copied). On the shared page the toggles keep working on the visitor's own list.",
+      "source": "v2/src/components/extensions/wishlist-share-element.ts:13",
+      "section": "Extensions",
+      "context": {
+        "anywhere": true,
+        "requiresAncestorOneOf": [],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [],
+        "mustContainOneOf": [],
+        "confidence": "anywhere"
+      },
+      "outsideContext": {
+        "effect": "inert",
+        "debugger": false,
+        "detail": "the wishlist starts with it, but without the licence nothing is shared"
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [
+          "Wishlist"
+        ],
+        "accounts": false
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [
+        "data-page",
+        "data-copy",
+        "data-title"
+      ],
+      "ancestorAttributes": [],
+      "writes": [
+        "is-empty",
+        "disabled",
+        "is-shared",
+        "is-copied"
+      ]
+    },
+    {
       "tag": "wishlist-toggle",
       "kind": "element",
       "registered": true,
@@ -6606,8 +6694,10 @@
       "not-new",
       "on-sale",
       "out-of-stock",
+      "own-wishlist",
       "product-available",
       "product-unavailable",
+      "shared-wishlist",
       "subscription",
       "variable-price"
     ],
@@ -10262,6 +10352,63 @@
     },
     {
       "kind": "attribute",
+      "group": "customer-metafield",
+      "name": "data-attr",
+      "placeholder": "href",
+      "inside": [],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[customer-metafield]",
+        "[company-metafield]"
+      ]
+    },
+    {
+      "kind": "attribute",
+      "group": "customer-metafield",
+      "name": "separator",
+      "placeholder": ", ",
+      "inside": [],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[customer-metafield]",
+        "[company-metafield]"
+      ],
+      "note": "Used as written, spaces included: a comma and a space joins with a comma and a space"
+    },
+    {
+      "kind": "attribute",
+      "group": "customer-metafield",
+      "name": "data-digits",
+      "placeholder": "2",
+      "inside": [],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[customer-metafield]",
+        "[company-metafield]"
+      ]
+    },
+    {
+      "kind": "attribute",
+      "group": "customer-metafield",
+      "name": "data-path",
+      "placeholder": "items.0.name",
+      "inside": [],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[customer-metafield]",
+        "[company-metafield]"
+      ]
+    },
+    {
+      "kind": "attribute",
       "group": "order",
       "name": "order",
       "value": "name",
@@ -13478,6 +13625,24 @@
       "value": "no-items-in-wishlist",
       "inside": [],
       "on": null
+    },
+    {
+      "kind": "condition",
+      "group": "page",
+      "name": "condition",
+      "value": "shared-wishlist",
+      "inside": [],
+      "on": null,
+      "note": "A wishlist page opened from a wishlist-share link"
+    },
+    {
+      "kind": "condition",
+      "group": "page",
+      "name": "condition",
+      "value": "own-wishlist",
+      "inside": [],
+      "on": null,
+      "note": "The visitor's own wishlist, not a shared one"
     },
     {
       "kind": "condition",

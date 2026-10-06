@@ -1556,6 +1556,35 @@
 					"placeholder": "--metafield-color",
 					"on": ["any"],
 					"with": ["[customer-metafield]", "[company-metafield]"]
+				},
+				{
+					"label": "Into an attribute",
+					"name": "data-attr",
+					"placeholder": "href",
+					"on": ["any"],
+					"with": ["[customer-metafield]", "[company-metafield]"]
+				},
+				{
+					"label": "List separator",
+					"name": "separator",
+					"placeholder": ", ",
+					"note": "Used as written, spaces included: a comma and a space joins with a comma and a space",
+					"on": ["any"],
+					"with": ["[customer-metafield]", "[company-metafield]"]
+				},
+				{
+					"label": "Decimal digits",
+					"name": "data-digits",
+					"placeholder": "2",
+					"on": ["any"],
+					"with": ["[customer-metafield]", "[company-metafield]"]
+				},
+				{
+					"label": "JSON path",
+					"name": "data-path",
+					"placeholder": "items.0.name",
+					"on": ["any"],
+					"with": ["[customer-metafield]", "[company-metafield]"]
 				}
 			],
 			"on": ["text", "rich", "container", "link", "button", "image", "video"]
@@ -3024,6 +3053,16 @@
 				{
 					"label": "Wishlist is empty",
 					"value": "no-items-in-wishlist"
+				},
+				{
+					"label": "Shared wishlist",
+					"value": "shared-wishlist",
+					"note": "A wishlist page opened from a wishlist-share link"
+				},
+				{
+					"label": "Own wishlist",
+					"value": "own-wishlist",
+					"note": "The visitor's own wishlist, not a shared one"
 				},
 				{
 					"label": "Has recently viewed",
