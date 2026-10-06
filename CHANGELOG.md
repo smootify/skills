@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0-beta.9
+
+- The plugin sets up the MCP servers the skills use: the Smootify MCP (`https://mcp.smootify.io/mcp`) and the Webflow MCP
+  (`https://mcp.webflow.com/mcp`), both signed in with OAuth on first use (`/mcp`). Claude Code connects to a server once
+  when the same URL is already configured, so nothing is doubled.
+- It depends on Figma's official plugin (`figma@claude-plugins-official`), installed with it: the Figma MCP and the
+  `figma-use` skill the annotation skill loads.
+
 ## 2.0.0-beta.8
 
 - `@inline: <master>`: an instance of a primitive that is not a Webflow component (a popover, a checkbox) is built as a

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "smootify": {
+      "type": "http",
+      "url": "https://mcp.smootify.io/mcp"
+    },
+    "webflow": {
+      "type": "http",
+      "url": "https://mcp.webflow.com/mcp"
+    }
+  }
+}

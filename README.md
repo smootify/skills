@@ -28,6 +28,10 @@ claude plugin install smootify@smootify
 Or, inside a session: `/plugin marketplace add smootify/skills`, then `/plugin install smootify@smootify`. The skills
 load as `/smootify:figma-annotate-smootify` and so on, and Claude uses them when a task calls for them.
 
+**MCP servers.** The plugin adds the Smootify MCP and the Webflow MCP, and installs Figma's official plugin
+(`figma@claude-plugins-official`) with the Figma MCP. Sign in to each the first time from `/mcp`. A server you already
+have at the same URL is used once, not twice.
+
 **Updates.** Claude Code installs a new copy when the plugin's version changes. Run
 `claude plugin marketplace update smootify`, or turn on auto-update for the marketplace in `/plugin`.
 
