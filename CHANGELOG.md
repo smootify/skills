@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.0-beta.10
+
+From the review of the second annotated starter.
+
+- A product block that depends on the product uses what Smootify already reads before any new CMS field: an element
+  that removes itself without data (`subscription-swatches`), a `condition`, or `if-metafield=<key>` on a `@wrap`.
+- Tablet and Mobile frames carry only their top-frame note; inside them only what exists at that size alone is annotated.
+- When an `@inline` master holds a layer that is legal in one host only, it becomes two masters, one per host.
+- `@set: <Prop> = prop:<Name>` connects an instance's prop to a prop of the component it sits in (a card inside a
+  carousel takes the carousel's Limit); the builder binds it in Webflow.
+- The catalogue covers slot booking (`booking-calendar`, `booking-form` and the fields the form reads).
+
 ## 2.0.0-beta.9
 
 - The plugin sets up the MCP servers the skills use: the Smootify MCP (`https://mcp.smootify.io/mcp`) and the Webflow MCP

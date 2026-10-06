@@ -229,6 +229,9 @@ the first checkpoint with the person.
      markup is written;
    - a primitive built inline (an input, a tab, a popover): `@note: not a component, each instance is annotated where it is placed`,
      and every instance of it gets `@inline: <master>`, never a `@note` saying "inline": the builder reads `@inline`.
+     `@inline` copies **every** layer of the master. When a layer is legal in one host and not in another (the
+     stock and pick-up time of a store row: `store-availability` yes, `store-locator` no), make **two masters**,
+     one per host, never one master with a note.
    Icons and other plain graphics need nothing.
 5. **Nesting and build order.** A component used inside another (the price inside the card, the swatches inside
    the add to cart) is built first and placed as an instance. Where the outer component takes one of several
@@ -263,6 +266,11 @@ from, so classify each one explicitly and ask whenever it is not obvious:
 | is decided by Smootify at runtime — selected, unavailable, loading, out of stock, on sale, new, empty, error, logged in | `state` | No variant, no prop. On each state variant write `@state: <class> on <layer>` with the class from the catalogue's *Classi di stato* list, or annotate the element that shows only in that state (`condition=…`, `data-state=…`, `skeleton=…`, Webflow form done/fail) |
 | is hover, focus, pressed | `interaction` | Pseudo-state styles |
 | names a size or a device: Desktop, Tablet, Mobile | `breakpoint` | Responsive styles. Annotate both frames and say on each `@note: same element as <other> at another size` |
+
+**Tablet and Mobile frames of a page** carry only their top-frame note, `@note: same element as <Desktop id> at
+another size`. Everything inside that the Desktop frame also has (tabs, inputs, cards, forms) gets **no annotation**:
+it is the Desktop element at another breakpoint. Annotate inside them only what exists at that size alone, such as
+a mobile account nav dropdown or a sticky buy bar, and say so in a note: `@note: mobile only`.
 | is chosen by whoever places the component, and **only styles** change | `variant` | A Webflow variant: `@variant: <Name>` on each variant |
 | is chosen by whoever places it, and **a part shows or not** | `prop` | `@prop: boolean <Name>` + `@bind: visibility = <Name>` on the part |
 | is chosen by whoever places it, and **its value becomes an attribute** (Option 1 \| 2 \| 3) | `prop` | `@prop: string <Name> = <default>` + `@bind: attr:<name> = <Name>`; each instance `@set: <Name> = <value>` |
@@ -411,7 +419,15 @@ For every page:
   wrap, and `@cms: text = Collections.Name` on its heading.
 - **One template per collection.** Webflow has one Products template: product pages drawn differently
   (standard, configurator, subscription) are one page with every block, and each block shows according to the
-  product with Webflow conditional visibility, which no tool can set: `@manual: conditional: <block> when <field>`.
+  product. **First the conditions Smootify already has, never a new CMS field**:
+  - a Smootify element that removes itself without data needs nothing: `subscription-swatches` disappears when the
+    product has no selling plans (the catalogue says what each tag does *outside its context*);
+  - otherwise a condition from the glossary on a wrapper: `condition=subscription`, `condition=is-variable`…, or a
+    product metafield with `if-metafield=<key>` (key proposed from the context, in the report):
+    `@wrap: DivBlock over <first>..<last> @attr: wrap if-metafield=configurator`.
+
+  `@manual: conditional` on a CMS field only when Smootify reads nothing that tells the products apart, and say why
+  in the report.
 
 Collection and field names: use what the Webflow site has if you can read it; otherwise the Smootify defaults
 (`Products` with `Shopify ID`, `Collections`, `Vendors`) — and list them in the report as assumptions to confirm.

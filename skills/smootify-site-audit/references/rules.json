@@ -1,6 +1,6 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-05",
+  "generatedAt": "2026-10-06",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
     "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0)",
@@ -1018,6 +1018,92 @@
           ]
         }
       ],
+      "writes": []
+    },
+    {
+      "tag": "booking-calendar",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "Shows the slots of a bookable product (its Booking schedule, set in the Shopify admin) for days days, the places left of each, the day in the site's language and the time in the place's time zone; picking a free slot books it as its container says. In a booking-form: the form books it. In a product's add to cart: adding the product holds the slot for the quantity and writes it on the product's lines (a paid appointment); no slot or a full one stops the addition with the message. In the cart: the slot is held when picked and written on the cart (a pickup or delivery window); a slot taken by someone else meanwhile is refused at checkout. The places are counted by Smootify: two visitors cannot book the last one. The availability is kept a minute, so pages opened again ask nothing.",
+      "source": "v2/src/components/booking/booking-calendar-element.ts:17",
+      "section": "Server extensions (plan server)",
+      "context": {
+        "anywhere": false,
+        "requiresAncestorOneOf": [
+          "booking-form",
+          "smootify-add-to-cart",
+          "smootify-product",
+          "smootify-cart"
+        ],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "[booking=\"day\"] [booking=\"slot\"]"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": "also on a site whose licence has no \"Booking\"; logs an error without a [booking=\"day\"] template"
+      },
+      "requires": {
+        "plan": "server",
+        "extensions": [
+          "Booking"
+        ],
+        "accounts": false
+      },
+      "serverPlanOnly": true,
+      "hostAttributes": [
+        "data-product-id",
+        "days",
+        "property"
+      ],
+      "ancestorAttributes": [],
+      "writes": [
+        "is-loading",
+        "is-error",
+        "has-selection"
+      ]
+    },
+    {
+      "tag": "booking-form",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "Books the slot picked in its booking-calendar without a cart (an appointment): the booking, with the form's name, email, phone and note fields and the logged-in customer, is saved in the store's Bookings (Shopify admin → Content → Metaobjects) and shown on the product's Smootify booking block. Webflow's success and error states show the answer; a slot that filled up meanwhile is the form error and the calendar shows its places again.",
+      "source": "v2/src/components/booking/booking-form-element.ts:15",
+      "section": "Server extensions (plan server)",
+      "context": {
+        "anywhere": true,
+        "requiresAncestorOneOf": [],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "booking-calendar",
+          "form"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": "also on a site whose licence has no \"Booking\"; logs an error without a form"
+      },
+      "requires": {
+        "plan": "server",
+        "extensions": [
+          "Booking"
+        ],
+        "accounts": false
+      },
+      "serverPlanOnly": true,
+      "hostAttributes": [],
+      "ancestorAttributes": [],
       "writes": []
     },
     {
@@ -6397,6 +6483,20 @@
     ],
     "address-condition": [
       "zone"
+    ],
+    "booking": [
+      "capacity",
+      "date",
+      "day",
+      "day-number",
+      "error",
+      "left",
+      "month",
+      "range",
+      "selection",
+      "slot",
+      "time",
+      "weekday"
     ],
     "box-condition": [
       "can-purchase",
@@ -12086,6 +12186,185 @@
     },
     {
       "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "day",
+      "inside": [
+        "booking-calendar"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "Template: one copy per day of the range, with data-date and the classes is-today, is-closed (no slot) and is-full (every slot full)"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "slot",
+      "inside": [
+        "booking-calendar [booking=\"day\"]"
+      ],
+      "on": [
+        "button"
+      ],
+      "note": "Template: one copy per slot of the day. Picked: is-selected and aria-pressed; full: is-full and disabled. A click picks it, a second click lets it go"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "day-number",
+      "inside": [
+        "booking-calendar [booking=\"day\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "12"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "weekday",
+      "inside": [
+        "booking-calendar [booking=\"day\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Mon, in the site's language"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "month",
+      "inside": [
+        "booking-calendar [booking=\"day\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "October, in the site's language"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "date",
+      "inside": [
+        "booking-calendar [booking=\"day\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Monday 12 October, in the site's language"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "time",
+      "inside": [
+        "booking-calendar [booking=\"slot\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The slot's time, in the time zone of the store's location"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "left",
+      "inside": [
+        "booking-calendar [booking=\"slot\"]"
+      ],
+      "on": [
+        "text"
+      ]
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "capacity",
+      "inside": [
+        "booking-calendar [booking=\"slot\"]"
+      ],
+      "on": [
+        "text"
+      ]
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "range",
+      "inside": [
+        "booking-calendar"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The first and the last day of the range"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "selection",
+      "inside": [
+        "booking-calendar"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The day and the time of the picked slot"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking",
+      "name": "booking",
+      "value": "error",
+      "inside": [
+        "booking-calendar"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "In the cart: why a slot could not be held"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking-nav",
+      "name": "data-action",
+      "value": "prev",
+      "inside": [
+        "booking-calendar"
+      ],
+      "on": [
+        "button"
+      ],
+      "note": "Disabled (disabled, is-disabled) on the range that starts today"
+    },
+    {
+      "kind": "attribute",
+      "group": "booking-nav",
+      "name": "data-action",
+      "value": "next",
+      "inside": [
+        "booking-calendar"
+      ],
+      "on": [
+        "button"
+      ]
+    },
+    {
+      "kind": "attribute",
       "group": "pickup-location",
       "name": "location",
       "value": "name",
@@ -14319,6 +14598,42 @@
         "requiredNote": "",
         "does": "the field the uploaded files are sent under; the file input itself loses its name",
         "source": "v2/src/components/server-extensions/upload/upload-view.ts:83"
+      }
+    ],
+    "booking-form": [
+      {
+        "name": "`name`, `email`, `phone`, `note` (any case: Webflow's `Name`, `Email` work)",
+        "names": [
+          "name",
+          "email",
+          "phone",
+          "note",
+          "Name",
+          "Email"
+        ],
+        "field": "text, email, tel, textarea",
+        "required": false,
+        "requiredNote": "the field's own `required` decides",
+        "does": "written on the Booking entry the submit creates in the store, trimmed; an empty value is not sent",
+        "source": "v2/src/components/booking/booking-form-element.ts:33"
+      },
+      {
+        "name": "any other name",
+        "names": [],
+        "field": "",
+        "required": null,
+        "requiredNote": "",
+        "does": "not sent: only these four reach the store",
+        "source": "v2/src/components/booking/booking-form-element.ts:34"
+      },
+      {
+        "name": "",
+        "names": [],
+        "field": "",
+        "required": null,
+        "requiredNote": "",
+        "does": "the slot is the one picked in its `booking-calendar` (\"Choose a slot\" without one); a logged-in visitor's customer is added to the entry by Smootify, no field needed",
+        "source": "v2/src/components/booking/booking-form-element.ts:37"
       }
     ],
     "smootify-magic-box-cart": [

@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-05.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-06.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -117,12 +117,14 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `webflow-form` | Generic Webflow form wrapper with success state and redirect, no request behind it. | ovunque | `form` | si rimuove | — | — |
 | `wishlist-toggle` | Adds or removes the product, or its current variant (data-use-variants), from the wishlist; inside a card of the wishlist page it works on the entry the card shows, product or variant. | `smootify-product` o `smootify-variant[data-product-id="wishlist"]` | — | si rimuove | "Wishlist" | `data-use-variants`, `data-animation-on`, `data-animation-off` |
 
-## Elementi del piano `server` (14)
+## Elementi del piano `server` (16)
 
 Presenti solo con il piano `server` (e l'estensione accesa); senza, vengono rimossi dalla pagina.
 
 | Tag | Cosa fa | Dentro | Deve contenere | Fuori contesto | Richiede | Attributi host |
 |---|---|---|---|---|---|---|
+| `booking-calendar` | Shows the slots of a bookable product (its Booking schedule, set in the Shopify admin) for days days, the places left of each, the day in the site's language and the time in the place's time zone; picking a free slot books it as its container says. In a booking-form: the form books it. In a product's add to cart: adding the product holds the slot for the quantity and writes it on the product's lines (a paid appointment); no slot or a full one stops the addition with the message. In the cart: the slot is held when picked and written on the cart (a pickup or delivery window); a slot taken by someone else meanwhile is refused at checkout. The places are counted by Smootify: two visitors cannot book the last one. The availability is kept a minute, so pages opened again ask nothing. | `booking-form` o `smootify-add-to-cart` o `smootify-product` o `smootify-cart` | `[booking="day"] [booking="slot"]` | si rimuove | piano server + "Booking" | `data-product-id`, `days`, `property` |
+| `booking-form` | Books the slot picked in its booking-calendar without a cart (an appointment): the booking, with the form's name, email, phone and note fields and the logged-in customer, is saved in the store's Bookings (Shopify admin → Content → Metaobjects) and shown on the product's Smootify booking block. Webflow's success and error states show the answer; a slot that filled up meanwhile is the form error and the calendar shows its places again. | ovunque | `booking-calendar`, `form` | si rimuove | piano server + "Booking" | — |
 | `configurator-checkbox` | Checkbox whose formula step is on while checked. | `smootify-add-to-cart` | `input[type="checkbox"]` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-dimension` | Number inputs named after formula variables; the step is on when all hold valid numbers. | `smootify-add-to-cart` | `input[type="number"]` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-dropdown` | Webflow dropdown over a hidden select whose chosen option carries the formula step. | `smootify-add-to-cart` | `select`, `.w-dropdown .w-dropdown-link` | si rimuove | piano server + "Product configurator" | `data-formula` |
@@ -219,6 +221,10 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 ### `address-condition=…` (1)
 
 `zone`
+
+### `booking=…` (12)
+
+`capacity` · `date` · `day` · `day-number` · `error` · `left` · `month` · `range` · `selection` · `slot` · `time` · `weekday`
 
 ### `box-condition=…` (2)
 
@@ -434,11 +440,16 @@ Scritte da Smootify a runtime sull'host. Non vanno messe in `@style`: servono pe
 - `smootify-search-discovery` → `inited`, `empty`, `is-filtered`, `has-pagination`, `has-page-numbers`
 - `smootify-search-page` → `inited`, `is-empty`, `is-filtered`, `has-pagination`, `has-page-numbers`
 
-## Campi dei form (39)
+## Campi dei form (40)
 
 Il **Name** di ogni campo (impostazione del campo in Webflow, non un attributo custom) dice a Smootify cosa
 contiene. Si annota con `@attr: name=<Name>` sul campo, scritto esattamente come qui: maiuscole comprese.
 "—" vuol dire che l'elemento non legge campi; "any other name" dice cosa succede ai nomi non elencati.
+
+### `booking-form`
+
+- `name`, `email`, `phone`, `note` (any case: Webflow's `Name`, `Email` work) — text, email, tel, textarea — written on the Booking entry the submit creates in the store, trimmed; an empty value is not sent
+- any other name — not sent: only these four reach the store
 
 ### `configurator-checkbox`
 

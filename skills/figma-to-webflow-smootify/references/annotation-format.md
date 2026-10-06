@@ -101,7 +101,7 @@ FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
 |---|---|---|
 | `@use: <Component>` | This hand-drawn frame is an instance of that component | `@use: Product card` |
 | `@inline: <master>` | On an instance of a primitive that is not a Webflow component (a popover, a checkbox): build a copy of that master's annotated markup here, not an instance. Its `@bind`s bind to the props of the component the copy lands in, by name | `@inline: Base / Popover` |
-| `@set: <Prop> = <value>` | This instance's value. The variant is a prop too | `@set: Option = 2` · `@set: Variant = Compact` |
+| `@set: <Prop> = <value>` | This instance's value. The variant is a prop too. `prop:<Name>` connects it to a prop of the component the instance sits in (a card inside a carousel takes the carousel's Limit) | `@set: Option = 2` · `@set: Variant = Compact` · `@set: Limit = prop:Limit` |
 | `@cms: <Prop> = <Collection>.<Field>` | On a CMS template or inside a collection list: the prop takes its value from a CMS field | `@cms: Product ID = Products.Shopify ID` |
 | `@cms: attr:<name>\|text\|image\|link = <Collection>.<Field>` | The same on a page element that is not a component: an attribute, its text, image or link takes the CMS field. Only `body` cannot take attributes; a `smootify-product` around the page content can | `@cms: attr:data-collection = Collections.Shopify ID` |
 | `@page: <kind> [<Collection>]` | `static`, or `template <Collection>` for a CMS template page | `@page: template Products` |
@@ -118,7 +118,7 @@ FormButton an `<input>`; every Smootify `button[...]` selector ignores both.
 | Directive | Meaning | Example |
 |---|---|---|
 | `@ask: <question>` | An open question. **The builder does not build the node's Smootify part while it stands.** Never together with the directive it asks about | `@ask: does this pick a variant or an add-on?` |
-| `@manual: <kind>: <detail>` | A step no tool can do. Kinds: `conditional` (Webflow conditional visibility: on a component variant, or on a CMS field of the template item, such as one Products template that shows the configurator block only on configurable products), `popover`, `other`. Everything else is buildable — see the build skill | `@manual: conditional: show Configurator only when Products.Type is Configurable` |
+| `@manual: <kind>: <detail>` | A step no tool can do. Kinds: `conditional` (Webflow conditional visibility on a component variant, or on a CMS field when no Smootify condition tells the items apart: try `condition=…` or `if-metafield=<key>` on a `@wrap` first), `popover`, `other`. Everything else is buildable — see the build skill | `@manual: conditional: show Gift note only when Products.Is Gift is on` |
 | `@note: <text>` | For people. The builder ignores it, so never put in a note something the build needs: a container is a `@wrap`; a Form Block a tag requires needs nothing (the builder adds it) | `@note: same element as the Desktop variant` |
 
 ## A complete component

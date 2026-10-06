@@ -2418,6 +2418,38 @@
 			]
 		},
 		{
+			"id": "booking",
+			"label": "Booking",
+			"inside": ["booking-calendar"],
+			"name": "booking",
+			"on": ["text"],
+			"items": [
+				{"label": "Day", "value": "day", "on": ["container"], "note": "Template: one copy per day of the range, with data-date and the classes is-today, is-closed (no slot) and is-full (every slot full)"},
+				{"label": "Slot", "value": "slot", "on": ["button"], "inside": ["booking-calendar [booking=\"day\"]"], "note": "Template: one copy per slot of the day. Picked: is-selected and aria-pressed; full: is-full and disabled. A click picks it, a second click lets it go"},
+				{"label": "Day of the month", "value": "day-number", "inside": ["booking-calendar [booking=\"day\"]"], "note": "12"},
+				{"label": "Weekday", "value": "weekday", "inside": ["booking-calendar [booking=\"day\"]"], "note": "Mon, in the site's language"},
+				{"label": "Month", "value": "month", "inside": ["booking-calendar [booking=\"day\"]"], "note": "October, in the site's language"},
+				{"label": "Full date", "value": "date", "inside": ["booking-calendar [booking=\"day\"]"], "note": "Monday 12 October, in the site's language"},
+				{"label": "Time", "value": "time", "inside": ["booking-calendar [booking=\"slot\"]"], "note": "The slot's time, in the time zone of the store's location"},
+				{"label": "Places left", "value": "left", "inside": ["booking-calendar [booking=\"slot\"]"]},
+				{"label": "Places", "value": "capacity", "inside": ["booking-calendar [booking=\"slot\"]"]},
+				{"label": "Days shown", "value": "range", "note": "The first and the last day of the range"},
+				{"label": "Picked slot", "value": "selection", "note": "The day and the time of the picked slot"},
+				{"label": "Error", "value": "error", "note": "In the cart: why a slot could not be held"}
+			]
+		},
+		{
+			"id": "booking-nav",
+			"label": "Booking days",
+			"inside": ["booking-calendar"],
+			"name": "data-action",
+			"on": ["button"],
+			"items": [
+				{"label": "Previous days", "value": "prev", "note": "Disabled (disabled, is-disabled) on the range that starts today"},
+				{"label": "Next days", "value": "next"}
+			]
+		},
+		{
 			"id": "pickup-location",
 			"label": "Pickup location",
 			"inside": ["store-availability store-location", "store-availability"],
