@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-06.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-07.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -32,7 +32,7 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `[policy]` | Writes a shop policy body, in the page language, into the element. | ovunque | — | si rimuove | — | `policy` |
 | `[popover][data-is="market-dialog"]` | Suggests the visitor's market once per browser, opening after a delay and after the cookie banner closes. | ovunque | — | resta inerte | — | `disable-blur`, `animation-name`, `animation-duration`, `delay` |
 | `[wishlist="count"]` | Shows how many items the wishlist holds (products and variants); on a wishlist page opened from a shared link, how many the shared list holds. | ovunque | — | resta inerte | "Wishlist" | `wishlist` |
-| `addon-checkbox` | Checkbox that adds the nested product as an add-on. | `smootify-add-to-cart smootify-product`; non in `.w-condition-invisible` | `input[type="checkbox"]` | si rimuove | — | `addon-type`, `id` |
+| `addon-checkbox` | Checkbox that adds the nested product as an add-on. The fields of every add-on widget can carry any Name (Webflow needs one). From mount they are named ##ignore-addon, which stays out of the cart line. Once the nested product loads, the checkbox becomes #addon|variantId|type|title|price, the quantity #quantity|variantId and the select #addon|SELECT|… (2.0). | `smootify-add-to-cart smootify-product`; non in `.w-condition-invisible` | `input[type="checkbox"]` | si rimuove | — | `addon-type`, `id` |
 | `addon-dropdown` | Webflow dropdown listing the nested product's variants as add-ons. | `smootify-add-to-cart smootify-product`; non in `.w-condition-invisible` | `.w-dropdown`, `.w-dropdown-link` | si rimuove | — | `addon-type`, `show-price`, `allow-unselect`, `id` |
 | `addon-popover` | Popover listing the nested product's variants as add-ons. | `smootify-add-to-cart smootify-product`; non in `.w-condition-invisible` | uno fra `[popover] a`, `[popover] button:not([popovertarget])` | si rimuove | — | `addon-type`, `show-price`, `allow-unselect`, `id` |
 | `addon-select` | Select whose options are the nested product's variants as add-ons. | `smootify-add-to-cart smootify-product`; non in `.w-condition-invisible` | `select` | si rimuove | — | `addon-type`, `id` |
@@ -268,9 +268,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `image` · `quantity` · `title` · `url` · `variant`
 
-### `condition=…` (37)
+### `condition=…` (38)
 
-`above-bundle-limits` · `available-at-location` · `below-bundle-limits` · `disabled` · `fixed-price` · `has-cart-upsells` · `has-complementary` · `has-items-in-last-viewed` · `has-items-in-wishlist` · `has-related` · `in-backorder` · `in-stock` · `is-free` · `is-new` · `is-not-variable` · `is-paid` · `is-variable` · `last-in-stock` · `low-not-last-stock` · `low-stock` · `many-in-stock` · `no-items-in-last-viewed` · `no-items-in-wishlist` · `no-stores` · `no-subscription` · `not-available-as-local-pickup` · `not-available-at-location` · `not-in-backorder` · `not-new` · `on-sale` · `out-of-stock` · `own-wishlist` · `product-available` · `product-unavailable` · `shared-wishlist` · `subscription` · `variable-price`
+`above-bundle-limits` · `available-at-location` · `below-bundle-limits` · `disabled` · `fixed-price` · `has-cart-upsells` · `has-complementary` · `has-items-in-last-viewed` · `has-items-in-wishlist` · `has-related` · `in-backorder` · `in-stock` · `is-free` · `is-new` · `is-not-variable` · `is-paid` · `is-variable` · `last-in-stock` · `low-not-last-stock` · `low-stock` · `many-in-stock` · `no-items-in-last-viewed` · `no-items-in-wishlist` · `no-stores` · `no-subscription` · `not-available-as-local-pickup` · `not-available-at-location` · `not-in-backorder` · `not-new` · `not-on-sale` · `on-sale` · `out-of-stock` · `own-wishlist` · `product-available` · `product-unavailable` · `shared-wishlist` · `subscription` · `variable-price`
 
 ### `consent-condition=…` (1)
 
@@ -573,6 +573,7 @@ Non legge campi: the submit starts the Customer Accounts login.
 - `Recipient email` — email — gift card: Shopify sends the card to this address
 - `Send on` — date — gift card: the day the card is sent (Smootify sets today as the minimum)
 - `buy-now` (submit button) — button — the line goes straight to checkout
+- any Name on a field of an add-on widget (`addon-checkbox`, `addon-select`, `addon-dropdown`, `addon-popover`, `addon-swatches`, the add-on's `quantity-input`) — any — never a property of the main line, whatever the Name (Webflow needs one). From mount the widget names its fields `##ignore-addon`, left out of the line; once the add-on's product loads they get the names of the add-on line (2.0)
 - any other name, or `properties[Name]` — any — a line item property named as the field's `data-name`; a checkbox with `data-name` sends its `data-value`, else `✓`; a file is sent as JSON; empty values are not sent; a name starting with `_` is hidden at checkout and in the cart
 
 ### `smootify-cart`

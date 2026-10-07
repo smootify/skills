@@ -192,7 +192,8 @@ questa lista.
   Ultimi visti.
 - Contenuto: titolo della sezione, frecce, la card ripetuta.
 - Prop Webflow: `Fonte` → `data-id` (`related`, `complementary`, `best-seller`, `created-at`, `specific-collection`,
-  `custom-query`, `metafields.<ns>.<chiave>`, `last-viewed`); `Quanti` → `limit`; `Collezione` →
+  `custom-query`, `metafields.<ns>.<chiave>`, `last-viewed`; dentro `smootify-metaobject` anche `metaobject.<chiave>`, i
+  prodotti di un campo della voce); `Quanti` → `limit`; `Collezione` →
   `data-collection-handle`; `Query` → `data-query`; `Ordine` → `data-sort`.
 - Markup: `product-slider` (Slider di Webflow) o `dynamic-swiper`, con dentro `smootify-product[data-id][data-parent-id]`.
 

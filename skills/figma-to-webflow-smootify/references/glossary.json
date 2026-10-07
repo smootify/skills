@@ -2890,6 +2890,10 @@
 					"value": "on-sale"
 				},
 				{
+					"label": "Not on sale",
+					"value": "not-on-sale"
+				},
+				{
 					"label": "Free",
 					"value": "is-free",
 					"inside": ["smootify-product"]

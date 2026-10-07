@@ -254,6 +254,11 @@ Go component by component, innermost first. For each one decide root, variants, 
   root carries its `@tag`.
 - Classes: `sm-` + the English name in kebab case for the root (`sm-product-card`), `sm-<component>-<part>`
   for the parts (`sm-product-card-title`). Utility classes keep their own name. No underscores.
+- **Without `@style`, the builder names the class from the layer.** A layer named with sample text ("Caring for
+  solid oak", "S", "92"), a selector or another language ("Freccia sinistra") gives a class nobody can use. Give
+  those layers an `@style` from the role (`sm-size-guide-size-value`, `sm-gallery-arrow-prev`).
+- **One class, one design.** Two layers with the same name and different designs (a filter label in a checkbox
+  list and in a dropdown) need different `@style`, or the second design is lost.
 - `@desc`: what it is and what it needs to work ("One product. Needs the Shopify ID of the product").
 
 ### Every Figma property gets an `@axis`
@@ -294,6 +299,12 @@ Cases from the kit that show the difference:
   **split**.
 - `Prodotto / Prezzo`, *Dimensione* = Card | PDP → **variant**.
 
+**Every variant gets a decision.** A state variant with no `@state`, no annotated block and no `@skip` is not
+built, and the build cannot tell an oversight from a choice. The ones missed on the starter: Open = No on
+filters and sort, Zero on a result count, Loading and Disabled on pagination, Updating and Removing on a cart line,
+Loading / Applied / Error on a discount field. Annotate what changes, or `@note: drawn for reference` on the
+variant.
+
 Webflow variants are one flat list per component and change styles only. With two `variant` properties on one
 set, list the combinations the design really uses and ask which to create.
 
@@ -304,7 +315,7 @@ supplies it**. Everything else is not a prop.
 
 | Is a prop | Is not a prop |
 |---|---|
-| A Smootify setting that differs per instance: `data-option`, `limit`, a filter's `label`, a carousel's source (`data-id`), a threshold (`data-amount`) → `string` / `number`, bound with `attr:<name>` | **Data Smootify fills in**: titles, prices, product images, stock. The text in Figma is a placeholder; the element gets `@attr: product=title` and nothing else. The one exception is the featured image connected to the CMS as step 0 decided |
+| A Smootify setting that differs per instance: `data-option`, `limit`, a filter's `label`, a carousel's source (`data-id`), a threshold (`data-amount`) → always `string`, bound with `attr:<name>` (a `number` prop defaults to 0 and ships as `limit="0"`) | **Data Smootify fills in**: titles, prices, product images, stock. The text in Figma is a placeholder; the element gets `@attr: product=title` and nothing else. The one exception is the featured image connected to the CMS as step 0 decided |
 | The Shopify ID on a card or a product wrapper → `string Product ID`, `@bind: attr:data-id = Product ID`, connected to the CMS with `@cms` where the instance is placed | **Runtime states** (they are `state`) |
 | A text written per instance: a section title, a button label that changes between placements → `text` | A label identical everywhere ("Add to cart"): static text, unless the person says otherwise |
 | An optional part (a Figma BOOLEAN property) → `boolean`, `@bind: visibility` | Styles (they are variants) |
@@ -317,6 +328,14 @@ shows and the list misses, and ask about it.
 
 A Smootify attribute bound to a prop is built without manual steps (the build skill has the recipe). So one
 component with a `string` prop always beats three components that differ by one attribute.
+
+What a prop cannot drive, so annotate it differently:
+
+- **the visibility or the position of an instance**: an instance has neither. Put the instance in a frame and
+  annotate the frame (`@bind: visibility = Show wishlist`, and the absolute position of a heart on the image);
+- **a form field's Name**: it is not bindable. When the Name changes between uses (a `coupon` field and a
+  `gift-card` field), it is a `split`;
+- **a placeholder**: Webflow reserves it. Write the text in a `@note`; the person sets it.
 
 **Popovers inside a component.** A trigger and its panel are tied by an id, and a component placed twice would
 repeat it. Add `@prop: string Popover ID`, bind it with `@bind: attr:popovertarget = Popover ID` on the trigger
@@ -392,6 +411,19 @@ Each one was caught by a person reviewing a real annotated page.
    `data-prop=price|compareAtPrice|total` children; a price with only the host annotated stays empty. Whenever
    a tag's description names an `[attribute=…]`, find those children and annotate them.
 
+**Numbers Smootify writes are never sample text.** "Filters (2)" is a static "Filters" and a
+`filter="active-count"` layer; "Cart (3)" is a static "Cart" and a `cart=count` layer. When the drawn number
+shares a layer with a word, ask for the layer to be split or note it, so the build does not drop the word.
+
+**Every panel needs its trigger and its close.** A popover, a dialog or a drawer is annotated with the button that
+opens it (`popovertarget`) and a close that is a real button (`popovertargetaction="hide"`), not a bare icon.
+Arrows drawn in a carousel's header are the Webflow Slider's own arrows, moved there: Smootify does not drive
+arrows outside a slider.
+
+**Metafield blocks** (a feature list, a rich text, a size guide): annotate the inner element Smootify writes into;
+if the metafield renders whole (rich text), mark the drawn content `@skip`. Drawn rows with no attribute are built
+as static sample text.
+
 And one that is knowledge, not vocabulary: **some elements look the way their vendor decides.** Shop Pay is
 Shopify's purple button; an outlined "Buy it now" is not `smootify-shop-pay`. The Judge.me widgets are drawn by
 Judge.me. For those, only the space is ours.
@@ -428,6 +460,26 @@ For every page:
 
   `@manual: conditional` on a CMS field only when Smootify reads nothing that tells the products apart, and say why
   in the report.
+
+  A **bookable product** (a service, a visit) is told apart by a product tag, `bookable`, with
+  `tagged="bookable"` / `not-tagged="bookable"` on the wrappers. Its booking schedule lives in Smootify, not in a
+  metafield, so `if-metafield` cannot read it.
+- **Tablet and Mobile frames that change the structure** still need no second element: annotate the extra
+  element on the desktop master or page, hidden at desktop by responsive styles, and say so in a `@note`. The
+  cases seen so far: a "Filters" button that opens the filter panel (a popover, `popover` / `popovertarget`, the
+  panel still inside `smootify-search-discovery`); a dropdown in place of a row of tabs; a sticky bar of the magic box, which goes **inside** `smootify-magic-box-cart` (the box counters and its
+  `smootify-price` work only there), fixed at the bottom on small screens; a sticky add-to-cart bar outside its form,
+  tied with `form="<form id>"`; thumbnails that scroll instead of wrapping.
+- **Search & discovery filters**: a filter's `label` must be the label of a filter set in the store's Search &
+  Discovery app (Availability, Price, Color…). List the labels you use in the report, as an assumption to check
+  in the store.
+
+- **What the store must have**, or Smootify removes the element and the page is empty: a public Mapbox token for
+  `store-locator` (without it the store list goes too); a Magic Box entry whose handle is the `data-handle` of
+  `smootify-magic-box`; local pickup on a location for `store-availability`. List each one in the report as a
+  store prerequisite.
+- **Reserved slugs**: Webflow keeps `/search` for its site search. Point search forms and `search="search-page"`
+  links to the page's real slug (`/search-page`), not to `/search`.
 
 Collection and field names: use what the Webflow site has if you can read it; otherwise the Smootify defaults
 (`Products` with `Shopify ID`, `Collections`, `Vendors`) — and list them in the report as assumptions to confirm.
@@ -519,3 +571,17 @@ requires (the builder adds it from the catalogue) or for a container a `@wrap` c
   with the `popover` / `popovertarget` attributes, which it can;
 - `other` — anything else, described so precisely that someone (or an agent driving the Designer in Chrome)
   can do it without looking at the design: the element, the panel, the value.
+
+**Not `@manual`**, because the build skill does them through the MCP (the starter build did them by hand from
+`@manual` lines, and they belong in the annotation):
+
+- the block of a **state** variant (out of stock, logged in, empty, reached, above the limit): annotate the block
+  on the variant with its `condition` / `data-state`; the builder puts every state's block in the one component
+  and Smootify shows the right one;
+- a hidden `select` with options (the configurator's `value|formula` options, with their visible text), number
+  and range inputs, a Webflow Dropdown built from a toggle and a list, a template moved into another element, a
+  block placed next to another, a collection list, a page wrapper.
+
+**Field names** come from the catalogue (contract §2.13), not from the layer: a field inside an add-on picker
+takes any Name, the configurator's popover keeps one template button for all its options, the cart's gift card
+field is `gift-card`, `booking-form` reads `name`, `email`, `phone`, `note`.

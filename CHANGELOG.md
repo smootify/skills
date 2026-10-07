@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.0.0-beta.12
+
+From the report of the starter build (60 `@manual` steps done through the MCP).
+
+- The builder has `references/mcp-recipes.md`: the MCP calls for the steps that used to be `@manual` (a hidden select
+  with options, Dropdown and Tabs, a popover with its trigger and close, `details` in repeated templates, a slot, a form
+  inside a custom tag, a wrapper that shows or hides an instance, a filtered Collection List, instances on pages, the
+  site custom code), and what to check before retrying a call.
+- Class names come from the component and the role, never from sample text or a layer in another language; one class
+  per design; images get `display: block` and `object-fit: cover`.
+- New rules for the build: elements Smootify removes when the store lacks their data, cart upsells with
+  `direct-add-to-cart`, counters Smootify writes (`filter="active-count"`), Webflow Slider arrows, the reserved
+  `/search` slug, no `display` on panel classes, reserved attributes, props bound to attributes are `string`.
+- The annotator gives every variant a decision, annotates what a prop cannot drive (an instance's visibility, a
+  field's Name, a placeholder) differently, puts numbers Smootify writes in their own layer, annotates each panel's
+  trigger and close, and lists what the store must have.
+
 ## 2.0.0-beta.11
 
 - The catalogue covers the elements added to 2.0 on 2026-10-06: `wishlist-share` (a wishlist shared through a link, with

@@ -1,6 +1,6 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-06",
+  "generatedAt": "2026-10-07",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
     "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0)",
@@ -796,7 +796,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Checkbox that adds the nested product as an add-on.",
+      "purpose": "Checkbox that adds the nested product as an add-on. The fields of every add-on widget can carry any Name (Webflow needs one). From mount they are named ##ignore-addon, which stays out of the cart line. Once the nested product loads, the checkbox becomes #addon|variantId|type|title|price, the quantity #quantity|variantId and the select #addon|SELECT|… (2.0).",
       "source": "v2/src/components/add-to-cart/addon-checkbox-element.ts:14",
       "section": "Pickers and add-ons",
       "context": {
@@ -6692,6 +6692,7 @@
       "not-available-at-location",
       "not-in-backorder",
       "not-new",
+      "not-on-sale",
       "on-sale",
       "out-of-stock",
       "own-wishlist",
@@ -13340,6 +13341,18 @@
       "kind": "condition",
       "group": "product",
       "name": "condition",
+      "value": "not-on-sale",
+      "inside": [
+        "smootify-product",
+        "smootify-variant"
+      ],
+      "on": null,
+      "note": "Shown only while the product is in that state"
+    },
+    {
+      "kind": "condition",
+      "group": "product",
+      "name": "condition",
       "value": "is-free",
       "inside": [
         "smootify-product"
@@ -14599,6 +14612,22 @@
         "requiredNote": "",
         "does": "the line goes straight to checkout",
         "source": "v2/src/components/add-to-cart/atc-element.ts:72"
+      },
+      {
+        "name": "any Name on a field of an add-on widget (`addon-checkbox`, `addon-select`, `addon-dropdown`, `addon-popover`, `addon-swatches`, the add-on's `quantity-input`)",
+        "names": [
+          "addon-checkbox",
+          "addon-select",
+          "addon-dropdown",
+          "addon-popover",
+          "addon-swatches",
+          "quantity-input"
+        ],
+        "field": "any",
+        "required": false,
+        "requiredNote": "",
+        "does": "never a property of the main line, whatever the Name (Webflow needs one). From mount the widget names its fields `##ignore-addon`, left out of the line; once the add-on's product loads they get the names of the add-on line (2.0)",
+        "source": "v2/src/components/add-to-cart/addon-adapter.ts:90"
       },
       {
         "name": "any other name, or `properties[Name]`",

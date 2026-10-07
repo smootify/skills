@@ -113,7 +113,7 @@ How each directive is built:
 
 The sections below describe the older syntax; where they differ from the format file, the format file wins.
 
-### Bind Validation### Bind Validation
+### Bind Validation
 
 Before Phase 4, verify every `@bind` on a component's descendants references a prop already declared via `@prop` on that same component (nearest ancestor with `@component`). If a `@bind` has no matching `@prop`:
 
@@ -176,6 +176,25 @@ If a node has no `@style` directive, derive the class name from the Figma layer 
 
 Apply it automatically during element creation unless `@style` explicitly overrides it.
 
+The layer name is a hint, not the class. When it is sample text ("Caring for solid oak", "S", "92"), a selector
+(`a href=/search?q=…`) or another language ("Freccia sinistra", "Percorso"), name the class from the component
+and the element's role instead: `sm-metafield-rich-heading`, `sm-size-guide-size-value`,
+`sm-gallery-arrow-prev`, `sm-breadcrumb-path`. Keep names short (`sm-search-result-title`, not the full path of
+layers), and give a page element a name that no component uses (`sm-cart-page-form`, not `sm-cart-form`).
+
+**One class, one design.** When the same layer name has different designs in different components (a filter
+label in a checkbox list and in a dropdown), give each its own class (`sm-filter-checkbox-label`,
+`sm-filter-dropdown-label`): a Webflow class has one style.
+
+What the styles carry over from Figma, and what they do not:
+
+- an image (`img`) gets `display: block` and `object-fit: cover`, not the flex layout of its Figma frame;
+- Figma's *clip content* becomes `overflow: hidden` only where the design needs it (an image mask, a slider),
+  never on a wrapper that holds a popover, a dropdown or a sticky part;
+- a negative gap is not a gap: use a negative margin on the children, or nothing;
+- a font the site does not have falls back: install it, or use the stack the person chose, before comparing
+  screenshots.
+
 **Special case — empty `@style` value:** if `@style:` is present but has no value (as opposed to being entirely absent), do not derive a class from the layer name. Instead, fall back to the default Figma→Webflow MCP class-generation behavior for that element.
 
 ## Component Decision Rules
@@ -200,6 +219,8 @@ component — even when every occurrence differs. Differences are props, not cop
 | **An element that exists in one case and not another** | A **second component** — not a conditional, see below |
 | Layout at another breakpoint | Nothing — same element, responsive styles |
 | An image, a link, whether something shows per instance | `image` / `link` / `boolean` prop |
+| A slot that would sit inside a Form | A **second component** with the content placed directly: Webflow rejects slots inside a Form ("Slots can not be placed inside Form"), so an Add to cart or a metaobject form with different pickers or fields is one component per layout |
+| A block that exists only in a **state** variant (out of stock, logged in, empty, reached) | Nothing to choose: build the union in the one component, the base plus the block of each state variant with the `condition` / `data-state` its annotation gives. Smootify shows the right one. Never a `@manual` that says "add the block of variant X" |
 
 Build **one** component per structure. Two components are justified when the *structure* differs — an
 element present in one case and absent in another — and never when only a value does.
@@ -254,6 +275,69 @@ components and no manual step.
 > Webflow's placeholder text regardless. Create the tree first, then set the text with `set_settings`
 > (`{key: "text", static_text: {value: "…"}}`) or `set_text`. Check it; do not assume it took.
 
+## Smootify rules the build must apply
+
+Learned on the starter build (beta.10, October 2026). Each one cost a question or a manual step there.
+
+- **Popovers.** The MCP cannot create the native Popover element: build the panel with the `popover` attribute
+  and the trigger with `popovertarget`. Never put a popover inside a template Smootify repeats (an address card,
+  a cart line): every copy repeats the id. Use `details` / `summary` there.
+- **A trigger lives in the element it opens.** `data-action="open-cart"` opens only the `smootify-cart` that
+  contains the button: the cart icon goes inside the same `smootify-cart` as its drawer panel, not in another one.
+  The same for the other Smootify triggers: check the catalogue's context before placing a trigger elsewhere.
+- **Field names.** Read the Name from the catalogue (contract §2.13), not from the layer:
+  - a field inside an add-on picker takes any Name (Webflow wants one): Smootify renames it;
+  - a configurator dropdown or popover reads a hidden `select` whose options are `value|formula` with the visible
+    text; the popover keeps **one** template button, Smootify repeats it per option;
+  - the cart's gift card field is `gift-card`, the discount field `coupon`;
+  - `booking-form` reads `name`, `email`, `phone`, `note`.
+- **Search & discovery filters.** A filter's `label` must be the label of a filter set in the store's
+  Search & Discovery app (Availability, Price, Color…), or Smootify removes the filter.
+- **State styles on a child.** A combo class Smootify puts on a parent (`is-not-available` on a search result,
+  `is-full` on a booking day) cannot show a child from the Designer. Add the rule to the site's custom code, with
+  the other site rules every Smootify build needs:
+  `[popover]:popover-open { display: flex; }` (or the panel's display), the child rules for each state you use,
+  and `:has()` rules where the design reserves space only when a part exists.
+- **Elements Smootify removes when the store lacks their data.** Check the store before building, or the page
+  comes out empty: `store-locator` without `data-api-key` (the store list goes too, not only the map);
+  `smootify-magic-box` whose `data-handle` is not the handle of a Magic Box entry in the store; a booking
+  element on a product that is not bookable. List what the store must have in the report.
+- **Inside the cart form, cards add with a button.** A cart upsell card sits in the cart's Form, so it adds with
+  `button[data-is="direct-add-to-cart"]`, never an add-to-cart form (Webflow does not nest forms).
+- **Counters Smootify writes.** Before writing a number as static text, look for its attribute: "Filters (2)" is
+  `filter="active-count"`, the box counters are `data-prop` inside `smootify-magic-box-cart`.
+- **Slider arrows.** Smootify does not drive arrows outside a Webflow Slider: the arrows a design draws in a
+  section header are the Slider's own arrows, styled and placed there.
+- **Reserved slugs.** Webflow keeps `/search` for its own site search: the page with `smootify-search-page` takes
+  another slug (`/search-page`), and every search form's action and `search="search-page"` link point to it.
+- **Class names.** Name classes from the component and the role (`sm-` library classes for shared parts such as
+  buttons), never from a layer's sample text or another language.
+- **What the MCP cannot do**, so it goes to the person, in the report, with the page and the element:
+  redirects, deleting pages, placeholders and select options, `type="date"` on inputs, the Current state of
+  links and tabs, copying a design into the 404 utility page, publishing.
+
+## Webflow rules the build must apply
+
+Also from the starter build: each of these broke something before it was known.
+
+- **Never `display` on a panel class.** A class with `display` on a `[popover]`, a `dialog` or a `.w-dropdown-list`
+  overrides the browser's hidden state, and the panel stays open. Give the panel's layout in the site custom
+  code, for the open state only: `[popover]:popover-open`, `dialog[open]`.
+- **Reserved attributes.** `id`, `type`, `placeholder`, `value`, `checked` and `disabled` cannot be set as
+  attributes. `id` goes through `set_dom_id`; an input `type` through its settings (text, email, password, tel,
+  number, url only); the rest is manual.
+- **Attributes on a Form Block** land on the inner form, not on the `.w-form` wrapper, and cannot be removed from
+  the wrapper afterwards. Put Smootify attributes on the form or on an element around the Form Block.
+- **A prop bound to an attribute is a `string`**, whatever the annotation says (a limit, a delay, a flag): a
+  `number` prop defaults to 0 and cannot be cleared, so the attribute ships as `limit="0"`.
+- **The Current state cannot be styled through the MCP**: a `w--current` combo comes out as `_w--current`. Make
+  the nav links of type *page*, so Webflow marks the current one, and leave the style to the person.
+- **Not as styles**: a CSS custom property (`--metafield-rating`) and a variable in `accent-color` are refused.
+  Put the first in the site custom code, write the second as a literal colour.
+- **The Designer canvas is not the site.** It does not load the site custom code, draws `details` closed, keeps
+  old snapshots after changes made headless, and cannot reach utility pages. Check states, panels and breakpoints
+  in Preview, and say in the report what you could only check from the data.
+
 ## Workflow
 
 ### Phase 1: Analyze
@@ -307,8 +391,14 @@ If there are nested or repeated (sibling) components:
 
 ### Phase 8: Manual Summary
 
-1. Collect all `@manual` directives into a checklist
-2. Present as remaining work
+1. **Do every `@manual` the MCP can do**, with the calls in `references/mcp-recipes.md`: a hidden select with
+   options, number and range inputs, a Webflow Dropdown or Tabs, a template moved into another element, a block
+   placed next to another, a popover and its trigger, a slot, a form inside a custom tag, a page wrapper, a
+   collection list, an instance placed on a page. Write each one in the report as "done by hand", with its node
+   id, so the annotation can turn it into a directive next time.
+2. Collect what is left, the steps no tool can do (see *Smootify rules the build must apply*), into a checklist
+   for the person
+3. Present it as remaining work
 
 ## Limitations & Workarounds
 
@@ -325,6 +415,12 @@ If there are nested or repeated (sibling) components:
 | Conditional visibility (show/hide by variant) can be neither read nor written via MCP | Don't use conditionals — build a second component instead |
 | `element_builder` with nested `children[]` doesn't return per-child element ids in the creation response | Follow up with `get_all_elements` (`scope_component_id`, `depth: -1`) to resolve every child's id before binding or further edits |
 | `set_text` inside `children[]` is ignored — children are created with Webflow's placeholder text | Set the text after creation, then read it back: do not assume it took |
+| Slots cannot be placed inside a Form, and an instance cannot be detached on a template | A second component for each layout of the form (see *Component Decision Rules*) |
+| No tool for redirects, deleting pages, noindex, placeholders, FormSelect options, `type="date"`, the Current state, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
+| `bulk_update_pages` answers ok and changes nothing | `update_page_settings`, one page at a time |
+| `unlink_component_instance` is refused by the permission system | Do not work around it: build what the instance should contain another way (a second component) |
+| The Webflow Navbar (`w-nav`) cannot be created; a new Form Block comes with Name, Email and Submit; a new Rich Text with sample headings and lists | Build the nav from Div blocks; delete the sample content right after creating the element |
+| `transform_element_to_component` leaves an element without its class when the style does not exist yet | Create the styles first, then transform |
 
 ## Summary Output Template
 
