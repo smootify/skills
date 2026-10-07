@@ -418,7 +418,20 @@ shares a layer with a word, ask for the layer to be split or note it, so the bui
 **Every panel needs its trigger and its close.** A popover, a dialog or a drawer is annotated with the button that
 opens it (`popovertarget`) and a close that is a real button (`popovertargetaction="hide"`), not a bare icon.
 Arrows drawn in a carousel's header are the Webflow Slider's own arrows, moved there: Smootify does not drive
-arrows outside a slider.
+arrows outside a slider. Where a panel opens (next to its trigger, as a drawer, in the middle of the page) is the design's choice: say it
+in a `@note` on the panel, so the build places it as drawn. When a field opens the panel and stays outside it, as a
+predictive search in the navbar, the panel must not cover the field.
+Text that repeats what the visitor typed ("View all results for …") is a static part plus a `search="query"` layer.
+
+**What works together is one component.** A trigger and the panel it opens (the cookie preferences button and the
+consent banner, a search field and its results), a list and its item template: one `@component`, inside the
+Smootify element that ties them. Two components a person must remember to place together, in the same element, are
+a mistake to flag even when the file draws them apart.
+
+**Every card and every list item links to its page.** A product card wraps its image and title in a link with
+`product="link"`; a collection or category card is a CMS item whose link is the collection page; a navbar, footer
+or account link names its page. A card nobody can open is the first thing a reviewer notices, and a drawn link has
+no target unless the annotation gives one: write `@note: links to <page>` on every static link.
 
 **Metafield blocks** (a feature list, a rich text, a size guide): annotate the inner element Smootify writes into;
 if the metafield renders whole (rich text), mark the drawn content `@skip`. Drawn rows with no attribute are built

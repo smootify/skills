@@ -214,7 +214,7 @@
       "outsideContext": {
         "effect": "inert",
         "debugger": false,
-        "detail": "nothing opens without a visitor country"
+        "detail": "nothing opens without a visitor country, nor (2.0) when the store sells in one country: then the visitor's country is not looked up"
       },
       "requires": {
         "plan": null,
@@ -1068,7 +1068,10 @@
       "writes": [
         "is-loading",
         "is-error",
-        "has-selection"
+        "has-selection",
+        "is-not-bookable",
+        ".w-condition-invisible",
+        "[tagged=\"bookable\"]"
       ]
     },
     {
@@ -1810,7 +1813,7 @@
       "outsideContext": {
         "effect": "removed",
         "debugger": false,
-        "detail": "a .w-dropdown without links removes it, no popover fallback"
+        "detail": "a .w-dropdown without links removes it, no popover fallback; also (2.0) when the store sells in one country (availableCountries has one entry), since there is nothing to pick"
       },
       "requires": {
         "plan": null,
@@ -1863,7 +1866,7 @@
       "kind": "marker",
       "registered": false,
       "selector": false,
-      "purpose": "Text set to the current currency ISO code, anywhere in the document.",
+      "purpose": "Text set to the current currency ISO code, anywhere in the document. With one country the switcher goes; a currency-code outside it still gets the currency (2.0).",
       "source": "v2/src/components/markets/country-switcher-element.ts:52",
       "section": "Markets and consent",
       "context": {
@@ -5222,7 +5225,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Predictive search: products and query suggestions as the customer types, in a Webflow Dropdown or a popover.",
+      "purpose": "Predictive search: products and query suggestions as the customer types, in a Webflow Dropdown or a popover. The search field is input[name=\"query\"]; without one, the only text field (2.0), whatever its Webflow Name, is named query (predictive-search-element.ts:35). A results popover (2.0) opens as the customer types, and also on a focus or click of the field, empty or not, so search-no-query shows its suggestions.",
       "source": "v2/src/components/search-discovery/predictive-search-element.ts:20",
       "section": "Search page and predictive search",
       "context": {
@@ -5230,16 +5233,19 @@
         "requiresAncestorOneOf": [],
         "ancestorSelectors": [],
         "notInside": [],
-        "mustContain": [
-          "input[name=\"query\"]"
+        "mustContain": [],
+        "mustContainOneOf": [
+          "input[name=\"query\"]",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input:not([type])"
         ],
-        "mustContainOneOf": [],
         "confidence": "parsed"
       },
       "outsideContext": {
         "effect": "inert",
         "debugger": false,
-        "detail": ""
+        "detail": "without a text field, or with two and none named query"
       },
       "requires": {
         "plan": null,
@@ -14955,7 +14961,7 @@
         ],
         "field": "text input",
         "required": false,
-        "requiredNote": "without it nothing searches",
+        "requiredNote": "without it nothing searches; (2.0) the only text field gets this name whatever its Webflow Name",
         "does": "the search text",
         "source": "v2/src/components/search-discovery/predictive-search-element.ts:30"
       }

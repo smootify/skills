@@ -220,6 +220,7 @@ component — even when every occurrence differs. Differences are props, not cop
 | Layout at another breakpoint | Nothing — same element, responsive styles |
 | An image, a link, whether something shows per instance | `image` / `link` / `boolean` prop |
 | A slot that would sit inside a Form | A **second component** with the content placed directly: Webflow rejects slots inside a Form ("Slots can not be placed inside Form"), so an Add to cart or a metaobject form with different pickers or fields is one component per layout |
+| Parts that only work together (a trigger and the panel it opens, such as the cookie preferences button and the consent banner; a field and its results panel) | **One component**, with both inside the Smootify element that ties them. Two components that must be placed in pairs, and stay in the same element, are a build error |
 | A block that exists only in a **state** variant (out of stock, logged in, empty, reached) | Nothing to choose: build the union in the one component, the base plus the block of each state variant with the `condition` / `data-state` its annotation gives. Smootify shows the right one. Never a `@manual` that says "add the block of variant X" |
 
 Build **one** component per structure. Two components are justified when the *structure* differs — an
@@ -279,8 +280,11 @@ components and no manual step.
 
 Learned on the starter build (beta.10, October 2026). Each one cost a question or a manual step there.
 
-- **Popovers.** The MCP cannot create the native Popover element: build the panel with the `popover` attribute
-  and the trigger with `popovertarget`. Never put a popover inside a template Smootify repeats (an address card,
+- **Popovers.** When the site has Webflow's Popover element (the beta), use it: the MCP cannot create it yet, so
+  place it in the Designer through Claude in Chrome, inside the Smootify element it belongs to, and position it as
+  the design draws it. The element writes `popover`, `popovertarget` and the close action itself: add none of them. Only on a site without it, build the panel with the `popover` attribute and the trigger with
+  `popovertarget`, and give the panel the design's position in the site custom code: without one, the browser opens
+  every popover in the middle of the page, which is right only when the design puts it there. Never put a popover inside a template Smootify repeats (an address card,
   a cart line): every copy repeats the id. Use `details` / `summary` there.
 - **A trigger lives in the element it opens.** `data-action="open-cart"` opens only the `smootify-cart` that
   contains the button: the cart icon goes inside the same `smootify-cart` as its drawer panel, not in another one.
@@ -339,6 +343,21 @@ Also from the starter build: each of these broke something before it was known.
   in Preview, and say in the report what you could only check from the data.
 
 ## Workflow
+
+### Phase 0: Install Smootify on the site
+
+Before the first component, read the site's head code (`get_site_freeform_code`) and make sure Smootify loads on
+every page. Without it nothing works on the published site, and no check of the Designer or of the markup shows it.
+
+- Add the loader line from the Install guide (docs.smootify.io, *Install Smootify 2.0*) at the top of the head
+  code, with the options script before it if the site needs one (template URLs that are not `products`,
+  `collections`, `vendors`).
+- `set_site_freeform_code` replaces the whole block: write back what was there, plus the loader. The site rules
+  of *Webflow rules the build must apply* go in the same block, after it.
+- If the person gives you another install (a test site that loads a local build), use theirs and say so in the
+  report.
+- After the first publish, check the page source for the line: it is the first thing to look at when a page
+  shows sample text instead of products.
 
 ### Phase 1: Analyze
 

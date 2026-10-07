@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.0-beta.13
+
+From the review of the starter on staging, with Smootify 2.0 running.
+
+- The builder installs Smootify first (Phase 0): it reads the site's head code, adds the loader with any options, writes the whole block back, and checks the published page for it.
+- On a site with Webflow's Popover element, the builder places the native Popover through Claude in Chrome, inside its Smootify element, and positions it as the design draws it; the element writes `popover` and `popovertarget` itself. Without it, an attribute popover gets the design's position in the site custom code, or the browser opens it in the middle of the page.
+- What works together is one component: a trigger and the panel it opens (the cookie preferences button and the consent banner, a search field and its results), a list and its item template.
+- Every card and every link has a target: a product card links with `product="link"`, a collection card is a CMS item, and every static link gets a note with its page.
+- Where a panel opens is the design's choice, written in a note; the skills give technical rules only.
+- The catalogue follows the 2.0 contract of 2026-10-07: one country hides the country switcher and the market suggestion, `smootify-search` takes its only text field, fields in a hidden block are not sent, `booking-calendar` takes `is-not-bookable` and asks nothing while hidden.
+
 ## 2.0.0-beta.12
 
 From the report of the starter build (60 `@manual` steps done through the MCP).
