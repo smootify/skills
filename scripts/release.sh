@@ -16,7 +16,7 @@ PLAYBOOK=${PLAYBOOK:-$ROOT/../playbook}
 SCRIPTS=${SCRIPTS:-$ROOT/../scripts}
 cd "$ROOT"
 
-for k in figma-annotate-smootify figma-to-webflow-smootify smootify-site-audit; do
+for k in figma-annotate-smootify figma-to-webflow-smootify smootify-site-audit smootify-iterate; do
   rm -rf "skills/$k" && cp -R "$PLAYBOOK/skills/$k" "skills/$k"
 done
 rm -rf skills/smootify-custom-script && cp -R "$SCRIPTS/skills/smootify-custom-script" skills/smootify-custom-script

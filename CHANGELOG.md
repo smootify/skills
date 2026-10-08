@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.16
+
+- New skill, `smootify-iterate`: answers the review notes that Smootify Studio's Iterate collects on a published site. For each note it reads the published page and the site in Webflow first, checks the element against Smootify's documentation and MCP, fixes the site when the site is the cause, and writes back into the note the cause (`site`, `runtime`, `annotate-skill`, `build-skill` or `missing-feature`) with a confidence from 0 to 1. It works only from public sources, is cautious before blaming Smootify or a skill, never publishes and never works around a Smootify bug on the site. The note format stays Studio's, in the site's `notes/README.md`.
+
 ## 2.0.0-beta.15
 
 From the second day of review on the starter, with Smootify 2.0 running.

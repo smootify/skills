@@ -3428,8 +3428,8 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Creates a metaobject from a Webflow form: every filled field whose name does not start with _; a name the form repeats (a checkbox group with each checkbox's value, a multiple select) sends all its values; a lone checkbox sends true / false. The backend converts each value to its field type: rating from a number (the field's scale), list.* from repeated values, a comma separated text or a JSON array, boolean, number_decimal with a comma, url without https://, references from a numeric id, rich_text_field from lines (one paragraph each), money in the shop currency, date_time from datetime-local, dimension / volume / weight from \"2.5 cm\" (a select data-unit-for=\"<name>\" gives the unit of that field, its own name is not sent); a value already in Shopify's format passes as it is. A definition without the publishable capability gets no status (data-draft is ignored there). The backend refuses Shopify's standard types (shopify--…), the app-reserved ones ($app:…) and Smootify's own (magic_box, combinations, dynamic_property, option), with the form error \"This form cannot create entries of this metaobject type\". customer-field=\"<key>\": the entry belongs to the logged-in customer, written by the backend into that field (a customer reference) from the Customer Account token, never from the form; logged out the element is hidden and its form inert (is-customer while logged in), and a request without a valid token is refused (\"Log in to send this form\"). 2.0: with customer-field the backend also puts the entry, first, into the customer's metafield smootify.<type> (a list of references to that type, created the first time, at most 128: the oldest leave the list), which smootify-metaobjects[data-type=\"metafield.smootify.<type>\"][data-parent-id=\"customer\"] lists on the account pages. Once the entry is created: data-handle and is-created on the host, every a[data-handle-param=\"<param>\"] inside (in the form's success state) links its page with ?<param>=<handle>, the page whose smootify-metaobject[data-handle-param] shows the entry (a gift list), and button[data-action=\"share\"] shares that link: the device's share sheet where there is one, else it is copied (data-copy always copies, data-title titles the share), is-shared / is-copied on the button for two seconds.",
-      "source": "v2/src/components/server-extensions/metaobject-creator-element.ts:16",
+      "purpose": "Creates a metaobject from a Webflow form: every filled field whose name does not start with _; a name the form repeats (a checkbox group with each checkbox's value, a multiple select) sends all its values; a lone checkbox sends true / false. The backend converts each value to its field type: rating from a number (the field's scale), list.* from repeated values, a comma separated text or a JSON array, boolean, number_decimal with a comma, url without https://, references from a numeric id, rich_text_field from lines (one paragraph each), money in the shop currency, date_time from datetime-local, dimension / volume / weight from \"2.5 cm\" (a select data-unit-for=\"<name>\" gives the unit of that field, its own name is not sent); a value already in Shopify's format passes as it is. A definition without the publishable capability gets no status (data-draft is ignored there). The backend refuses Shopify's standard types (shopify--…), the app-reserved ones ($app:…) and Smootify's own (magic_box, combinations, dynamic_property, option), with the form error \"This form cannot create entries of this metaobject type\". customer-field=\"<key>\": the entry belongs to the logged-in customer, written by the backend into that field (a customer reference) from the Customer Account token, never from the form; logged out the element is hidden and its form inert (is-customer while logged in), and a request without a valid token is refused (\"Log in to send this form\"). 2.0: with customer-field the backend also puts the entry, first, into the customer's metafield smootify.<type> (a list of references to that type, created the first time, at most 128: the oldest leave the list), which smootify-metaobjects[data-type=\"metafield.smootify.<type>\"][data-parent-id=\"customer\"] lists on the account pages. Once the entry is created: data-handle and is-created on the host, every a[data-handle-param=\"<param>\"] inside (in the form's success state) links its page with ?<param>=<handle>, the page whose smootify-metaobject[data-handle-param] shows the entry (a gift list), and button[data-action=\"share\"] shares that link: the device's share sheet where there is one, else it is copied (data-copy always copies, data-title titles the share), is-shared / is-copied on the button for two seconds. 2.0: input[type=number][data-quantity-for=\"<list key>\"] beside each checkbox of that list (in the same product card) sends, under its own name, one JSON field {\"<product id>\": n} with the count of every checked product (at least 1; an unchecked one is left out), such as how many units a gift list asks for.",
+      "source": "v2/src/components/server-extensions/metaobject-creator-element.ts:29",
       "section": "Server extensions (plan server)",
       "context": {
         "anywhere": true,
@@ -3467,6 +3467,10 @@
           "on": []
         },
         {
+          "name": "data-quantity-for",
+          "on": []
+        },
+        {
           "name": "data-handle-param",
           "on": []
         },
@@ -3479,6 +3483,57 @@
         "is-customer",
         "data-handle",
         "is-created"
+      ]
+    },
+    {
+      "tag": "metaobject-editor",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "2.0: the logged-in customer edits or deletes an entry they own, one a metaobject-creator[customer-field] made (a gift list, a warranty registration). The entry is the one smootify-metaobject would show: data-handle-param (the page url's parameter), else data-id, else data-handle, with data-type. Its form is filled with the entry (v2/src/components/server-extensions/metaobject-editor.ts:34: a text its value, a lone checkbox true, the checkboxes of a list the values in it, a radio or a select its value, a data-quantity-for input its product's count, a file-input its saved files) and sends its fields as metaobject-creator does, as an update. Only the customer whose id is in customer-field gets is-owner and a working form; anyone else, or logged out, gets neither (hidden by skeleton.css, form inert), and the backend checks the token's customer against the entry again (\"This entry belongs to another customer\"); the customer field itself never changes. button[data-action=\"delete\"] deletes the entry, after data-confirm=\"<question>\" when set, and takes it out of the customer's smootify.<type> list; then is-deleted on the host (form inert) and data-redirect=\"<url>\" goes there; a refusal shows in the form's .w-form-fail.",
+      "source": "v2/src/components/server-extensions/metaobject-editor-element.ts:24",
+      "section": "Server extensions (plan server)",
+      "context": {
+        "anywhere": true,
+        "requiresAncestorOneOf": [],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "form"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": "also without a form, data-type, customer-field or the entry, or when the entry is not found"
+      },
+      "requires": {
+        "plan": "server",
+        "extensions": [
+          "Metaobject creator"
+        ],
+        "accounts": false
+      },
+      "serverPlanOnly": true,
+      "hostAttributes": [
+        "data-type",
+        "customer-field",
+        "data-handle-param",
+        "data-id",
+        "data-handle",
+        "data-confirm"
+      ],
+      "ancestorAttributes": [
+        {
+          "name": "data-redirect",
+          "on": []
+        }
+      ],
+      "writes": [
+        "is-owner",
+        "is-deleted"
       ]
     },
     {
@@ -4852,7 +4907,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Writes the price, compare-at price and total of its scope into its children.",
+      "purpose": "Writes the price, compare-at price and total of its scope into its children. Inside subscription-swatches it shows its own option's price whatever plan is chosen: in a plan's radio that plan, in the one-time tab or radio the price without a plan, and (2.0) in a group's tab link its first plan.",
       "source": "v2/src/components/product/price-element.ts:16",
       "section": "Product and variants",
       "context": {
@@ -6906,6 +6961,11 @@
       "currency-symbol",
       "flag",
       "language"
+    ],
+    "metaobject-quantity": [
+      "fulfilled",
+      "left",
+      "requested"
     ],
     "option": [
       "bg-color",
@@ -10277,6 +10337,48 @@
       "on": [
         "button"
       ]
+    },
+    {
+      "kind": "attribute",
+      "group": "metaobject-quantity",
+      "name": "metaobject-quantity",
+      "value": "requested",
+      "inside": [
+        "smootify-product[data-requested]",
+        "smootify-product[data-fulfilled]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "How many the entry asks for: the 6 of 2 of 6 gifted (1 when not set)"
+    },
+    {
+      "kind": "attribute",
+      "group": "metaobject-quantity",
+      "name": "metaobject-quantity",
+      "value": "fulfilled",
+      "inside": [
+        "smootify-product[data-requested]",
+        "smootify-product[data-fulfilled]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "How many are bought already: the 2 of 2 of 6 gifted"
+    },
+    {
+      "kind": "attribute",
+      "group": "metaobject-quantity",
+      "name": "metaobject-quantity",
+      "value": "left",
+      "inside": [
+        "smootify-product[data-requested]",
+        "smootify-product[data-fulfilled]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "How many are still missing; the card's quantity stops there"
     },
     {
       "kind": "attribute",
@@ -14702,8 +14804,21 @@
         "field": "any",
         "required": false,
         "requiredNote": "",
-        "does": "the metaobject field whose key is the snake_case of `data-name` (\"Serial number\" → `serial_number`, as `customer-metafields-editor`), else the `name`; names starting with `_` and empty values are not sent; a repeated name sends a list, a lone checkbox `true` / `false`, a `[data-unit-for]` field adds its unit to that field and is not sent itself, a `file-input[data-multiple]` a list of file gids",
-        "source": "v2/src/components/server-extensions/server-form.ts:59"
+        "does": "the metaobject field whose key is the snake_case of `data-name` (\"Serial number\" → `serial_number`, as `customer-metafields-editor`), else the `name`; names starting with `_` and empty values are not sent; a repeated name sends a list, a lone checkbox `true` / `false`, a `[data-unit-for]` field adds its unit to that field and is not sent itself, a `file-input[data-multiple]` a list of file gids; 2.0: the `data-quantity-for=\"<list key>\"` number inputs of one name send one JSON field `{\"<product id>\": n}` for the checked products of that list",
+        "source": "v2/src/components/server-extensions/server-form.ts:49"
+      }
+    ],
+    "metaobject-editor": [
+      {
+        "name": "as `metaobject-creator`",
+        "names": [
+          "metaobject-creator"
+        ],
+        "field": "any",
+        "required": false,
+        "requiredNote": "",
+        "does": "as `metaobject-creator`, filled with the entry first; the `customer-field` key is ignored",
+        "source": "v2/src/components/server-extensions/metaobject-editor-element.ts:24"
       }
     ],
     "newsletter-subscribe": [

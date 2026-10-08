@@ -1495,6 +1495,31 @@
 			]
 		},
 		{
+			"id": "metaobject-quantity",
+			"label": "Quantities of a metaobject's products",
+			"inside": ["smootify-product[data-requested]", "smootify-product[data-fulfilled]"],
+			"name": "metaobject-quantity",
+			"on": ["text"],
+			"note": "On a product card of a metaobject (data-id=\"metaobject.products\") whose data-requested and data-fulfilled name the entry's JSON fields of quantities, like a gift list's quantities and gifted. The card takes is-partially-fulfilled, then is-fulfilled with its add to cart off",
+			"items": [
+				{
+					"label": "Requested",
+					"value": "requested",
+					"note": "How many the entry asks for: the 6 of 2 of 6 gifted (1 when not set)"
+				},
+				{
+					"label": "Fulfilled",
+					"value": "fulfilled",
+					"note": "How many are bought already: the 2 of 2 of 6 gifted"
+				},
+				{
+					"label": "Left",
+					"value": "left",
+					"note": "How many are still missing; the card's quantity stops there"
+				}
+			]
+		},
+		{
 			"id": "customer",
 			"label": "Customer",
 			"inside": [],

@@ -11,6 +11,7 @@ attributes Smootify reads, and checks them.
 | [`figma-annotate-smootify`](skills/figma-annotate-smootify) | Prepares a Figma design for Webflow and Smootify: which components to build, their props and bindings, the Smootify elements inside them. Writes it all into the file as Dev Mode annotations, and asks when the design does not settle a choice. |
 | [`figma-to-webflow-smootify`](skills/figma-to-webflow-smootify) | Builds Webflow components from the annotated design, with the Figma and Webflow MCP servers, and checks every binding. |
 | [`smootify-site-audit`](skills/smootify-site-audit) | Audits a Smootify site: the version it loads, every element against the contract, the published pages, the store's unused features. Writes a report. |
+| [`smootify-iterate`](skills/smootify-iterate) | Answers the review notes of Smootify Studio's Iterate: finds the cause, fixes the site in Webflow when the site is the cause, and writes the cause and its confidence back into the note. |
 | [`smootify-custom-script`](skills/smootify-custom-script) | Writes and changes a site's custom scripts on the public `window.Smootify` API, its events and filters. Smootify Studio loads it for you. |
 
 They work best with the [Smootify MCP](https://www.smootify.io/developers/mcp), which checks markup and pages against
@@ -44,6 +45,7 @@ Download the zip of a skill and upload it in **Settings → Customize → Skills
 | Figma annotation | [figma-annotate-smootify.zip](https://cdn.smootify.io/skills/beta/figma-annotate-smootify.zip) |
 | Figma to Webflow | [figma-to-webflow-smootify.zip](https://cdn.smootify.io/skills/beta/figma-to-webflow-smootify.zip) |
 | Site audit | [smootify-site-audit.zip](https://cdn.smootify.io/skills/beta/smootify-site-audit.zip) |
+| Iterate | [smootify-iterate.zip](https://cdn.smootify.io/skills/beta/smootify-iterate.zip) |
 | Custom script | [smootify-custom-script.zip](https://cdn.smootify.io/skills/beta/smootify-custom-script.zip) |
 
 `beta` always holds the latest beta; each version also stays at its own address, such as
