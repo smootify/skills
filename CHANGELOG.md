@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.0-beta.15
+
+From the second day of review on the starter, with Smootify 2.0 running.
+
+- Forms that a shopper can understand: a field with limits or a required value (a size, a quantity, a configurator choice) has its error state with a text that says the limits. Smootify blocks an invalid configurator field without the browser's message, so the annotator checks for the text and the builder builds every `error-message` the design draws, with the `is-invalid` style on the field.
+- Webflow's form defaults: the builder resets the bottom margin and fixed height of `.w-input` and `.w-select`, and the offsets of `.w-radio` and `.w-checkbox`, where a field sits in a row with a button or in a card.
+- Required fields on a shared product template live in a block hidden by a condition (`if-metafield`, conditional visibility): hidden that way they do not block the other products; hidden with CSS they do.
+- Templates Smootify repeats are Webflow's own elements: a subscription plan or a configurator choice is a Webflow Radio Button, never a Div with a custom input.
+- The catalogue follows the 2.0 contract of 2026-10-08 evening: `cart="shipping"`, `data-fallback` on every cart value (an empty one is ignored), `is-disabled` on Webflow Slider arrows when every card fits, `hide-if-product-in-cart` hiding its whole slide, a subscription tab that picks its group's first plan, add-ons disabled while a plan is picked, `error-message` in `configurator-radio`, the link and share button of a created metaobject entry and the customer's entries in the account, `data-vendor` needing the Vendor filter of Search & Discovery.
+
 ## 2.0.0-beta.14
 
 From the manual review of the starter, with Smootify 2.0 running.

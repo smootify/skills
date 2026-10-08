@@ -2487,14 +2487,15 @@
       "kind": "marker",
       "registered": false,
       "selector": false,
-      "purpose": "Error text shown only while the field is invalid (CSS only).",
-      "source": "v2/src/styles/configurator.css:2",
+      "purpose": "Error text shown only while the field is invalid (CSS only): a value out of its limits, or (2.0) a required configurator-radio group with no choice, which marks its host is-invalid instead of the browser bubble until a radio is picked. The browser's own message never shows on these fields, so a design gives each one an error-message with its limits.",
+      "source": "v2/src/styles/configurator.css:3",
       "section": "Server extensions (plan server)",
       "context": {
         "anywhere": false,
         "requiresAncestorOneOf": [
           "configurator-input",
-          "configurator-dimension"
+          "configurator-dimension",
+          "configurator-radio"
         ],
         "ancestorSelectors": [],
         "notInside": [],
@@ -2518,7 +2519,8 @@
       "writes": [],
       "readBy": [
         "configurator-input",
-        "configurator-dimension"
+        "configurator-dimension",
+        "configurator-radio"
       ]
     },
     {
@@ -3426,7 +3428,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Creates a metaobject from a Webflow form: every filled field whose name does not start with _; a name the form repeats (a checkbox group with each checkbox's value, a multiple select) sends all its values; a lone checkbox sends true / false. The backend converts each value to its field type: rating from a number (the field's scale), list.* from repeated values, a comma separated text or a JSON array, boolean, number_decimal with a comma, url without https://, references from a numeric id, rich_text_field from lines (one paragraph each), money in the shop currency, date_time from datetime-local, dimension / volume / weight from \"2.5 cm\" (a select data-unit-for=\"<name>\" gives the unit of that field, its own name is not sent); a value already in Shopify's format passes as it is. A definition without the publishable capability gets no status (data-draft is ignored there). The backend refuses Shopify's standard types (shopify--…), the app-reserved ones ($app:…) and Smootify's own (magic_box, combinations, dynamic_property, option), with the form error \"This form cannot create entries of this metaobject type\". customer-field=\"<key>\": the entry belongs to the logged-in customer, written by the backend into that field (a customer reference) from the Customer Account token, never from the form; logged out the element is hidden and its form inert (is-customer while logged in), and a request without a valid token is refused (\"Log in to send this form\").",
+      "purpose": "Creates a metaobject from a Webflow form: every filled field whose name does not start with _; a name the form repeats (a checkbox group with each checkbox's value, a multiple select) sends all its values; a lone checkbox sends true / false. The backend converts each value to its field type: rating from a number (the field's scale), list.* from repeated values, a comma separated text or a JSON array, boolean, number_decimal with a comma, url without https://, references from a numeric id, rich_text_field from lines (one paragraph each), money in the shop currency, date_time from datetime-local, dimension / volume / weight from \"2.5 cm\" (a select data-unit-for=\"<name>\" gives the unit of that field, its own name is not sent); a value already in Shopify's format passes as it is. A definition without the publishable capability gets no status (data-draft is ignored there). The backend refuses Shopify's standard types (shopify--…), the app-reserved ones ($app:…) and Smootify's own (magic_box, combinations, dynamic_property, option), with the form error \"This form cannot create entries of this metaobject type\". customer-field=\"<key>\": the entry belongs to the logged-in customer, written by the backend into that field (a customer reference) from the Customer Account token, never from the form; logged out the element is hidden and its form inert (is-customer while logged in), and a request without a valid token is refused (\"Log in to send this form\"). 2.0: with customer-field the backend also puts the entry, first, into the customer's metafield smootify.<type> (a list of references to that type, created the first time, at most 128: the oldest leave the list), which smootify-metaobjects[data-type=\"metafield.smootify.<type>\"][data-parent-id=\"customer\"] lists on the account pages. Once the entry is created: data-handle and is-created on the host, every a[data-handle-param=\"<param>\"] inside (in the form's success state) links its page with ?<param>=<handle>, the page whose smootify-metaobject[data-handle-param] shows the entry (a gift list), and button[data-action=\"share\"] shares that link: the device's share sheet where there is one, else it is copied (data-copy always copies, data-title titles the share), is-shared / is-copied on the button for two seconds.",
       "source": "v2/src/components/server-extensions/metaobject-creator-element.ts:16",
       "section": "Server extensions (plan server)",
       "context": {
@@ -3456,16 +3458,27 @@
       "hostAttributes": [
         "data-type",
         "data-draft",
-        "customer-field"
+        "customer-field",
+        "data-copy"
       ],
       "ancestorAttributes": [
         {
           "name": "data-unit-for",
           "on": []
+        },
+        {
+          "name": "data-handle-param",
+          "on": []
+        },
+        {
+          "name": "data-title",
+          "on": []
         }
       ],
       "writes": [
-        "is-customer"
+        "is-customer",
+        "data-handle",
+        "is-created"
       ]
     },
     {
@@ -4800,7 +4813,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Paged list of the metaobjects of a type, or of a product metafield.",
+      "purpose": "Paged list of the metaobjects of a type, or of a product metafield. 2.0: data-type=\"metafield.<ns>.<key>\" with data-parent-id=\"customer\" lists the entries of the logged-in customer's metafield, such as metafield.smootify.gift_list, the entries a metaobject-creator[customer-field] made for them (newest first; logged out, or none yet: is-empty; an entry deleted in the admin is skipped).",
       "source": "v2/src/components/extensions/metaobject/metaobjects-element.ts:11",
       "section": "Extensions",
       "context": {
@@ -4817,7 +4830,7 @@
       "outsideContext": {
         "effect": "removed",
         "debugger": false,
-        "detail": "also without data-type, or data-product-id for metafield lists"
+        "detail": "also without data-type, or data-product-id / data-parent-id=\"customer\" for metafield lists"
       },
       "requires": {
         "plan": null,
@@ -4828,7 +4841,8 @@
       "hostAttributes": [
         "data-type",
         "data-limit",
-        "data-product-id"
+        "data-product-id",
+        "data-parent-id"
       ],
       "ancestorAttributes": [],
       "writes": []
@@ -6645,6 +6659,7 @@
       "duties",
       "gift-card",
       "savings",
+      "shipping",
       "subtotal",
       "taxes",
       "total"
@@ -6939,11 +6954,14 @@
       "has-fulfillments"
     ],
     "policy": [
+      "contact-information",
+      "legal-notice",
       "privacy",
       "refund",
       "shipping",
       "subscription",
-      "terms"
+      "terms",
+      "terms-of-sale"
     ],
     "product": [
       "category",
@@ -8764,6 +8782,19 @@
         "text"
       ],
       "note": "Hidden when nothing is saved"
+    },
+    {
+      "kind": "attribute",
+      "group": "cart",
+      "name": "cart",
+      "value": "shipping",
+      "inside": [
+        "smootify-cart"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Shopify's estimate once the cart knows an address; hidden without one (data-fallback for a text)"
     },
     {
       "kind": "attribute",
@@ -12331,6 +12362,39 @@
       "group": "policy",
       "name": "policy",
       "value": "subscription",
+      "inside": [],
+      "on": [
+        "rich",
+        "container"
+      ]
+    },
+    {
+      "kind": "attribute",
+      "group": "policy",
+      "name": "policy",
+      "value": "contact-information",
+      "inside": [],
+      "on": [
+        "rich",
+        "container"
+      ]
+    },
+    {
+      "kind": "attribute",
+      "group": "policy",
+      "name": "policy",
+      "value": "legal-notice",
+      "inside": [],
+      "on": [
+        "rich",
+        "container"
+      ]
+    },
+    {
+      "kind": "attribute",
+      "group": "policy",
+      "name": "policy",
+      "value": "terms-of-sale",
       "inside": [],
       "on": [
         "rich",

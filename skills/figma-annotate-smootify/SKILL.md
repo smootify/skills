@@ -545,6 +545,9 @@ and what you would add. The person decides; the design keeps its style.
   find the attribute that fills it, or flag it.
 - **Every form can be sent and understood.** Each field has the Name Smootify reads, a label, and the type it
   needs (date, email, number); there is a submit, a success and an error. A rating drawn as stars needs an input.
+  A field with limits or a required value (a size, a quantity, a choice in a configurator) has its error state
+  with a text that says the limits ("Between 60 and 90 cm", "Choose a wood"): Smootify blocks the add to cart
+  without the browser's message, so a missing error text leaves the shopper with a button that does nothing.
 - **Small screens work.** Nothing overflows sideways (a 7-day calendar, a wide table), sticky bars do not cover
   what they repeat, tap targets are at least 40 px, and a dropdown or drawer replaces what no longer fits.
 - **Images load fast and show before Smootify.** Every product picture is an image element, never a background:

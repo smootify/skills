@@ -795,6 +795,11 @@
 					"note": "Hidden when nothing is saved"
 				},
 				{
+					"label": "Shipping",
+					"value": "shipping",
+					"note": "Shopify's estimate once the cart knows an address; hidden without one (data-fallback for a text)"
+				},
+				{
 					"label": "Discounts",
 					"value": "discount",
 					"on": ["container"],
@@ -2436,6 +2441,18 @@
 				{
 					"label": "Subscriptions",
 					"value": "subscription"
+				},
+				{
+					"label": "Contact information",
+					"value": "contact-information"
+				},
+				{
+					"label": "Legal notice",
+					"value": "legal-notice"
+				},
+				{
+					"label": "Terms of sale",
+					"value": "terms-of-sale"
 				}
 			]
 		},

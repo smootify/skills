@@ -337,6 +337,19 @@ Also from the starter build: each of these broke something before it was known.
   `display` on the class still keeps it open: give their layout to the open state in the site custom code.
 - **Labels are Field Labels.** A form field's label is Webflow's Field Label element tied to its field (the "For"
   setting), never a text block: a tap on it focuses the field and screen readers read it.
+- **Webflow's form defaults.** `.w-input` and `.w-select` have `margin-bottom: 10px` and a fixed height, and
+  `.w-radio` / `.w-checkbox` a left padding and a float. Where a field sits in a row with a button (discount code,
+  search, newsletter) or in a card, reset them on the field's class, or the row comes out taller than the field
+  and the button no longer lines up.
+- **Required fields on a shared template.** A required field in a block a condition hides (`if-metafield`, Webflow's
+  conditional visibility) does not count while hidden; one hidden by CSS or `display: none` still blocks the form.
+  On a product template that every product shares, hide such blocks with a condition only.
+- **Templates Smootify repeats are Webflow's own elements.** A radio Smootify copies (a subscription plan, a
+  configurator choice) is Webflow's Radio Button (`w-radio` with its Field Label), never a Div with a custom input:
+  the custom one is not repeated and its value never reaches the cart. Keep the design's classes on the Radio
+  Button and reset Webflow's offsets (see the form defaults above).
+- **Error states carry a text.** Smootify blocks an invalid configurator field without the browser's message: build
+  each `error-message` the design draws, with the field's limits, and the `is-invalid` style on the field.
 - **Reserved attributes.** `id`, `type`, `placeholder`, `value`, `checked` and `disabled` cannot be set as
   attributes. `id` goes through `set_dom_id`; an input `type` through its settings (text, email, password, tel,
   number, url only); the rest is manual.
