@@ -625,6 +625,12 @@
 					"label": "Image",
 					"value": "image",
 					"on": ["image"]
+				},
+				{
+					"label": "Option name",
+					"value": "name",
+					"on": ["text"],
+					"note": "The name of the option the picker shows (Color, Size)"
 				}
 			]
 		},
@@ -1216,6 +1222,21 @@
 			]
 		},
 		{
+			"id": "fallback",
+			"label": "When the value is missing",
+			"inside": [],
+			"items": [
+				{
+					"label": "Fallback text",
+					"name": "data-fallback",
+					"placeholder": "there",
+					"on": ["any"],
+					"with": ["[product]", "[variant]", "[customer]", "[company]", "[order]", "[line-item]", "[subscription]", "[address]", "[cart-item]", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]"],
+					"note": "Shown when the value is missing, instead of an empty or removed element: Hi, there"
+				}
+			]
+		},
+		{
 			"id": "product-metafield",
 			"label": "Product metafield",
 			"inside": ["smootify-product", "cart-item"],
@@ -1667,6 +1688,12 @@
 					"label": "Refunded",
 					"value": "totalRefunded",
 					"aliases": ["total-refunded"]
+				},
+				{
+					"label": "Discounts",
+					"value": "totalDiscounts",
+					"aliases": ["total-discounts"],
+					"note": "Removed when the order has no discount"
 				},
 				{
 					"label": "Shipping address",
@@ -3207,6 +3234,23 @@
 			]
 		},
 		{
+			"id": "magic-box-category",
+			"label": "Magic box category",
+			"inside": ["smootify-magic-box"],
+			"name": "box-condition",
+			"note": "Inside a box category, the slide or the tab link that shows it",
+			"items": [
+				{
+					"label": "Category has a piece",
+					"value": "category-complete"
+				},
+				{
+					"label": "Category still empty",
+					"value": "category-incomplete"
+				}
+			]
+		},
+		{
 			"id": "order",
 			"label": "Order",
 			"inside": ["order-page"],
@@ -3228,6 +3272,22 @@
 					"name": "address-condition",
 					"value": "zone",
 					"note": "Hidden for countries without provinces"
+				}
+			]
+		},
+		{
+			"id": "address-row",
+			"label": "Address in the list",
+			"inside": ["customer-address"],
+			"name": "address-condition",
+			"items": [
+				{
+					"label": "Default address",
+					"value": "default"
+				},
+				{
+					"label": "Not the default address",
+					"value": "not-default"
 				}
 			]
 		},

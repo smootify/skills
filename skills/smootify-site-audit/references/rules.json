@@ -1,6 +1,6 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-07",
+  "generatedAt": "2026-10-08",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
     "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0)",
@@ -42,7 +42,9 @@
         "data-name"
       ],
       "ancestorAttributes": [],
-      "writes": [],
+      "writes": [
+        "is-complete"
+      ],
       "readBy": [
         "smootify-magic-box"
       ]
@@ -53,7 +55,7 @@
       "registered": false,
       "selector": true,
       "purpose": "Shown only in sale-of-data regions (CSS only).",
-      "source": "v2/src/styles/consent.css:8",
+      "source": "v2/src/styles/consent.css:15",
       "section": "Markets and consent",
       "context": {
         "anywhere": false,
@@ -89,8 +91,8 @@
       "kind": "marker",
       "registered": false,
       "selector": true,
-      "purpose": "Hidden while the preferences panel is open (CSS only).",
-      "source": "v2/src/styles/consent.css:7",
+      "purpose": "Shown while the banner is required, hidden while the preferences panel is open (CSS only).",
+      "source": "v2/src/styles/consent.css:14",
       "section": "Markets and consent",
       "context": {
         "anywhere": false,
@@ -127,7 +129,7 @@
       "registered": false,
       "selector": true,
       "purpose": "Shown only while the preferences panel is open (CSS only).",
-      "source": "v2/src/styles/consent.css:6",
+      "source": "v2/src/styles/consent.css:13",
       "section": "Markets and consent",
       "context": {
         "anywhere": false,
@@ -1159,7 +1161,7 @@
       "registered": false,
       "selector": false,
       "purpose": "Template of one item of a bundle line, cloned per item.",
-      "source": "v2/src/components/cart/cart-renderer.ts:231",
+      "source": "v2/src/components/cart/cart-renderer.ts:232",
       "section": "Cart",
       "context": {
         "anywhere": false,
@@ -1233,7 +1235,7 @@
       "kind": "element",
       "registered": true,
       "selector": true,
-      "purpose": "Opens the preferences panel of the page's cookie banner.",
+      "purpose": "Opens the preferences panel of the page's cookie banner; shown only where the consent applies (2.0).",
       "source": "v2/src/components/manifest.ts:646",
       "section": "Markets and consent",
       "context": {
@@ -1901,7 +1903,7 @@
       "kind": "marker",
       "registered": false,
       "selector": false,
-      "purpose": "Address row template, cloned once per address.",
+      "purpose": "Address row template, cloned once per address; 2.0: the customer's default address's row gets is-default (:60).",
       "source": "v2/src/components/account/customer-addresses-element.ts:21",
       "section": "Account",
       "context": {
@@ -1928,7 +1930,9 @@
       "serverPlanOnly": false,
       "hostAttributes": [],
       "ancestorAttributes": [],
-      "writes": [],
+      "writes": [
+        "is-default"
+      ],
       "readBy": [
         "customer-addresses",
         "delete-address"
@@ -1973,8 +1977,8 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Form that prefills and saves the customer's custom metafields.",
-      "source": "v2/src/components/account/metafields-editor-element.ts:50",
+      "purpose": "Form that prefills and saves the customer's custom metafields; 2.0: once saved, the customer is read again and the form comes back 5 s after its success message.",
+      "source": "v2/src/components/account/metafields-editor-element.ts:93",
       "section": "Account",
       "context": {
         "anywhere": true,
@@ -2227,8 +2231,8 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Form that prefills and saves the customer's first and last name.",
-      "source": "v2/src/components/account/user-update-element.ts:10",
+      "purpose": "Form that prefills and saves the customer's first and last name; 2.0: once saved, the customer is read again (every [customer] binding of the page follows) and the form comes back 5 s after its success message.",
+      "source": "v2/src/components/account/user-update-element.ts:14",
       "section": "Account",
       "context": {
         "anywhere": true,
@@ -2522,7 +2526,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Uploads files to Shopify and submits their gids as one form field.",
+      "purpose": "Uploads files to Shopify and submits their gids as one form field. The saved files of its value show their file name, and their image when data-preview is set or (2.0) the designed item template has an [upload=\"preview\"].",
       "source": "v2/src/components/server-extensions/upload/file-input-element.ts:19",
       "section": "Server extensions (plan server)",
       "context": {
@@ -4370,7 +4374,7 @@
       "kind": "marker",
       "registered": false,
       "selector": false,
-      "purpose": "A box category: its add-to-cart forms fill that category, the box moves to the next one.",
+      "purpose": "A box category: its add-to-cart forms fill that category, the box moves to the next one. 2.0: is-complete while the box holds a piece of it, also on the .w-slide or the .w-tab-link that shows it (when every category there has one; v2/src/components/extensions/magic-box/box-navigation.ts:83).",
       "source": "v2/src/components/extensions/magic-box/box-navigation.ts:6",
       "section": "Extensions",
       "context": {
@@ -4399,7 +4403,9 @@
         "data-name"
       ],
       "ancestorAttributes": [],
-      "writes": [],
+      "writes": [
+        "is-complete"
+      ],
       "readBy": [
         "smootify-magic-box"
       ]
@@ -4444,8 +4450,8 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Cookie banner and preferences panel built in Webflow over Shopify's Customer Privacy API.",
-      "source": "v2/src/components/consent/consent-element.ts:28",
+      "purpose": "Cookie banner and preferences panel built in Webflow over Shopify's Customer Privacy API: shown while Shopify asks for consent and the visitor has not answered, the preferences while open. With button[data-is=\"preferences-button\"] inside (one component, e.g. in the Footer, the banner in a [popover] or [consent-panel]) it stays for the button wherever the consent applies, the banner closed until asked; elsewhere it is hidden whole (2.0).",
+      "source": "v2/src/components/consent/consent-element.ts:32",
       "section": "Markets and consent",
       "context": {
         "anywhere": true,
@@ -4469,7 +4475,13 @@
       "serverPlanOnly": false,
       "hostAttributes": [],
       "ancestorAttributes": [],
-      "writes": []
+      "writes": [
+        "is-loaded",
+        "is-required",
+        "is-open",
+        "is-sale-of-data-region",
+        "is-applicable"
+      ]
     },
     {
       "tag": "smootify-consent [data-action]",
@@ -4477,7 +4489,7 @@
       "registered": false,
       "selector": true,
       "purpose": "Consent buttons (accept all, decline all, save choices, open preferences, close).",
-      "source": "v2/src/components/consent/consent-element.ts:49",
+      "source": "v2/src/components/consent/consent-element.ts:53",
       "section": "Markets and consent",
       "context": {
         "anywhere": false,
@@ -4516,7 +4528,7 @@
       "registered": false,
       "selector": true,
       "purpose": "Opened and closed with the banner; closed from outside it hides the banner for the page.",
-      "source": "v2/src/components/consent/consent-element.ts:45",
+      "source": "v2/src/components/consent/consent-element.ts:50",
       "section": "Markets and consent",
       "context": {
         "anywhere": false,
@@ -4553,7 +4565,7 @@
       "registered": false,
       "selector": true,
       "purpose": "Consent category checkboxes, mirrored from and saved to the current consent.",
-      "source": "v2/src/components/consent/consent-element.ts:59",
+      "source": "v2/src/components/consent/consent-element.ts:65",
       "section": "Markets and consent",
       "context": {
         "anywhere": false,
@@ -5373,7 +5385,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Shows Shopify's Shop Pay button for the current variant or the cart lines.",
+      "purpose": "Shows Shopify's Shop Pay button for the current variant or the cart lines. The button fills the element whatever the display of its class (2.0, v2/src/styles/skeleton.css:125): the element's width sizes the button.",
       "source": "v2/src/components/add-to-cart/shop-pay-element.ts:14",
       "section": "Product and variants",
       "context": {
@@ -5485,7 +5497,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Sort options in a Webflow Dropdown; toggle text and data-selected show the current sort.",
+      "purpose": "Sort options in a Webflow Dropdown; toggle text and data-selected show the current sort (2.0: the designer's text until the visitor sorts; 1.x emptied data-selected).",
       "source": "v2/src/components/search-discovery/sort-dropdown-element.ts:16",
       "section": "Search & discovery",
       "context": {
@@ -5526,8 +5538,8 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Sort options in a popover; the trigger shows the current sort, a pick closes it.",
-      "source": "v2/src/components/search-discovery/sort-dropdown-element.ts:91",
+      "purpose": "Sort options in a popover; the trigger shows the current sort (the designer's text until the visitor sorts), a pick closes it.",
+      "source": "v2/src/components/search-discovery/sort-dropdown-element.ts:93",
       "section": "Search & discovery",
       "context": {
         "anywhere": false,
@@ -6576,6 +6588,8 @@
       "zoneCode"
     ],
     "address-condition": [
+      "default",
+      "not-default",
       "zone"
     ],
     "booking": [
@@ -6594,7 +6608,9 @@
     ],
     "box-condition": [
       "can-purchase",
-      "cannot-purchase"
+      "cannot-purchase",
+      "category-complete",
+      "category-incomplete"
     ],
     "box-item": [
       "category",
@@ -6912,6 +6928,7 @@
       "status",
       "statusUrl",
       "subtotalPrice",
+      "totalDiscounts",
       "totalPrice",
       "totalRefunded",
       "totalShipping",
@@ -6985,6 +7002,7 @@
       "bg-color",
       "color",
       "image",
+      "name",
       "title"
     ],
     "skeleton": [
@@ -8463,6 +8481,22 @@
     },
     {
       "kind": "attribute",
+      "group": "selected-option",
+      "name": "selected-option",
+      "value": "name",
+      "inside": [
+        "variant-swatches",
+        "variant-dropdown",
+        "variant-popover",
+        "variant-selector"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The name of the option the picker shows (Color, Size)"
+    },
+    {
+      "kind": "attribute",
       "group": "add-to-cart",
       "name": "bundle",
       "value": "total",
@@ -9660,6 +9694,32 @@
     },
     {
       "kind": "attribute",
+      "group": "fallback",
+      "name": "data-fallback",
+      "placeholder": "there",
+      "inside": [],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[product]",
+        "[variant]",
+        "[customer]",
+        "[company]",
+        "[order]",
+        "[line-item]",
+        "[subscription]",
+        "[address]",
+        "[cart-item]",
+        "[metafield]",
+        "[variant-metafield]",
+        "[customer-metafield]",
+        "[company-metafield]"
+      ],
+      "note": "Shown when the value is missing, instead of an empty or removed element: Hi, there"
+    },
+    {
+      "kind": "attribute",
       "group": "product-metafield",
       "name": "metafield",
       "placeholder": "key, like care_guide",
@@ -10645,6 +10705,23 @@
       ],
       "aliases": [
         "total-refunded"
+      ]
+    },
+    {
+      "kind": "attribute",
+      "group": "order",
+      "name": "order",
+      "value": "totalDiscounts",
+      "inside": [
+        "customer-order",
+        "order-page"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Removed when the order has no discount",
+      "aliases": [
+        "total-discounts"
       ]
     },
     {
@@ -13875,6 +13952,28 @@
     },
     {
       "kind": "condition",
+      "group": "magic-box-category",
+      "name": "box-condition",
+      "value": "category-complete",
+      "inside": [
+        "smootify-magic-box"
+      ],
+      "on": null,
+      "note": "Inside a box category, the slide or the tab link that shows it"
+    },
+    {
+      "kind": "condition",
+      "group": "magic-box-category",
+      "name": "box-condition",
+      "value": "category-incomplete",
+      "inside": [
+        "smootify-magic-box"
+      ],
+      "on": null,
+      "note": "Inside a box category, the slide or the tab link that shows it"
+    },
+    {
+      "kind": "condition",
       "group": "order",
       "name": "order-condition",
       "value": "has-fulfillments",
@@ -13894,6 +13993,26 @@
       ],
       "on": null,
       "note": "Hidden for countries without provinces"
+    },
+    {
+      "kind": "condition",
+      "group": "address-row",
+      "name": "address-condition",
+      "value": "default",
+      "inside": [
+        "customer-address"
+      ],
+      "on": null
+    },
+    {
+      "kind": "condition",
+      "group": "address-row",
+      "name": "address-condition",
+      "value": "not-default",
+      "inside": [
+        "customer-address"
+      ],
+      "on": null
     },
     {
       "kind": "condition",
@@ -14508,8 +14627,8 @@
         "field": "text, textarea, select, radio, checkbox, `file-input`",
         "required": false,
         "requiredNote": "",
-        "does": "saves the customer metafield `custom.<key>`, the key being the snake_case of `data-name` (the `name` as written without it), and is prefilled from it, select and textarea included; a lone checkbox saves `true` checked and `false` unchecked; names starting with `_` and empty values are not saved, and a repeated name keeps its last value",
-        "source": "v2/src/components/account/metafields-editor-element.ts:57"
+        "does": "saves the customer metafield `custom.<key>`, the key being the snake_case of `data-name` (the `name` as written without it), and is prefilled from it, select and textarea included; a lone checkbox saves `true` checked and `false` unchecked; names starting with `_` are not saved, and a repeated name keeps its last value. 2.0: a field sent empty (a text cleared, the last file removed from a `file-input`) empties its metafield (deleted: Shopify takes no empty value); a field a condition hides is left alone",
+        "source": "v2/src/components/account/metafields-editor-element.ts:50, :73"
       }
     ],
     "metaobject-creator": [
@@ -14872,7 +14991,7 @@
         "required": false,
         "requiredNote": "a missing `analytics`, `marketing` or `preferences` counts as declined",
         "does": "checked: that kind of tracking is allowed, saved by `[data-action=\"save\"]`; the boxes follow the stored consent, Webflow's custom checkbox included",
-        "source": "v2/src/components/consent/consent-element.ts:98"
+        "source": "v2/src/components/consent/consent-element.ts:109"
       }
     ],
     "smootify-cart": [

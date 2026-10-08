@@ -421,7 +421,7 @@ Arrows drawn in a carousel's header are the Webflow Slider's own arrows, moved t
 arrows outside a slider. Where a panel opens (next to its trigger, as a drawer, in the middle of the page) is the design's choice: say it
 in a `@note` on the panel, so the build places it as drawn. When a field opens the panel and stays outside it, as a
 predictive search in the navbar, the panel must not cover the field.
-Text that repeats what the visitor typed ("View all results for …") is a static part plus a `search="query"` layer.
+Text that repeats what the visitor typed ("View all results for …") is a static part plus a `search="query"` layer, and it goes inside `search-with-query` with its link: outside it shows on an empty field as "View all results for “”". The same for anything that only makes sense in one state: it goes inside the region of that state.
 
 **What works together is one component.** A trigger and the panel it opens (the cookie preferences button and the
 consent banner, a search field and its results), a list and its item template: one `@component`, inside the
@@ -521,6 +521,39 @@ Before writing, check every annotated node:
 
 A proposal that fails a check is wrong: fix it or ask — never write it and let the build skill find out.
 
+### Usability checks
+
+The checks above prove the markup is legal. These prove a shopper can use what gets built. Each one was missed
+on the starter and found only by looking at the built site. Go through every page and every component that holds
+something interactive. Where the annotation can fix it, fix it. Where the design lacks something (a state never
+drawn, a link with no page), do not invent it: write it in the report as a **usability suggestion**, with the frame
+and what you would add. The person decides; the design keeps its style.
+
+- **Everything that looks clickable goes somewhere.** Product cards, collection cards, cart lines, upsells, search
+  results, wishlist items link to their page. Navbar, footer, breadcrumb, account nav and every button
+  ("Shop now", "View all", "Continue shopping") have a destination. A card nobody can open is the first thing a
+  shopper tries.
+- **Every panel can be opened and closed.** A trigger, a close that is a real button, and the panel never covers
+  the field or trigger that opened it.
+- **Every list has an empty state and every page a logged-out state.** A carousel, a review list, "Recently
+  viewed", an empty cart or quote, a wishlist with nothing in it, an account page or a gift list for a visitor who
+  is not logged in: annotate what shows, or that the section hides itself. A section with only a title and arrows,
+  or a page with only the header and footer, is a failed check.
+- **What belongs to one state lives in that state's region.** "View all results for …" inside
+  `search-with-query`, a badge with a count only above zero, a "Sold out" label inside the sold-out condition.
+- **Data the shopper expects to be theirs is not sample text.** A name, an order number, a total, a page count:
+  find the attribute that fills it, or flag it.
+- **Every form can be sent and understood.** Each field has the Name Smootify reads, a label, and the type it
+  needs (date, email, number); there is a submit, a success and an error. A rating drawn as stars needs an input.
+- **Small screens work.** Nothing overflows sideways (a 7-day calendar, a wide table), sticky bars do not cover
+  what they repeat, tap targets are at least 40 px, and a dropdown or drawer replaces what no longer fits.
+- **Images load fast and show before Smootify.** Every product picture is an image element, never a background:
+  the first slide of a gallery holds an Image, and its thumbnail too. On a CMS template, its `src` and `alt` come
+  from the CMS fields (`@cms: attr:src = Products.Image URL`, `attr:alt = Products.Image Alt`), so the page shows
+  the picture before Smootify loads. A slide or thumbnail with no image annotated is a failed check.
+- **Controls are what they look like.** A button is a button, a link is a link, an icon-only control has an
+  accessible name, and images that carry meaning have alt text.
+
 **Checkpoint 2.** Before writing, show the person the plan: per component its variants, props (with what each
 is bound to) and slots; per page what is placed and how it is connected; and every open question. Write after
 the answers.
@@ -561,9 +594,11 @@ In this order:
 4. **`@wrap` introduced**: they become Webflow elements that do not exist in the design. Then the masters left as
    page structure, each with the frame its `@note` points to.
 5. **Manual steps**: every `@manual`.
-6. **Disagreements**: kit list vs glossary, names or descriptions vs context, nodes annotated on an ancestor
+6. **Usability suggestions**: what the usability checks found that the design lacks, per frame, with what you
+   would add. Not written into the annotations until the person agrees.
+7. **Disagreements**: kit list vs glossary, names or descriptions vs context, nodes annotated on an ancestor
    because the right node was a group.
-7. **Vocabulary used**: where the glossary came from (CDN via `curl`, CDN via `use_figma`, or the copy) and its
+8. **Vocabulary used**: where the glossary came from (CDN via `curl`, CDN via `use_figma`, or the copy) and its
    `last-modified`, so a wrong annotation can be traced to the vocabulary it was made with.
 
 Never report a count as success. Twenty confident annotations and one wrong role are worse than nineteen and a

@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-07.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-08.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -39,16 +39,16 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `addon-swatches` | One button per value or variant of the nested product as add-ons. | `smootify-add-to-cart smootify-product`; non in `.w-condition-invisible` | `button:not([popovertarget])` | si rimuove | — | `addon-type`, `allow-unselect`, `id` |
 | `box-item` | One line of the box, cloned from the first box-item for each picked item. | `smootify-magic-box-cart` o `cart-item` | — | resta inerte | "Magic Box" | `data-hash` |
 | `button[data-is="direct-add-to-cart"]` | Button that adds the product's current variant to the cart without a form. | `smootify-product` | — | si rimuove | — | `data-is` |
-| `button[data-is="preferences-button"]` | Opens the preferences panel of the page's cookie banner. | ovunque | — | si rimuove | — | `data-is` |
+| `button[data-is="preferences-button"]` | Opens the preferences panel of the page's cookie banner; shown only where the consent applies (2.0). | ovunque | — | si rimuove | — | `data-is` |
 | `country-switcher` | Lists the market's countries in a Webflow dropdown or a popover and changes country on a pick; when Shopify has a language with the country's ISO code (IT → Italian) it changes language too. With Webflow Localization (a Webflow locale switcher, or the page's hreflang alternate links) the language goes through Webflow: the page moves to that language's locale (it-IT before it when the site has both), and without a locale for that language only the country changes. | ovunque | uno fra `.w-dropdown .w-dropdown-link`, `[popover] :is(a, button:not([popovertarget]))` | si rimuove | — | — |
 | `create-address` | Form that creates an address, with country and zone selects filled from the shop. | ovunque | `form`, `select[name="countryCode"]`, `select[name="zoneCode"]` | si rimuove | Customer Accounts | — |
 | `customer-addresses` | Lists the customer's addresses, one row per address, with edit and delete forms armed. | ovunque | `customer-address` | si rimuove | Customer Accounts | — |
-| `customer-metafields-editor` | Form that prefills and saves the customer's custom metafields. | ovunque | `form` | si rimuove | Customer Accounts | — |
+| `customer-metafields-editor` | Form that prefills and saves the customer's custom metafields; 2.0: once saved, the customer is read again and the form comes back 5 s after its success message. | ovunque | `form` | si rimuove | Customer Accounts | — |
 | `customer-orders` | Paged list of the customer's orders, one row per order. | ovunque | `customer-order` | si rimuove | Customer Accounts | `limit` |
 | `customer-subscribe-email` | Form that subscribes the customer to email marketing. | ovunque | `form` | si rimuove | Customer Accounts | — |
 | `customer-subscriptions` | Paged list of the customer's subscription contracts, one row per contract. | ovunque | `customer-subscription` | si rimuove | Customer Accounts | `limit` |
 | `customer-unsubscribe-email` | Form that unsubscribes the customer from email marketing. | ovunque | `form` | si rimuove | Customer Accounts | — |
-| `customer-user-update` | Form that prefills and saves the customer's first and last name. | ovunque | `form`, `input[name="firstName"]`, `input[name="lastName"]` | si rimuove | Customer Accounts | — |
+| `customer-user-update` | Form that prefills and saves the customer's first and last name; 2.0: once saved, the customer is read again (every [customer] binding of the page follows) and the form comes back 5 s after its success message. | ovunque | `form`, `input[name="firstName"]`, `input[name="lastName"]` | si rimuove | Customer Accounts | — |
 | `delete-address` | Form that deletes the address of its row and removes the row. | `customer-address` | `form` | si rimuove | Customer Accounts | — |
 | `dynamic-property` | Form control configured by the product's property metaobject with the same label. | `smootify-product` | uno fra `input`, `select`, `button`, `.w-dropdown`, `[popover]` | si rimuove | — | `label`, `delete-parent` |
 | `dynamic-swiper` | CMS items become Swiper slides, then Swiper starts with the params of an inner JSON script. | ovunque | `swiper-container` | si rimuove | — | — |
@@ -77,7 +77,7 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `smootify-account-component` | Embeds Shopify's account web component (login menu) while the visitor is logged out. | ovunque | — | si rimuove | Customer Accounts | — |
 | `smootify-add-to-cart` | Product form that turns the selection into cart lines. | `smootify-product` | `form` | si rimuove | — | `use-magic-box`, `box-title`, `box-image`, `single-addon-swatch`, `allow-unavailable`, `avoid-option-update` |
 | `smootify-cart` | Renders the cart and opens or closes it as a mini cart. | ovunque | — | resta inerte | — | `data-open`, `data-draft` |
-| `smootify-consent` | Cookie banner and preferences panel built in Webflow over Shopify's Customer Privacy API. | ovunque | — | resta inerte | — | — |
+| `smootify-consent` | Cookie banner and preferences panel built in Webflow over Shopify's Customer Privacy API: shown while Shopify asks for consent and the visitor has not answered, the preferences while open. With button[data-is="preferences-button"] inside (one component, e.g. in the Footer, the banner in a [popover] or [consent-panel]) it stays for the button wherever the consent applies, the banner closed until asked; elsewhere it is hidden whole (2.0). | ovunque | — | resta inerte | — | — |
 | `smootify-magic-box` | Build-a-box: the add-to-cart forms inside it add to the box instead of the cart. | ovunque | `smootify-magic-box-cart` | si rimuove | "Magic Box" | `data-handle`, `data-title`, `data-image`, `data-min`, `data-max`, `data-step`, `data-unique`, `data-unique-per-category`, `data-all-categories`, `data-auto-remove-category`, `data-only-one`, `data-only-one-per-category`, `data-full-error`, `data-too-many-error` |
 | `smootify-magic-box-cart` | Box panel: picked items, counters, totals and the form that adds the whole box to the cart. | `smootify-magic-box` | `form`, `box-item` | si rimuove | "Magic Box" | `data-buy-now` |
 | `smootify-metaobject` | One metaobject, written into its [metaobject] descendants. With data-handle-param the handle comes from that parameter of the page url (data-handle-param="l" on /list?l=giulia-birthday: a link to one entry, such as one a metaobject-creator form created), before data-id and data-handle, which stay the fallback; the handle only goes to the query, never into the page. Without the parameter (and no fallback) or with an unknown handle the element is removed like any not found: a message next to it can show with :has() (.list:not(:has(smootify-metaobject)) .not-found). | ovunque | — | si rimuove | — | `data-id`, `data-handle`, `data-handle-param`, `data-type` |
@@ -94,11 +94,11 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `smootify-search` | Predictive search: products and query suggestions as the customer types, in a Webflow Dropdown or a popover. The search field is input[name="query"]; without one, the only text field (2.0), whatever its Webflow Name, is named query (predictive-search-element.ts:35). A results popover (2.0) opens as the customer types, and also on a focus or click of the field, empty or not, so search-no-query shows its suggestions. | ovunque | uno fra `input[name="query"]`, `input[type="text"]`, `input[type="search"]`, `input:not([type])` | resta inerte | "Predictive Search" | `limit` |
 | `smootify-search-discovery` | Faceted product list: runs the search, renders the cards, active chips, count and pagination, and hosts the filter and sort widgets. | ovunque | `smootify-product` | si rimuove | "Search & discovery" | `data-wait`, `limit`, `auto-close-details`, `disable-scroll`, `disable-scroll-on-load-more`, `avoid-webflow-restart`, `hide-empty`, `hide-if-single`, `sync-query-params`, `page-range`, `animation`, `easing`, `duration`, `stagger`, `data-expand`, `data-collection`, `data-vendor`, `data-tag`, `unavailable-products`, `body`, `menu` |
 | `smootify-search-page` | Full search results page driven by the query in the url or its text inputs, with count and pagination. | ovunque | `smootify-product` | si rimuove | "Search" | `data-wait`, `limit`, `disable-scroll`, `disable-scroll-on-load-more`, `auto-close-details`, `avoid-webflow-restart`, `page-range`, `animation`, `easing`, `duration`, `stagger`, `unavailable-products` |
-| `smootify-shop-pay` | Shows Shopify's Shop Pay button for the current variant or the cart lines. | `smootify-product` o `smootify-cart` | — | resta inerte | — | — |
+| `smootify-shop-pay` | Shows Shopify's Shop Pay button for the current variant or the cart lines. The button fills the element whatever the display of its class (2.0, v2/src/styles/skeleton.css:125): the element's width sizes the button. | `smootify-product` o `smootify-cart` | — | resta inerte | — | — |
 | `smootify-variant` | Repeats its block once per variant of a product. | ovunque | — | resta inerte | — | `data-product-id`, `unique-by` |
 | `smootify-variant[data-product-id="wishlist"]` | Variant card template (its .w-dyn-item, else itself) repeated once per saved variant (the first one in the page), with the smootify-variant markup; without a smootify-product[data-id="wishlist"] also once per saved product, as the card of its first available variant. | ovunque | — | resta inerte | "Wishlist" | `data-product-id` |
-| `sort-dropdown` | Sort options in a Webflow Dropdown; toggle text and data-selected show the current sort. | `smootify-search-discovery` | `form`, `.w-dropdown .w-dropdown-link` | si rimuove | "Search & discovery" | `selected-value` |
-| `sort-popover` | Sort options in a popover; the trigger shows the current sort, a pick closes it. | `smootify-search-discovery` | `form`, `[popover] :is(a, button:not([popovertarget]))` | si rimuove | "Search & discovery" | `selected-value` |
+| `sort-dropdown` | Sort options in a Webflow Dropdown; toggle text and data-selected show the current sort (2.0: the designer's text until the visitor sorts; 1.x emptied data-selected). | `smootify-search-discovery` | `form`, `.w-dropdown .w-dropdown-link` | si rimuove | "Search & discovery" | `selected-value` |
+| `sort-popover` | Sort options in a popover; the trigger shows the current sort (the designer's text until the visitor sorts), a pick closes it. | `smootify-search-discovery` | `form`, `[popover] :is(a, button:not([popovertarget]))` | si rimuove | "Search & discovery" | `selected-value` |
 | `sort-radio` | Sort options as one radio label each. | `smootify-search-discovery` | `form`, `label` | si rimuove | "Search & discovery" | `selected-value` |
 | `sort-select` | Sort options in a native select; the first option is the placeholder. | `smootify-search-discovery` | `form`, `select` | si rimuove | "Search & discovery" | `selected-value` |
 | `store-availability` | Shows pickup availability of the current variant, with an optional list of locations. | `smootify-product` | — | si rimuove | — | `disable-blur`, `animation-name`, `animation-duration` |
@@ -136,7 +136,7 @@ Presenti solo con il piano `server` (e l'estensione accesa); senza, vengono rimo
 | `configurator-radio` | Radios whose checked option carries the formula step. | `smootify-add-to-cart` | `input[type="radio"]` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-select` | Select whose chosen option carries the formula step. | `smootify-add-to-cart` | `select` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-share` | Shares a link to this page with the visitor's configuration: one url parameter per configurator field, named as its control (name: ?Engraving=abc&Finish=gloss&width=120), plus ?variant= when the product has more than one. A page opened from such a link starts every configurator field from its parameter, applied as a visitor would (the same input / change, so a value the field refuses stays off: below min, an option the select does not have; text cut at maxlength), and the price follows; names the page does not have are ignored, and a file stays out of the link (uploaded again). The device's share sheet where there is one, else the link is copied (data-copy: always copied). | `smootify-add-to-cart` | — | si rimuove | piano server + "Product configurator" | `data-copy`, `data-title` |
-| `file-input` | Uploads files to Shopify and submits their gids as one form field. | `metaobject-creator` o `customer-metafields-editor` o `smootify-cart` | — | resta inerte | piano server | `name`, `value`, `data-multiple`, `data-required`, `data-preview`, `data-only-images`, `min-file-size`, `max-file-size`, `min-resolution`, `data-error-<code>` |
+| `file-input` | Uploads files to Shopify and submits their gids as one form field. The saved files of its value show their file name, and their image when data-preview is set or (2.0) the designed item template has an [upload="preview"]. | `metaobject-creator` o `customer-metafields-editor` o `smootify-cart` | — | resta inerte | piano server | `name`, `value`, `data-multiple`, `data-required`, `data-preview`, `data-only-images`, `min-file-size`, `max-file-size`, `min-resolution`, `data-error-<code>` |
 | `file-uploader` | Uploads files to Shopify and adds their names, gids and admin links to the cart line. | `smootify-add-to-cart` o `dynamic-property` | — | resta inerte | piano server + "Product File Upload" | `name`, `data-multiple`, `data-required`, `data-preview`, `data-only-images`, `min-file-size`, `max-file-size`, `min-resolution`, `data-error-<code>` |
 | `metaobject-creator` | Creates a metaobject from a Webflow form: every filled field whose name does not start with _; a name the form repeats (a checkbox group with each checkbox's value, a multiple select) sends all its values; a lone checkbox sends true / false. The backend converts each value to its field type: rating from a number (the field's scale), list.* from repeated values, a comma separated text or a JSON array, boolean, number_decimal with a comma, url without https://, references from a numeric id, rich_text_field from lines (one paragraph each), money in the shop currency, date_time from datetime-local, dimension / volume / weight from "2.5 cm" (a select data-unit-for="<name>" gives the unit of that field, its own name is not sent); a value already in Shopify's format passes as it is. A definition without the publishable capability gets no status (data-draft is ignored there). The backend refuses Shopify's standard types (shopify--…), the app-reserved ones ($app:…) and Smootify's own (magic_box, combinations, dynamic_property, option), with the form error "This form cannot create entries of this metaobject type". customer-field="<key>": the entry belongs to the logged-in customer, written by the backend into that field (a customer reference) from the Customer Account token, never from the form; logged out the element is hidden and its form inert (is-customer while logged in), and a request without a valid token is refused ("Log in to send this form"). | ovunque | `form` | si rimuove | piano server + "Metaobject creator" | `data-type`, `data-draft`, `customer-field` |
 | `name-your-price` | Lets the customer type the unit price the product is added at. | `smootify-add-to-cart` | `input[type="number"]` | si rimuove | piano server + "Name your price" | `data-invalid-price` |
@@ -149,7 +149,7 @@ annotano come gli altri, con il solo `@tag`.
 
 - `[box-category]` — Attribute form of smootify-box-category. (dentro `smootify-magic-box`; letto da `smootify-magic-box`)
 - `[consent-condition="sale-of-data"]` — Shown only in sale-of-data regions (CSS only). (dentro `smootify-consent`; letto da `smootify-consent`)
-- `[consent-panel="banner"]` — Hidden while the preferences panel is open (CSS only). (dentro `smootify-consent`; letto da `smootify-consent`)
+- `[consent-panel="banner"]` — Shown while the banner is required, hidden while the preferences panel is open (CSS only). (dentro `smootify-consent`; letto da `smootify-consent`)
 - `[consent-panel="preferences"]` — Shown only while the preferences panel is open (CSS only). (dentro `smootify-consent`; letto da `smootify-consent`)
 - `[popover][data-is="market-dialog"] button[data-action="continue"]` — Closes the market suggestion and remembers it was seen. (dentro `[popover][data-is="market-dialog"]`; letto da `[popover][data-is="market-dialog"]`)
 - `[upload="dropzone"]` — Drop and click area; defaults to the element itself. (dentro `file-uploader` o `file-input` o `configurator-file-input`; letto da `file-uploader`, `file-input`, `configurator-file-input`)
@@ -165,7 +165,7 @@ annotano come gli altri, con il solo `@tag`.
 - `bundle-item` — Template of one item of a bundle line, cloned per item. (dentro `cart-item`; letto da `smootify-cart`)
 - `cart-item` — Template of one cart line: the first is cloned per line, the others are removed. (dentro `smootify-cart`; letto da `smootify-cart`, `quantity-input`)
 - `currency-code` — Text set to the current currency ISO code, anywhere in the document. With one country the switcher goes; a currency-code outside it still gets the currency (2.0). (dentro ovunque; letto da `country-switcher`)
-- `customer-address` — Address row template, cloned once per address. (dentro `customer-addresses`; letto da `customer-addresses`, `delete-address`)
+- `customer-address` — Address row template, cloned once per address; 2.0: the customer's default address's row gets is-default (:60). (dentro `customer-addresses`; letto da `customer-addresses`, `delete-address`)
 - `customer-order` — Order row template, cloned once per order and painted like an order page. (dentro `customer-orders`; letto da `customer-orders`)
 - `customer-subscription` — Subscription row template, cloned once per contract. (dentro `customer-subscriptions`; letto da `customer-subscriptions`, `subscription-activate`, `subscription-cancel`, `subscription-pause`)
 - `empty-state` — Shown while the box, or the metaobject list, is empty (CSS). (dentro `smootify-magic-box-cart` o `smootify-metaobjects`; letto da `smootify-magic-box-cart`, `smootify-metaobjects`)
@@ -183,7 +183,7 @@ annotano come gli altri, con il solo `@tag`.
 - `search-result` — Result template, cloned per product and filled through its search bindings. (dentro `smootify-search`; letto da `smootify-search`)
 - `search-suggestions` — Holds the suggested-query template, cloned per Shopify query suggestion; hidden when there are none. (dentro `smootify-search`; letto da `smootify-search`)
 - `search-with-query` — Region shown only while there is a query; its first product card can be the result template. (dentro `smootify-search`; letto da `smootify-search`)
-- `smootify-box-category` — A box category: its add-to-cart forms fill that category, the box moves to the next one. (dentro `smootify-magic-box`; letto da `smootify-magic-box`)
+- `smootify-box-category` — A box category: its add-to-cart forms fill that category, the box moves to the next one. 2.0: is-complete while the box holds a piece of it, also on the .w-slide or the .w-tab-link that shows it (when every category there has one; v2/src/components/extensions/magic-box/box-navigation.ts:83). (dentro `smootify-magic-box`; letto da `smootify-magic-box`)
 - `smootify-consent [data-action]` — Consent buttons (accept all, decline all, save choices, open preferences, close). (dentro `smootify-consent`; letto da `smootify-consent`)
 - `smootify-consent [popover]` — Opened and closed with the banner; closed from outside it hides the banner for the page. (dentro `smootify-consent`; letto da `smootify-consent`)
 - `smootify-consent input[type="checkbox"][name]` — Consent category checkboxes, mirrored from and saved to the current consent. (dentro `smootify-consent`; letto da `smootify-consent`)
@@ -220,17 +220,17 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `address1` · `address2` · `city` · `company` · `countryCode` · `firstName` · `formatted` · `id` · `lastName` · `name` · `phoneNumber` · `zip` · `zoneCode`
 
-### `address-condition=…` (1)
+### `address-condition=…` (3)
 
-`zone`
+`default` · `not-default` · `zone`
 
 ### `booking=…` (12)
 
 `capacity` · `date` · `day` · `day-number` · `error` · `left` · `month` · `range` · `selection` · `slot` · `time` · `weekday`
 
-### `box-condition=…` (2)
+### `box-condition=…` (4)
 
-`can-purchase` · `cannot-purchase`
+`can-purchase` · `cannot-purchase` · `category-complete` · `category-incomplete`
 
 ### `box-item=…` (6)
 
@@ -360,9 +360,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `image`
 
-### `order=…` (24)
+### `order=…` (25)
 
-`billingAddress` · `cancelReason` · `canceledAt` · `createdAt` · `customerUrl` · `email` · `financialStatus` · `fulfillmentStatus` · `locationName` · `name` · `note` · `orderNumber` · `phone` · `poNumber` · `processedAt` · `shippingAddress` · `status` · `statusUrl` · `subtotalPrice` · `totalPrice` · `totalRefunded` · `totalShipping` · `totalTax` · `url`
+`billingAddress` · `cancelReason` · `canceledAt` · `createdAt` · `customerUrl` · `email` · `financialStatus` · `fulfillmentStatus` · `locationName` · `name` · `note` · `orderNumber` · `phone` · `poNumber` · `processedAt` · `shippingAddress` · `status` · `statusUrl` · `subtotalPrice` · `totalDiscounts` · `totalPrice` · `totalRefunded` · `totalShipping` · `totalTax` · `url`
 
 ### `order-condition=…` (1)
 
@@ -384,9 +384,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `collection` · `compare-at-price` · `count` · `empty-state` · `image` · `price` · `query` · `search-page` · `suggested-query` · `title` · `type` · `url` · `vendor`
 
-### `selected-option=…` (4)
+### `selected-option=…` (5)
 
-`bg-color` · `color` · `image` · `title`
+`bg-color` · `color` · `image` · `name` · `title`
 
 ### `skeleton=…` (5)
 
@@ -496,7 +496,7 @@ contiene. Si annota con `@attr: name=<Name>` sul campo, scritto esattamente come
 
 ### `customer-metafields-editor`
 
-- any name: the metafield key — text, textarea, select, radio, checkbox, `file-input` — saves the customer metafield `custom.<key>`, the key being the snake_case of `data-name` (the `name` as written without it), and is prefilled from it, select and textarea included; a lone checkbox saves `true` checked and `false` unchecked; names starting with `_` and empty values are not saved, and a repeated name keeps its last value
+- any name: the metafield key — text, textarea, select, radio, checkbox, `file-input` — saves the customer metafield `custom.<key>`, the key being the snake_case of `data-name` (the `name` as written without it), and is prefilled from it, select and textarea included; a lone checkbox saves `true` checked and `false` unchecked; names starting with `_` are not saved, and a repeated name keeps its last value. 2.0: a field sent empty (a text cleared, the last file removed from a `file-input`) empties its metafield (deleted: Shopify takes no empty value); a field a condition hides is left alone
 
 ### `customer-subscribe-email`
 

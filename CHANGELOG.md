@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.0-beta.14
+
+From the manual review of the starter, with Smootify 2.0 running.
+
+- The annotator runs usability checks before writing: everything that looks clickable goes somewhere, every panel opens and closes, every list has an empty state and every account page a logged-out state, state-only content lives in its state's region, customer data is never sample text, forms can be sent, small screens work, controls are what they look like, product pictures are images bound to the CMS. What the design lacks goes into a new "Usability suggestions" section of the report, not into the annotations.
+- The builder checks the published page as a shopper would, at three widths, before calling a component done: links, panels, empty states, data Smootify fills, form Names, images (`img` with CMS `src`/`alt` and a `max-width`), state styles only on their combo class.
+- CSS the Designer cannot write (a child styled by its parent's state, a chevron turned while a popover is open, `:has()` rules, a panel's position) goes in a Code Embed inside the component, behind a boolean prop such as *Include styles*; the site's custom code keeps only what belongs to the whole site.
+- Webflow's Popover element: its trigger is any Button or Link Block with Link → Type *Popover*; a close is the same with Action Hide. Popover styles follow the 2.0 CSS: no backdrop unless the panel's class sets `--smootify-backdrop-color`, `--smootify-closed-display` for a panel that is a popover only on small screens.
+- A component or variant named after a Webflow element (Dropdown, Tabs, Slider, Lightbox, Popover) is built with that element; form labels are Field Labels; a field Name set through the API does not publish, so it is set in the Designer.
+- The catalogue follows the 2.0 contract of 2026-10-08: `selected-option="name"`, `data-fallback`, `order="totalDiscounts"`, the default address (`is-default`, `address-condition="default"`), completed Magic Box categories (`is-complete`, `box-condition="category-complete"`), the sort trigger keeping the designer's text, consent in one component (`is-applicable`).
+
 ## 2.0.0-beta.13
 
 From the review of the starter on staging, with Smootify 2.0 running.

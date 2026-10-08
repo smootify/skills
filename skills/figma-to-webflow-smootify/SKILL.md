@@ -282,7 +282,7 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
 
 - **Popovers.** When the site has Webflow's Popover element (the beta), use it: the MCP cannot create it yet, so
   place it in the Designer through Claude in Chrome, inside the Smootify element it belongs to, and position it as
-  the design draws it. The element writes `popover`, `popovertarget` and the close action itself: add none of them. Only on a site without it, build the panel with the `popover` attribute and the trigger with
+  the design draws it. The element writes `popover`, `popovertarget` and the close action itself: add none of them. Its trigger is any Webflow Button or Link Block, with Link → Type *Popover*, its Target and the Action (Toggle, Show, Hide); a close button is the same with Action Hide. A DOM `button` cannot target it. Only on a site without it, build the panel with the `popover` attribute and the trigger with
   `popovertarget`, and give the panel the design's position in the site custom code: without one, the browser opens
   every popover in the middle of the page, which is right only when the design puts it there. Never put a popover inside a template Smootify repeats (an address card,
   a cart line): every copy repeats the id. Use `details` / `summary` there.
@@ -297,11 +297,12 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   - `booking-form` reads `name`, `email`, `phone`, `note`.
 - **Search & discovery filters.** A filter's `label` must be the label of a filter set in the store's
   Search & Discovery app (Availability, Price, Color…), or Smootify removes the filter.
-- **State styles on a child.** A combo class Smootify puts on a parent (`is-not-available` on a search result,
-  `is-full` on a booking day) cannot show a child from the Designer. Add the rule to the site's custom code, with
-  the other site rules every Smootify build needs:
-  `[popover]:popover-open { display: flex; }` (or the panel's display), the child rules for each state you use,
-  and `:has()` rules where the design reserves space only when a part exists.
+- **CSS the Designer cannot write lives in the component.** A child styled by its parent's state
+  (`is-not-available` on a search result, `is-full` on a booking day), a chevron turned while a popover is open
+  (`:has([popover]:popover-open)`), `:has()` rules, a panel's position: put them in a Code Embed inside the
+  component, a `<style>` scoped to the component's root class, with its visibility bound to a boolean prop such as
+  *Include styles* (default on), so whoever does not want it switches it off on the instance. The site's custom code
+  keeps only what belongs to the whole site: Smootify's options, scripts, global variables.
 - **Elements Smootify removes when the store lacks their data.** Check the store before building, or the page
   comes out empty: `store-locator` without `data-api-key` (the store list goes too, not only the map);
   `smootify-magic-box` whose `data-handle` is not the handle of a Magic Box entry in the store; a booking
@@ -312,6 +313,10 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   `filter="active-count"`, the box counters are `data-prop` inside `smootify-magic-box-cart`.
 - **Slider arrows.** Smootify does not drive arrows outside a Webflow Slider: the arrows a design draws in a
   section header are the Slider's own arrows, styled and placed there.
+- **A name that is a Webflow element is that element.** A component or variant called Dropdown, Tabs, Slider,
+  Lightbox or Popover is built with that Webflow element (a Cart dropdown is a `smootify-cart` around a Webflow
+  Dropdown, not a button and a popover), because Smootify drives each of them in its own way. Two variants built
+  on the same mechanism are one variant drawn twice.
 - **Reserved slugs.** Webflow keeps `/search` for its own site search: the page with `smootify-search-page` takes
   another slug (`/search-page`), and every search form's action and `search="search-page"` link point to it.
 - **Class names.** Name classes from the component and the role (`sm-` library classes for shared parts such as
@@ -324,9 +329,14 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
 
 Also from the starter build: each of these broke something before it was known.
 
-- **Never `display` on a panel class.** A class with `display` on a `[popover]`, a `dialog` or a `.w-dropdown-list`
-  overrides the browser's hidden state, and the panel stays open. Give the panel's layout in the site custom
-  code, for the open state only: `[popover]:popover-open`, `dialog[open]`.
+- **Panels and their styles.** With Smootify loaded, a closed popover stays hidden whatever `display` its class
+  has, so give the panel its layout on its class. Smootify adds no backdrop: where the design draws one (a cart
+  drawer, a dialog), set `--smootify-backdrop-color` on the panel's class. A panel that is a popover only on small
+  screens (filters in a column on desktop) gets `--smootify-closed-display: flex` at the desktop breakpoint, with
+  `position: static`, `inset: auto` and `margin: 0`, and `none` below. On a `dialog` or a `.w-dropdown-list` a
+  `display` on the class still keeps it open: give their layout to the open state in the site custom code.
+- **Labels are Field Labels.** A form field's label is Webflow's Field Label element tied to its field (the "For"
+  setting), never a text block: a tap on it focuses the field and screen readers read it.
 - **Reserved attributes.** `id`, `type`, `placeholder`, `value`, `checked` and `disabled` cannot be set as
   attributes. `id` goes through `set_dom_id`; an input `type` through its settings (text, email, password, tel,
   number, url only); the rest is manual.
@@ -400,6 +410,20 @@ every page. Without it nothing works on the published site, and no check of the 
 1. `get_settings` with `type: "all_raw_settings"` + `scope_component_id` to verify bindings
 2. `get_all_elements` with `scope_component_id` to verify tree
 3. Insert instance on the target page specified by the requester, take snapshot
+4. **On the published page, with Smootify running** (the Designer shows neither the runtime nor the site custom
+   code), use it as a shopper would, at desktop, tablet and mobile width:
+   - every card, link and button goes somewhere: no `href="#"` left, cards open their product or collection;
+   - every panel opens from its trigger, closes, and does not cover what opened it;
+   - lists and pages with no data (empty cart, no reviews, nothing recently viewed, a visitor not logged in) show
+     their empty state or hide, never a bare title;
+   - text the runtime fills (names, prices, counts, the searched words) changes with the data;
+   - forms send the Names Smootify reads; nothing overflows sideways on mobile;
+   - every product picture is an `img` (never an empty slide that Smootify fills as a background), and on a CMS
+     template its `src` and `alt` are bound to the CMS, so the page shows it before Smootify loads; images Smootify
+     fills carry `max-width` (about twice their displayed width, such as `192` on a 96px thumbnail);
+   - a state style (the active thumbnail, the selected swatch) sits only on its combo class (`is-active`), never on
+     the base class, or every item looks selected.
+   What fails goes in the report before anything else: a component that renders but cannot be used is not done.
 
 ### Phase 7: Inner and Sibling Components
 
@@ -436,6 +460,7 @@ If there are nested or repeated (sibling) components:
 | `set_text` inside `children[]` is ignored — children are created with Webflow's placeholder text | Set the text after creation, then read it back: do not assume it took |
 | Slots cannot be placed inside a Form, and an instance cannot be detached on a template | A second component for each layout of the form (see *Component Decision Rules*) |
 | No tool for redirects, deleting pages, noindex, placeholders, FormSelect options, `type="date"`, the Current state, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
+| A form field's Name written through the API does not reach the published HTML (it still publishes `field-N`) | Set every Name in the Designer's settings panel, through Claude in Chrome, and check it on the published page |
 | `bulk_update_pages` answers ok and changes nothing | `update_page_settings`, one page at a time |
 | `unlink_component_instance` is refused by the permission system | Do not work around it: build what the instance should contain another way (a second component) |
 | The Webflow Navbar (`w-nav`) cannot be created; a new Form Block comes with Name, Email and Submit; a new Rich Text with sample headings and lists | Build the nav from Div blocks; delete the sample content right after creating the element |
