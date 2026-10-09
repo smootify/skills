@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.20
+
+- `smootify-iterate` has a sixth cause, `store`: the note comes from the store's data or setup in Shopify (a metafield or metaobject definition, an option value without its image, a product's price or description, a pickup location, a market, a Search & Discovery filter). The site is left as it is, and the answer says what the store must have and where it is set in the Shopify admin. Smootify Studio shows it as "Store (Shopify admin)" and never sends it to Smootify.
+
 ## 2.0.0-beta.19
 
 - The catalogue follows the 2.0 contract of 2026-10-09 evening: the predictive search's host classes (`has-query`, `has-suggestions`, `has-products`, `is-empty`, `without-initial-state`) and the gift card's `Recipient name` and `Message` fields.

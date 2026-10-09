@@ -82,6 +82,7 @@ Every answer names one cause and a confidence from 0 to 1:
 | `runtime` | Smootify's script does not do what its documentation says, on markup that matches the documentation. |
 | `annotate-skill` | The Figma annotation skill wrote a wrong instruction that the build followed. |
 | `build-skill` | The Figma to Webflow skill built against a correct annotation, wrongly. |
+| `store` | The store's data or setup in Shopify: a metafield or metaobject definition, an option value without its image, a product's price or description, a pickup location, a market, a Search & Discovery filter. Nothing to change in Webflow. |
 | `missing-feature` | What the person wants is not something Smootify does today, by its documentation. A request, not a bug. |
 
 **Be very careful before blaming Smootify or a skill.** Most of the time Smootify works and the configuration is
@@ -94,7 +95,7 @@ wrong. Something that looks like a bug is usually one of these:
 - a state that the design never styled (a combo class such as `is-active`, `is-invalid` or `is-disabled`);
 - a block hidden or shown with CSS where the documentation asks for a condition, or the reverse;
 - the store's data: a product, metafield, market, location or filter that does not exist in Shopify, or is not
-  visible to the storefront;
+  visible to the storefront (the cause is then `store`);
 - a Webflow default that was never reset (a margin, a fixed height, an alignment);
 - a page published before the last changes, or a note taken before a fix: when the element already changed after
   the note's time, answer that it is fixed on the current version and ask to look again after the next publish.
@@ -142,7 +143,9 @@ Write only `status`, `resolution` and one new entry in `replies`, as `notes/READ
   elsewhere, the note asks for something the site should not do, or there was nothing to fix).
 - `text`: plain words for the person. What was wrong, what you changed, what to look at after publishing.
 - `refs`: the documentation pages and the MCP findings you relied on.
-- When the cause is not `site`, the `text` stands on its own for Smootify's support: the page URL, the element, what
+- When the cause is `store`, the `text` says what the store must have and where it is set in the Shopify admin
+  (the setting or the definition, with its namespace and key or its type), and how to check the page after.
+- When the cause is `runtime`, a skill or `missing-feature`, the `text` stands on its own for Smootify's support: the page URL, the element, what
   the documentation says should happen, what happens, what you checked on the site to rule out the configuration,
   and how to see it again.
 
