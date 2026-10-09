@@ -65,7 +65,9 @@ Take the open notes one at a time, oldest first, and finish each one before the 
    outline, `audit_page` on the page, `diagnose` with the symptom. Compare with what the site has.
 5. **Decide the cause** (see below), with a confidence.
 6. **When the cause is the site, fix it.** Say in one line what you will change, then change it with the Webflow MCP.
-   Read the element back after every write. Change only what the note is about.
+   Read the element back after every write. Change only what the note is about, but at its source: when the cause
+   is a shared component, class or template, fix it there, look at the other places that use it, and list them in
+   the answer.
 7. **Answer in the note** (see below). Then the next note.
 
 Never publish the site. Studio tells the person when a fix is waiting for a publish.
@@ -94,7 +96,8 @@ wrong. Something that looks like a bug is usually one of these:
 - the store's data: a product, metafield, market, location or filter that does not exist in Shopify, or is not
   visible to the storefront;
 - a Webflow default that was never reset (a margin, a fixed height, an alignment);
-- a page published before the last changes.
+- a page published before the last changes, or a note taken before a fix: when the element already changed after
+  the note's time, answer that it is fixed on the current version and ask to look again after the next publish.
 
 Choose a cause other than `site` only when all of these hold:
 

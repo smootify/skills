@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.0-beta.18
+
+From everything the builder had to ask during the first demo store build, the 140 review notes on the starter and the demo store, and the earlier build, review and QA reports.
+
+- The builder starts with one checklist for the person (site, licence and extensions, store and CMS sync, Customer Account API client id with its allowed origins, spam protection) and asks only what the design does not settle: anything the catalogue or the annotation answers is applied and written in the report.
+- What changes per use is a component prop, never a manual step. Placeholders, form names and native Popovers are done in the Designer through Claude in Chrome before a page goes to review.
+- Smootify rules: where `data-prop`, `option-values` and `url` go; a sticky add-to-cart tied with `form`; one cookie banner per site and its Necessary box; email preferences as two forms; references in a metaobject form; sort values and `SmootifySortLabels`; `smootify-cart[data-open]` values; Smootify's tags are inline.
+- Webflow rules: the defaults that break a layout (`.w-form` margin, FormButton text, Dropdown toggle and icon, style-only Code Embeds), elements that cannot be removed (Form Success and Error, Slider nav), `details` open at publish, unique form and field ids, fields created as required, Collection List self links, page titles, icons that follow their control, rows that keep one height.
+- The builder's checks on the published page now include every state class styled and disabled controls that look disabled, no empty blocks, no Webflow sample text, and links to pages not built yet; with the Smootify MCP connected, `check_markup`, `resolve_vocabulary` and `get_example`.
+- The annotator: in a starter or kit, every Smootify feature block is a component with its settings as props; never a slot inside a Form; the cart's Form spans the whole cart; the quote cart's states; picker labels from the option name; the page's `h1` outside components; checkout totals with `data-fallback`; text that repeats the shopper's choices bound with `form-value` and the configurator values; B2B paths by Smootify conditions; slider arrows' disabled state; Magic Box sizes; products without their own page; grids without products not sold on their own; `data-overflow-body`; visible states and disabled looks; required consent boxes; honest success messages; real quantities. It reads hidden frames, checks its work with `check_annotations` when the Smootify MCP is connected, and renames layers a `@wrap` cannot name.
+- `smootify-iterate` fixes a shared component, class or template at its source and lists the other places it touched, and recognises a note taken before a fix.
+
 ## 2.0.0-beta.17
 
 From the first build of a demo store from its Figma (Millimetro), with Smootify 2.0 running.

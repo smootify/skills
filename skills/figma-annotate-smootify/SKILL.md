@@ -153,7 +153,9 @@ variant. Keep both.
 ## Step 1 — Read the file in few calls
 
 A product page alone is ~200 nodes. Never call `get_design_context` per node. One `use_figma` call per page
-returns everything the decisions need; one `get_screenshot` per top frame gives the picture.
+returns everything the decisions need; one `get_screenshot` per top frame gives the picture. Instances inside a
+hidden frame (a closed popover panel, a state block) do not expose their children: make the frame visible for the
+read and hide it again in the same call.
 
 ```js
 const PAGE_ID = '…';                        // one call per page
@@ -220,7 +222,11 @@ the first checkpoint with the person.
    - **in a starter or a kit** (a library the Designer App will offer), every drawn alternative becomes its own
      component: the Dropdown, the native select and the popover version of a filter are three components, not one
      chosen version. On a shop's own site, build only the versions the shop uses.
-4. **Find what is not a component.** A component is justified when a structure **repeats**. The layout of a
+4. **Find what is not a component.** A component is justified when a structure **repeats**. One exception: in a
+   starter or kit (a file others reuse), every Smootify feature block is a component whose Smootify settings are
+   string props, even when it is placed once: the product listing (`smootify-search-discovery` with its toolbar,
+   filters, grid and pagination, with `Collection ID` → `data-collection` and `Vendor` → `data-vendor`, placed on
+   the shop page and on the Collections and Vendors templates), the store locator, the booking calendar. The layout of a
    product page or of an account page does not repeat: it is page structure, not a component. The 404, policy
    pages, header and footer are Webflow; the skeletons and the banners Smootify injects are not drawn at all.
    **A master you do not build as a component still gets one line saying why**, on the master itself, so whoever
@@ -236,7 +242,8 @@ the first checkpoint with the person.
 5. **Nesting and build order.** A component used inside another (the price inside the card, the swatches inside
    the add to cart) is built first and placed as an instance. Where the outer component takes one of several
    inner components (a card that ends with a form, a quick-view button or nothing), prefer a **slot**
-   (`@slot`) to one outer component per combination — and ask.
+   (`@slot`) to one outer component per combination — and ask. Never a slot inside a Form (add to cart, cart,
+   a metaobject form): Webflow rejects it there, so each layout is a `split` component or a plain block of fields.
 6. **Drawn copies.** Four thumbnails, three cart lines, five filter values: one template Smootify repeats
    (`@repeat`), the rest `@skip`. Never a component per copy, never an instance per copy.
 
@@ -498,6 +505,57 @@ For every page:
 Collection and field names: use what the Webflow site has if you can read it; otherwise the Smootify defaults
 (`Products` with `Shopify ID`, `Collections`, `Vendors`) — and list them in the report as assumptions to confirm.
 
+### Structure rules learned on the builds
+
+Each one broke a build or came back as a review note.
+
+- **The cart's Form spans the whole cart**: lines, upsells and the footer (discount and gift-card fields, note,
+  checkout). A footer drawn outside it gets `@wrap: FormBlock over <lines>..<footer>`.
+- **A quote cart** (`smootify-cart[data-draft]`): the Form's Success block is the confirmation after sending; the
+  empty quote is a block with `cart-condition="no-items-in-quote"` (`has-empty-quote` is only a class on the host).
+- **A picker's label is the option name Smootify writes** (a static word plus `selected-option="name"`, or
+  `variant="option1-name"`), never a text prop kept in sync by hand.
+- **The page's `h1` is page structure.** A heading level cannot be bound to a prop, so a component never holds the
+  page title; components use h2 and h3.
+- **An empty attribute is not a missing one.** A string prop bound to an attribute writes it even when empty
+  (`label=""`), and Smootify can read empty differently (an empty filter label removes the filter). Give such a
+  prop a real default, or split.
+- **Blocks that change the price on a shared template are conditional.** Quantity-break tables, configurator
+  fields, a default add-on on a product template every product shares sit in a block shown only on the products
+  that use them (`if-metafield`, `tagged`); the same choice offered twice on one kind of product (a gift-wrap
+  add-on and the same configurator option) is hidden on one side by condition.
+- **Totals Shopify computes at checkout** (shipping, taxes) are `cart="shipping"` / `cart="taxes"` with
+  `data-fallback="Calculated at checkout"`, never € 0.00. A summary that shows a total shows the rows that make it
+  up (shipping, taxes, discounts), and a line with a saving shows `cart-item="compare-at-price"`. Values that can
+  be zero or missing (a saving, a unit price, a rating) sit where they collapse when empty.
+- **Text that repeats what the shopper chose** on the page (a gift card preview, a configurator's price breakdown)
+  is bound with `form-value`, `configurator-price`, `configurator-formula` and `if-configurator`, with
+  `data-fallback` for the empty case; never sample values. Any bound text that can be missing (a first name in a
+  greeting) gets `data-fallback` too.
+- **Paths for guests and companies** (B2B) are told apart by Smootify conditions on wrappers
+  (`customer-condition`, `customer-tagged`, `if-company-metafield`), never by Webflow conditional visibility.
+- **`product="vendor"` on a link goes to `/vendors/<vendor>`**: make it text unless the site has the Vendors
+  template.
+- **Slider arrows have a disabled state.** When every card fits, Smootify gives the arrows `is-disabled` and
+  `aria-disabled`: annotate how they look.
+- **A box size (6 or 12) is the Magic Box's `data-min` / `data-max` / `data-step`**, not a variant picker.
+- **The language switcher is Webflow Localization's or Weglot's**, left unannotated: Smootify waits for the
+  language with either.
+- **A product sold without its own page** (a bookable visit, a service hidden from the CMS sync) gets a static
+  page with `smootify-product data-id=<Shopify ID>`, and every link points there, never to `/products/<handle>`.
+- **Grids fed by the CMS leave out what is not sold on its own** (gift cards, add-on products, Shopify's
+  `frontpage` collection) unless the page is about it.
+- **`filter="active-count"` can count the searched text too**: place it with the Filters button, never as a bare
+  number beside the results line.
+- **`option="image"` needs an image on each value in the store** (the native swatch image or the option
+  metaobject's image), or Smootify removes it: list it as a store prerequisite.
+- **A panel that covers the page** (a cart drawer, a mobile menu) takes `data-overflow-body` so the page behind does
+  not scroll; an anchored dropdown does not. In a tall panel only the list scrolls: the totals and the main button
+  stay in a footer that is always visible.
+- **The cookie preferences**: only Necessary is disabled (checked, with no `name`: it is not a Shopify category);
+  `analytics`, `marketing`, `preferences` and `sale_of_data` stay switchable, even where the design draws one
+  disabled. Ask when it does.
+
 ## Step 6 — Refute your own proposal
 
 Before writing, check every annotated node:
@@ -590,6 +648,15 @@ and what you would add. The person decides; the design keeps its style.
 - **Layout choices are drawn, not noted.** A field at full width, a text aligned to the title without an empty
   column, which accordion item starts open: draw them in the frame or set them with a prop, so the build reads
   them. A layout intention left in a note comes back as a review note after the build.
+- **Disabled looks disabled, and states are visible.** Every control that can be disabled (a required consent
+  box, slider arrows, an add-on during a subscription) and every state Smootify sets (selected, current, done,
+  invalid, full) has a drawn look that tells it apart; one that is missing goes in the report.
+- **An icon that goes with a state changes with it.** In stock, low stock, sold out, unavailable: each state's
+  block carries its own icon, never one check mark for all.
+- **A consent or terms checkbox is required.** The form (newsletter, contact) cannot be sent until it is ticked.
+- **A success message promises only what the store does.** No "we sent you an email" where no email is sent.
+- **Real quantities.** Check every list and picker against the store's real count (12 products, not the 4
+  drawn), and flag a layout that only works with the sample count.
 - **An image is its picture.** Annotate the image as the image fill of its rectangle, never an export of the card
   around it (photo, band and text): reused elsewhere, the card export brings its text along.
 
@@ -621,6 +688,9 @@ return { done, skipped };
   keep what the person corrected by hand — their correction is an answer.
 - Batch the writes, a few dozen nodes per call, and read them back: `get_design_context` on one annotated
   component shows what the build skill will see.
+- When the Smootify MCP is connected, run `check_annotations` on the annotated nodes, instances and their main
+  components included, and fix every confirmed error before the report. A missing child that a `@manual` covers is
+  unverified, not fine.
 
 ## Step 8 — Report
 

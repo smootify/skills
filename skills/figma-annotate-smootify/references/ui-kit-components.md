@@ -229,7 +229,7 @@ stessi.
 - Contenuto: subtotale, sconti (codici e automatici, i codici con la x), risparmio, totale barrato, totale, nota su
   tasse e spedizione, bottone checkout.
 - Stati: checkout Default e Caricamento.
-- Markup: `[cart=subtotal|discount|savings|compare-at-total|total|taxes]`, `button[type=submit]` con `data-wait`.
+- Markup: `[cart=subtotal|discount|savings|compare-at-total|total|taxes]`, `button[type=submit]` con i figli `[data-state=default|loading]` (`data-wait` cambia solo il `value` di un `input[type=submit]`).
 
 ### Carrello / Codice sconto e gift card
 - Stati: Vuoto, Applicato, Errore.

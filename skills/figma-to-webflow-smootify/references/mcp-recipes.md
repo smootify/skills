@@ -15,7 +15,7 @@ through the Webflow MCP. They are no longer manual: build them like any other di
 | Webflow Tabs (subscription picker, magic box categories) | builder type `Tabs`, remove the extra tab and pane. A radio outside a form is a DOM `label` > `input[type=radio]`: Webflow rejects a FormRadioInput outside a Form |
 | A popover panel and its trigger (only on a site without Webflow's Popover element; with it, place the Popover through Claude in Chrome) | panel: DivBlock with `popover="auto"` and its id through `set_dom_id` (with a prop binding if the id is a prop); trigger: DOM `button` with `popovertarget`; a close button: `popovertarget` + `popovertargetaction="hide"`. Never `display` on the panel class (see the build skill) |
 | A popover inside a repeated template (address card, cart line) | DOM `details` > `summary` instead: a popover would repeat its id in every copy |
-| A slot | builder type `ComponentSlot` inside a DivBlock; the slot's name is its display name (`set_display_name`). Not inside a Form |
+| A slot | builder type `ComponentSlot` inside a DivBlock; the slot's name is its display name (`set_display_name`, which may not take on a slot: read it back, and list the rename for the Designer if it did not). Not inside a Form |
 | A Form Block inside a custom tag (`customer-unsubscribe-email`, the consent preferences panel) | builder with a `{type: "Form"}` child inside the tag; delete the sample fields Webflow adds; `set_settings` for the form `name`, `domId` and `buttonText` |
 | Form fields in a component (Cart line with its quantity, Discount code field, Cart note) | build them inside a temporary Form Block on a page, then `transform_element_to_component`: Webflow refuses form fields outside a form, also inside a custom tag such as `configurator-field` |
 | Showing or hiding an instance from a prop (Wishlist button, Rating stars in a card) | wrap the instance in a DivBlock and bind the wrapper's visibility: an instance has no visibility setting. The wrapper also carries the instance's position (the heart at the top right of the image) |
@@ -26,6 +26,7 @@ through the Webflow MCP. They are no longer manual: build them like any other di
 | What | Calls |
 |---|---|
 | An instance on a page | `insert_component_instance` with the `pageId` (works headless). **An instance cannot be the anchor** of `before` or `after`: anchor on a plain element, or `prepend` / `append` in the parent |
+| Pages under a path (`/account/orders`) | a page folder; it can share its slug with a page (`/account` and `/account/…` both work) |
 | A page like one that exists | `create_page` with `duplicateOf`, then remove the sections it does not need: the copy keeps the source's element ids, so the ids you already know work on it |
 | A form's redirect | `set_settings` key `redirect` on the `FormForm` (`/newsletter-confirmed`) |
 | An instance inside a component | `insert_component_instance` with `scope_component_id` |

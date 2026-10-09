@@ -206,6 +206,9 @@ A node becomes a component when it has `@component: Name`. All descendants of th
 - **Sibling components are not rebuilt — they're instanced**: Webflow components aren't rebuilt per occurrence. If multiple sibling nodes at the same depth share `@component: Name` (or are Figma instances of the same component), build it **once**, then insert instances via `insert_component_instance` for each remaining occurrence, and set each instance's props (see *Props on instances* below). Do not flag per-instance differences as `@manual`: they are settable.
 - **Props on the component**: All `@prop` directives on descendant nodes define the component's props. Collect them at the component level.
 - **Bindings scope**: `@bind` references a prop defined on the **nearest ancestor** with `@component`.
+- **What changes per use is a prop, never a manual step.** When an instance needs a setting the component does
+  not expose (required or not, a placeholder, a link shown or not), add a prop to the component and set it on the
+  instance; do not leave it to the person in the Designer.
 
 ### Prefer components, and make the difference a prop
 
@@ -290,6 +293,36 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
 - **A trigger lives in the element it opens.** `data-action="open-cart"` opens only the `smootify-cart` that
   contains the button: the cart icon goes inside the same `smootify-cart` as its drawer panel, not in another one.
   The same for the other Smootify triggers: check the catalogue's context before placing a trigger elsewhere.
+- **Where a value goes is part of the attribute.** `data-prop` goes on the children of `smootify-price`
+  (`price`, `compareAtPrice`, `total`), never on the host: a price annotated on the host stays empty. An amount in
+  a button ("Buy now · € 120") is a `smootify-price` with a `[data-prop="total"]` child inside it. `option-values`
+  goes on the element Smootify repeats per value (the swatch), not on the flex row that holds the copies.
+  `product="url"` and `cart-item="url"` write the product title into an element whose only child is text: when the
+  link keeps its own label ("View product"), put the label in a child element.
+- **A second button for the same form is tied with `form`.** A sticky add-to-cart bar repeats the button, not
+  the element: a submit with `form="<id of the add-to-cart form>"` outside it, never a second
+  `smootify-add-to-cart`. Smootify gives it the same states as the button inside.
+- **One cookie banner per site.** One `smootify-consent` (in the Footer component, so every page has it);
+  anywhere else, a cookie policy page included, a `button[data-is="preferences-button"]` reopens its preferences.
+- **Email preferences are two forms.** A subscribe toggle is a `customer-subscribe-email` and a
+  `customer-unsubscribe-email`, each shown by its condition (`customer-condition="email-not-subscribed"` /
+  `"email-subscribed"`), each with a `button type="submit"` drawn as the toggle (`aria-pressed` and an
+  `aria-label` saying what it does). The submit does the change: no Save button.
+- **References in a `metaobject-creator` form are hidden inputs.** A product reference is an
+  `input type="hidden"` with the field's name, whose value is the product's Shopify ID (a CMS binding on the
+  template); a variant reference is an `input type="hidden"` with `variant="id"` inside `smootify-product`, which
+  follows the chosen variant.
+- **Sort and cart options take values.** A sort component's `selected-value` is one the page offers (Best
+  selling on a collection; on a search only relevance and the two prices exist); its labels are renamed with
+  `window.SmootifySortLabels` in the head, before Smootify. `smootify-cart[data-open]` takes a value (`on-add`),
+  not a bare attribute.
+- **A list of products to pick in a form** (a gift list, an alert for several products) is a Collection List whose
+  checkbox `value` is bound to the item's Shopify ID: a checkbox with no value sends `on`.
+- **The cookie preferences' Necessary box** is checked, disabled and without a `name`, written in a Code Embed
+  (Webflow drops `checked` and `disabled`); the other categories stay switchable.
+- **Where the design draws a Smootify value with a fixed width**, leave the element free to grow or to cut with
+  an ellipsis: the sort toggle, an option name and a price change length with the data. An element Smootify fills
+  as a background image (`data-prop="flag"`) gets `background-size: cover` and `background-position: center`.
 - **Field names.** Read the Name from the catalogue (contract §2.13), not from the layer:
   - a field inside an add-on picker takes any Name (Webflow wants one): Smootify renames it;
   - a configurator dropdown or popover reads a hidden `select` whose options are `value|formula` with the visible
@@ -323,7 +356,7 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
 - **Class names.** Name classes from the component and the role (`sm-` library classes for shared parts such as
   buttons), never from a layer's sample text or another language.
 - **What the MCP cannot do**, so it goes to the person, in the report, with the page and the element:
-  site redirects, deleting pages, placeholders of native fields, `type="date"` on inputs, the Current state of
+  site redirects, deleting pages, placeholders of native fields when Claude in Chrome is not available, `type="date"` on inputs, the Current state of
   links and tabs, copying a design into the 404 utility page, publishing.
 - **Every empty state is built.** The annotation lists the empty states (cart, search, collection and filters,
   orders, addresses, subscriptions, store credit, wishlist, gift lists, recently viewed, a day with no slot, 404).
@@ -371,6 +404,37 @@ Also from the starter build: each of these broke something before it was known.
   `.w-radio` / `.w-checkbox` a left padding and a float. Where a field sits in a row with a button (discount code,
   search, newsletter) or in a card, reset them on the field's class, or the row comes out taller than the field
   and the button no longer lines up.
+- **Smootify's tags are inline.** A `smootify-*` custom element (and every other Smootify tag) is `inline` by
+  default, like any unknown HTML tag: give its class `display: block` (or flex, grid) whenever it carries layout,
+  or widths, margins and gaps on it do nothing.
+- **Webflow's defaults that break a layout.** The Form Block wrapper `.w-form` has a 15 px bottom margin and
+  shrinks in a flex parent: give it a class with `margin: 0` and its width. A FormButton (`input type=submit`)
+  starts with white text and its own line-height: set colour, font and line-height on its class, without negative
+  letter-spacing, or the label is clipped. The Dropdown's toggle is centred with its own padding and its icon is
+  positioned absolutely over the text: reset them where the dropdown sits among links, with an inline SVG chevron
+  in the flow. A Code Embed that holds only a `<style>` still takes space in flex and grid: add
+  `.w-embed:has(>style:only-child){display:none}` once in the site code.
+- **Elements Webflow will not let go.** Removing a Form Block's Success or Error block deletes the form: keep
+  them hidden on forms that never submit (search, filters, sort), and give them the design's text elsewhere.
+  Deleting a Slider's nav deletes the slider: hide it with a class. A Webflow checkbox's inline label cannot be
+  removed: hide it.
+- **`details` that starts open** is written `open="open"`: an empty `open` is dropped at publish. A `dialog` closes
+  with a `form method="dialog"` holding a real `button`, never a bare icon.
+- **Ids and Names are unique on the page.** Webflow names forms `Email Form N` and fields `field-N`, and a component
+  with a form repeats them on every instance: give forms and fields names and ids from their role (a prop when
+  the component is placed twice), and list what only the Designer can rename.
+- **Fields the builder creates can come with Required on.** Turn it off unless the annotation asks for
+  `data-required`: a stray required field blocks the cart or the add to cart.
+- **A Collection List item's link to its own page** (Current Product, Current Collection) written through the MCP
+  publishes `#` or a relative href: set it in the Designer's link panel and check the published href.
+- **Every page and template has its title.** Webflow defaults to the site name; a template title bound to a CMS
+  field is set in the Designer, so list it.
+- **Icons follow their control.** An SVG icon inside a button or link uses `currentColor`, so it follows the
+  text colour in every state; an icon that fills on a state (a filled heart) loses its own `fill` attribute and
+  gets `fill` from the class and its state combo. Every clickable element that is not a link or a button
+  (thumbnails, swatches, clickable cards) gets `cursor: pointer`.
+- **Rows drawn at one height stay at one height** with real texts of different length: stretch the cards and pin
+  the price or the button to the bottom.
 - **A DOM `button` keeps the browser's look.** A Custom element `button` (a consent action, a text link that is a
   button, a toggle) starts with the browser's grey background, border and padding. Reset them on its class
   (`background-color: transparent`, `border: 0`, `padding: 0`, `font: inherit`, `color: inherit`) unless the design
@@ -428,7 +492,27 @@ Also from the starter build: each of these broke something before it was known.
 
 ## Workflow
 
-### Phase 0: Install Smootify on the site
+### Phase 0: Ask for everything the build needs, then install Smootify
+
+**One checklist before the first element.** Everything below is the person's to do, outside the Designer, and
+each one, found halfway, stops the build until they answer. Ask for all of it in one message, before building:
+
+- the Webflow site exists, Smootify is connected to it, and the Designer is open with the Webflow MCP app;
+- the Smootify licence is active, with the plan and the extensions the design uses (server plan, Draft Orders,
+  Product configurator, Dynamic Properties, Booking, Magic Box…: read them from the annotation and the catalogue's
+  *Extension* column);
+- the store is ready: products, collections, metafield and metaobject definitions the design reads, and the CMS
+  sync from Smootify done, with the product ids at hand (a template needs them, the sample data does not);
+- the Customer Account API client id, when the design has account parts (below), with the staging and live
+  domains added to its JavaScript origins and callback URIs in Shopify: from any other origin the login fails;
+- whether to keep Webflow's spam protection (Turnstile) on the site: it guards Smootify's forms too, add to cart
+  included, and its empty slot takes space in the layout;
+- the redirects, policies and other admin settings the design depends on, to put in the report.
+
+**Ask only what the person decides.** A question the catalogue, the contract or the annotation already answers
+(which attribute, which state class, which value) is not a question: apply it and write the choice in the report.
+Ask about what the design does not settle (copy, a variant, whether to build a proposal), and group those
+questions instead of stopping on each.
 
 Before the first component, read the site's head code (`get_site_freeform_code`) and make sure Smootify loads on
 every page. Without it nothing works on the published site, and no check of the Designer or of the markup shows it.
@@ -501,7 +585,17 @@ every page. Without it nothing works on the published site, and no check of the 
      template its `src` and `alt` are bound to the CMS, so the page shows it before Smootify loads; images Smootify
      fills carry `max-width` (about twice their displayed width, such as `192` on a 96px thumbnail);
    - a state style (the active thumbnail, the selected swatch) sits only on its combo class (`is-active`), never on
-     the base class, or every item looks selected.
+     the base class, or every item looks selected;
+   - every state class the catalogue lists for what you built (`is-active`, `w--current`, `is-disabled`,
+     `is-done`, `is-invalid`, `is-full`…) has a style that shows it, checked with the state forced, and a disabled
+     control looks disabled;
+   - no block ships empty: every accordion item, tab pane and panel has its bound rows or its text;
+   - no Webflow sample text is left: search the published HTML for `Email Form`, "Thank you! Your submission",
+     "First choice", "Checkbox", "Radio", "Example Text";
+   - while pages are still missing, the report lists the links that lead to them.
+   With the Smootify MCP connected, run `check_markup` on each component's tree (with the Smootify elements it will
+   sit in), and use `resolve_vocabulary` / `get_example` for a value or a structure the annotation lacks instead of
+   guessing.
    What fails goes in the report before anything else: a component that renders but cannot be used is not done.
 
 ### Phase 7: Inner and Sibling Components
@@ -542,8 +636,10 @@ If there are nested or repeated (sibling) components:
 | A FormSelect has no setting for its options | A DOM `select` with DOM `option` children: `set_attributes` for each `value`, `set_settings` `text` for the label |
 | An instance cannot be the anchor of `before` / `after` (`insert_component_instance`, `data_element_builder`) | `prepend` / `append` in the parent, or anchor on a plain element next to it |
 | Slots cannot be placed inside a Form, and an instance cannot be detached on a template | A second component for each layout of the form (see *Component Decision Rules*) |
-| No tool for site redirects, deleting pages, noindex, placeholders, `type="date"`, the Current state, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
+| No tool for site redirects, deleting pages, noindex, `type="date"`, the Current state, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
 | A form field's Name written through the API does not reach the published HTML (it still publishes `field-N`) | Set every Name in the Designer's settings panel, through Claude in Chrome, and check it on the published page |
+| Placeholders, Form names and native Popovers have no MCP tool | Do them in the Designer through Claude in Chrome page by page, before the page is published for review, not at the end; check the published page for inputs without a placeholder |
+| `move_element` rejects an instance as anchor; `set_style` replaces every class of the element; `element_snapshot_tool` fails when the Designer is not on the element's page | Anchor on a plain element; pass all the classes the element keeps; open the page first |
 | `bulk_update_pages` answers ok and changes nothing | `update_page_settings`, one page at a time |
 | `unlink_component_instance` is refused by the permission system | Do not work around it: build what the instance should contain another way (a second component) |
 | The Webflow Navbar (`w-nav`) cannot be created; a new Form Block comes with Name, Email and Submit; a new Rich Text with sample headings and lists | Build the nav from Div blocks; delete the sample content right after creating the element |
