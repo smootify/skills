@@ -378,6 +378,9 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   query to write and keeps its text: the line that shows it goes inside `with-query`. The field can be
   `input[type=search]`; its Clear is a `button type="reset"`, and the browser's own clear icon is hidden in the
   site CSS when the design draws one.
+- **The predictive search's host classes.** `smootify-search` gets `has-products` / `is-empty` only once a query has
+  an answer: style the "Products" heading and "View all results" region from `has-products`, the "nothing found"
+  text from `is-empty`, never from the field being filled.
 - **Store credit's empty state.** `store-credit` stays on the page with a zero balance; the "no credit yet" state
   is `customer-condition="no-store-credit"`, the card with a balance `has-store-credit`.
 - **Policies are Shopify's HTML.** `policy="refund|terms|privacy|shipping"` writes the policy's HTML from the

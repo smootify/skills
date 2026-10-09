@@ -15077,6 +15077,28 @@
         "source": "v2/src/domain/cart-lines.ts:83"
       },
       {
+        "name": "`Recipient name`",
+        "names": [
+          "Recipient name"
+        ],
+        "field": "text",
+        "required": false,
+        "requiredNote": "",
+        "does": "gift card: the recipient's name, in the email Shopify sends with the card (with a filled `Recipient email`)",
+        "source": "v2/src/domain/cart-lines.ts:83"
+      },
+      {
+        "name": "`Message`",
+        "names": [
+          "Message"
+        ],
+        "field": "text or textarea",
+        "required": false,
+        "requiredNote": "",
+        "does": "gift card: the message in that email",
+        "source": "v2/src/domain/cart-lines.ts:83"
+      },
+      {
         "name": "`Send on`",
         "names": [
           "Send on"

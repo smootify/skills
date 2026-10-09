@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.19
+
+- The catalogue follows the 2.0 contract of 2026-10-09 evening: the predictive search's host classes (`has-query`, `has-suggestions`, `has-products`, `is-empty`, `without-initial-state`) and the gift card's `Recipient name` and `Message` fields.
+- The annotator and the builder place the predictive search's "Products" and "View all results" in a region shown only with `has-products`, and the gift card's recipient fields (`Recipient email`, `Recipient name`, `Message`, `Send on`) as ordinary fields of the add to cart, repeated in a preview with `form-value`.
+
 ## 2.0.0-beta.18
 
 From everything the builder had to ask during the first demo store build, the 140 review notes on the starter and the demo store, and the earlier build, review and QA reports.

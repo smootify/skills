@@ -580,6 +580,8 @@ Non legge campi: the submit starts the Customer Accounts login.
 - `sellingPlanId` — radio or select (written by `subscription-swatches`) — the selling plan of the line
 - `option1`, `option2`, `option3` — select — a bare `select[name="optionN"]` picks that option; never a line property
 - `Recipient email` — email — gift card: Shopify sends the card to this address
+- `Recipient name` — text — gift card: the recipient's name, in the email Shopify sends with the card (with a filled `Recipient email`)
+- `Message` — text or textarea — gift card: the message in that email
 - `Send on` — date — gift card: the day the card is sent (Smootify sets today as the minimum)
 - `buy-now` (submit button) — button — the line goes straight to checkout
 - any Name on a field of an add-on widget (`addon-checkbox`, `addon-select`, `addon-dropdown`, `addon-popover`, `addon-swatches`, the add-on's `quantity-input`) — any — never a property of the main line, whatever the Name (Webflow needs one). From mount the widget names its fields `##ignore-addon`, left out of the line; once the add-on's product loads they get the names of the add-on line (2.0)

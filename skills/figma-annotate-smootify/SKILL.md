@@ -545,6 +545,13 @@ Each one broke a build or came back as a review note.
   page with `smootify-product data-id=<Shopify ID>`, and every link points there, never to `/products/<handle>`.
 - **Grids fed by the CMS leave out what is not sold on its own** (gift cards, add-on products, Shopify's
   `frontpage` collection) unless the page is about it.
+- **The predictive search's results have their own state.** `smootify-search` gets `has-products` or `is-empty`
+  only once a query has an answer (neither while the field is empty or the answer is pending): the "Products"
+  heading and "View all results" go in a region shown only with `has-products`, the "nothing found" text in one
+  shown only with `is-empty`.
+- **A gift card offers its recipient fields.** On a gift card product, the fields Shopify sends the card with are
+  ordinary fields of `smootify-add-to-cart` named `Recipient email`, `Recipient name`, `Message` and `Send on`;
+  annotate those the design draws, and a preview that repeats them with `form-value`.
 - **`filter="active-count"` can count the searched text too**: place it with the Filters button, never as a bare
   number beside the results line.
 - **`option="image"` needs an image on each value in the store** (the native swatch image or the option
