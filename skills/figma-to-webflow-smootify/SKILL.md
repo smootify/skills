@@ -146,7 +146,8 @@ Before Phase 4, verify every `@bind` on a component's descendants references a p
 | `FormButton` | `type: "FormButton"` | Submit button |
 | `FormBlockLabel` | `type: "FormBlockLabel"` | Field label |
 
-**Form elements can be built with `element_builder`. Form submission configuration (email notification, redirect, etc.) remains manual.**
+**Form elements can be built with `element_builder`.** A form's redirect is `set_settings` key `redirect` on the
+form (`FormForm`, value `/newsletter-confirmed`); the email notification stays manual.
 
 ### Element Type Fallback (when `@element` is absent)
 
@@ -322,8 +323,37 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
 - **Class names.** Name classes from the component and the role (`sm-` library classes for shared parts such as
   buttons), never from a layer's sample text or another language.
 - **What the MCP cannot do**, so it goes to the person, in the report, with the page and the element:
-  redirects, deleting pages, placeholders and select options, `type="date"` on inputs, the Current state of
+  site redirects, deleting pages, placeholders of native fields, `type="date"` on inputs, the Current state of
   links and tabs, copying a design into the 404 utility page, publishing.
+- **Every empty state is built.** The annotation lists the empty states (cart, search, collection and filters,
+  orders, addresses, subscriptions, store credit, wishlist, gift lists, recently viewed, a day with no slot, 404).
+  Build each one with its condition, and check it on the published page with the state forced (an empty cart, a
+  customer with no orders). If one has no design, do not leave the section blank: use the site's Empty state
+  component, say so in the report, and ask the person to approve it.
+- **System pages first.** The 404 (and the other utility pages the design draws) goes in the plan with the first
+  pages, not at the end: while pages are missing, every link to them lands on it, and on a theme that is not a
+  starter it must be the designed one, not Webflow's default.
+- **Required fields are `data-required`.** Webflow strips a custom `required` attribute, so a Field or Checkbox
+  component carries `data-required="True"` / `"False"` (a prop), and Smootify makes the field required in every
+  form of the page. Do not replace the component with a native input to get `required`.
+- **An `edit-address` without the country select is a "Set as default" form.** It sends only the address id and
+  `defaultAddress`, and the address stays as it is. The country and zone selects are required only in a form that
+  edits the address: do not add them, hidden, to a "Set as default" button.
+- **The search page has three states.** `[search="no-query"]` before a search (suggestions, popular searches),
+  `[search="with-query"]` once there is one (the "Results for …" line and the results), `[search="empty-state"]`
+  when it finds nothing; the host gets `has-query` and `is-empty`. Outside `with-query`, `search="query"` has no
+  query to write and keeps its text: the line that shows it goes inside `with-query`. The field can be
+  `input[type=search]`; its Clear is a `button type="reset"`, and the browser's own clear icon is hidden in the
+  site CSS when the design draws one.
+- **Store credit's empty state.** `store-credit` stays on the page with a zero balance; the "no credit yet" state
+  is `customer-condition="no-store-credit"`, the card with a balance `has-store-credit`.
+- **Policies are Shopify's HTML.** `policy="refund|terms|privacy|shipping"` writes the policy's HTML from the
+  admin: style its `h2`, `p` and `ul` with descendant selectors in the site custom code (the style API cannot write
+  them). Numbering the sections as the design draws them is a CSS counter, only on a policy the merchant wrote:
+  Shopify's automatic privacy policy has its own headings.
+- **The consent preferences button hides while the banner shows.** `button[data-is="preferences-button"]` is
+  hidden while the cookie banner is on screen and shows once the shopper has chosen: that is how it works, not a
+  bug to fix.
 
 ## Webflow rules the build must apply
 
@@ -341,13 +371,30 @@ Also from the starter build: each of these broke something before it was known.
   `.w-radio` / `.w-checkbox` a left padding and a float. Where a field sits in a row with a button (discount code,
   search, newsletter) or in a card, reset them on the field's class, or the row comes out taller than the field
   and the button no longer lines up.
+- **A DOM `button` keeps the browser's look.** A Custom element `button` (a consent action, a text link that is a
+  button, a toggle) starts with the browser's grey background, border and padding. Reset them on its class
+  (`background-color: transparent`, `border: 0`, `padding: 0`, `font: inherit`, `color: inherit`) unless the design
+  draws them, or a light text lands on a light background.
 - **Required fields on a shared template.** A required field in a block a condition hides (`if-metafield`, Webflow's
   conditional visibility) does not count while hidden; one hidden by CSS or `display: none` still blocks the form.
   On a product template that every product shares, hide such blocks with a condition only.
 - **Templates Smootify repeats are Webflow's own elements.** A radio Smootify copies (a subscription plan, a
-  configurator choice) is Webflow's Radio Button (`w-radio` with its Field Label), never a Div with a custom input:
-  the custom one is not repeated and its value never reaches the cart. Keep the design's classes on the Radio
-  Button and reset Webflow's offsets (see the form defaults above).
+  configurator choice, a `dynamic-property` with choices) is Webflow's Radio Button (`w-radio` with its Field Label),
+  never a Div with a custom input: the custom one is not repeated and its value never reaches the cart. A
+  `dynamic-property` checkbox is Webflow's Checkbox (`w-checkbox`). Never wrap the input in a `label` of your own:
+  Smootify writes the property's title into every plain `label` inside a `dynamic-property`, so a label that holds
+  the input is emptied and the element removes itself. Titles and help texts go in a div or in a Field Label with no
+  input inside. These Webflow elements live only inside a Form, so place them in the page's Form of
+  `smootify-add-to-cart`, not in a component. Keep the design's classes on them and reset Webflow's offsets (see the
+  form defaults above).
+- **Everything in a repeated copy follows the same state.** In a template Smootify repeats per value (`option-values`,
+  a swatch, a cart line), an element Smootify hides for one value (an `[option-metafield]` with no data gets
+  `w-condition-invisible`) does not hide its siblings. When a row only makes sense with that data (a "next batch"
+  note and its "Join the waitlist" link), hide the whole row with the state, for example
+  `.row:has(> [option-metafield].w-condition-invisible) { display: none; }` in the component's styles.
+- **No image without a source.** An image bound to a component prop ships `src=""` when the prop is left empty on an
+  instance: give every image prop a default, set it on each instance, and before the report look for `img[src=""]`
+  in the published pages. A decorative icon keeps `alt=""`, a picture that means something gets its alt.
 - **Error states carry a text.** Smootify blocks an invalid configurator field without the browser's message: build
   each `error-message` the design draws, with the field's limits, and the `is-invalid` style on the field.
 - **Reserved attributes.** `id`, `type`, `placeholder`, `value`, `checked` and `disabled` cannot be set as
@@ -362,8 +409,22 @@ Also from the starter build: each of these broke something before it was known.
 - **Not as styles**: a CSS custom property (`--metafield-rating`) and a variable in `accent-color` are refused.
   Put the first in the site custom code, write the second as a literal colour.
 - **The Designer canvas is not the site.** It does not load the site custom code, draws `details` closed, keeps
-  old snapshots after changes made headless, and cannot reach utility pages. Check states, panels and breakpoints
-  in Preview, and say in the report what you could only check from the data.
+  old snapshots after changes made headless, and cannot reach utility pages. Styles created or updated through the
+  data API (`create_style`, `update_style`) are saved and publish, but a Designer already open does not load them:
+  the new classes vanish from its canvas and changes to existing ones do not show until the person reloads it.
+  Measure only classes the canvas already had; check everything else on the published staging, and say in the
+  report what you could only check from the data.
+- **A variant's size comes from all its instances.** Before giving a component variant an `aspect-ratio` or a
+  height, look at every instance of that variant in the file: a ratio taken from one frame (a card 221 px wide on
+  the tablet home) is wrong where the same variant is 432 px wide. When the image keeps one height at every width,
+  the rule is that height.
+- **A state border over a picture goes on `::after`.** A button with a border and a full-bleed image inside shows
+  the border only where there is no image: draw the selected border on an `::after` with `inset: 0` in the
+  component's styles (a swatch with a photo).
+- **Images are the picture alone, at 2x.** Export the image fill of the picture's rectangle, never the whole card
+  (photo, band and text), or the text comes back wherever the image is reused. `get_screenshot` does not go past
+  the node's size: for a 2x export, add a temporary rectangle with the same fill at twice the size, take the
+  screenshot, delete the rectangle. Product and collection pictures stay in Shopify.
 
 ## Workflow
 
@@ -377,6 +438,11 @@ every page. Without it nothing works on the published site, and no check of the 
   `collections`, `vendors`).
 - `set_site_freeform_code` replaces the whole block: write back what was there, plus the loader. The site rules
   of *Webflow rules the build must apply* go in the same block, after it.
+- **Customer accounts need the store's Customer Account API client id.** When the design has anything for
+  logged-in customers (sign in, account pages, orders, addresses, profile, store credit, entries a customer owns),
+  ask the person for it before building those parts, and put it in the options script as
+  `newCustomerAccountsPublicKey`. Without it Smootify turns off the login and every account element, so the account
+  pages come out empty and nothing in the Designer shows why.
 - If the person gives you another install (a test site that loads a local build), use theirs and say so in the
   report.
 - After the first publish, check the page source for the line: it is the first thing to look at when a page
@@ -470,9 +536,13 @@ If there are nested or repeated (sibling) components:
 | `element_builder`'s `settings[].binding` doesn't reliably pre-apply on built-in element types (Image, Paragraph, Heading, etc.) at creation time | Create the element first (style/text/attributes only), look up its id via `get_all_elements`, then bind with a follow-up `set_settings` call |
 | Conditional visibility (show/hide by variant) can be neither read nor written via MCP | Don't use conditionals — build a second component instead |
 | `element_builder` with nested `children[]` doesn't return per-child element ids in the creation response | Follow up with `get_all_elements` (`scope_component_id`, `depth: -1`) to resolve every child's id before binding or further edits |
-| `set_text` inside `children[]` is ignored — children are created with Webflow's placeholder text | Set the text after creation, then read it back: do not assume it took |
+| `set_text` and `set_link` inside `children[]` are ignored — children are created with Webflow's placeholder text and no link | Set them after creation, then read them back: do not assume they took. A top-level Button takes both |
+| `set_style` on an element inside a component answers "styles not found" when its classes form a combo that does not exist yet, even if each class exists | Create the combo first (`parent_style_names`), then apply it |
+| `remove_properties` and `properties` on the same property in one call: the removal wins | To replace a value pass only `properties` |
+| A FormSelect has no setting for its options | A DOM `select` with DOM `option` children: `set_attributes` for each `value`, `set_settings` `text` for the label |
+| An instance cannot be the anchor of `before` / `after` (`insert_component_instance`, `data_element_builder`) | `prepend` / `append` in the parent, or anchor on a plain element next to it |
 | Slots cannot be placed inside a Form, and an instance cannot be detached on a template | A second component for each layout of the form (see *Component Decision Rules*) |
-| No tool for redirects, deleting pages, noindex, placeholders, FormSelect options, `type="date"`, the Current state, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
+| No tool for site redirects, deleting pages, noindex, placeholders, `type="date"`, the Current state, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
 | A form field's Name written through the API does not reach the published HTML (it still publishes `field-N`) | Set every Name in the Designer's settings panel, through Claude in Chrome, and check it on the published page |
 | `bulk_update_pages` answers ok and changes nothing | `update_page_settings`, one page at a time |
 | `unlink_component_instance` is refused by the permission system | Do not work around it: build what the instance should contain another way (a second component) |

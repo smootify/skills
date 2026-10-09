@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.0-beta.17
+
+From the first build of a demo store from its Figma (Millimetro), with Smootify 2.0 running.
+
+- Empty states are required: the annotator lists each one (cart, search, collection and filters, orders, addresses, subscriptions, store credit, wishlist, gift lists, recently viewed, a day with no slot, 404) as an open question before the build when the design lacks it, and the builder builds and checks every one, with the site's Empty state component as a fallback the person approves.
+- More usability checks for the annotator: a breadcrumb has at least one link or it is not there; a label promises only what the control does; texts that come from the store are written for the shopper; every page has a link that leads to it and every anchor exists; emails and phones are `mailto:` / `tel:` links; a difference written in a note is a prop; dynamic text never sits inside a text prop; layout choices are drawn, not noted; an image is the fill of its rectangle, never an export of the card around it; a popover inside a repeated template is a `details` / `summary`.
+- The builder asks for the store's Customer Account API client id (`newCustomerAccountsPublicKey`) when the design has account parts, builds the 404 and the other system pages first, resets the browser's look on DOM buttons, builds dynamic-property choices as Webflow Radio and Checkbox elements in the page's Form, hides a whole repeated row with the state of its data, and never ships an image without a source.
+- Smootify rules for the builder: `data-required` for required fields (Webflow strips `required`), an `edit-address` without the country select as a "Set as default" form, the three states of the search page, the store credit's empty state, Shopify's policy HTML styled in the site CSS, the consent preferences button hidden while the banner shows.
+- Webflow and MCP facts for the builder: styles written through the data API do not show in an open Designer until it is reloaded; an instance cannot anchor `before` / `after`; `set_link` in `children[]` is ignored; a combo class must exist before `set_style`; a form's redirect and a select's options can be written; a duplicated page keeps its element ids; a variant's size comes from all its instances; a state border over a picture goes on `::after`; images exported at 2x.
+- `smootify-iterate` reads the Smootify script, the failed requests and the kind of element from Studio's notes.
+- The catalogue follows the 2.0 contract of 2026-10-09: `form-value`, `configurator-price` and `configurator-formula` with `data-fallback`, `data-required` in every form, name your price not on gift cards, `variant="id"`, the order page for a logged-out customer, `has-store-credit` / `no-store-credit`, "Set as default" on an address, the search page's `search="no-query"` / `"with-query"` and `has-query`, `input[type=search]`.
+
 ## 2.0.0-beta.16
 
 - New skill, `smootify-iterate`: answers the review notes that Smootify Studio's Iterate collects on a published site. For each note it reads the published page and the site in Webflow first, checks the element against Smootify's documentation and MCP, fixes the site when the site is the cause, and writes back into the note the cause (`site`, `runtime`, `annotate-skill`, `build-skill` or `missing-feature`) with a confidence from 0 to 1. It works only from public sources, is cautious before blaming Smootify or a skill, never publishes and never works around a Smootify bug on the site. The note format stays Studio's, in the site's `notes/README.md`.

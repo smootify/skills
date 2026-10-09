@@ -343,6 +343,12 @@
 					"note": "The product page on this variant"
 				},
 				{
+					"label": "Variant id",
+					"value": "id",
+					"on": ["input", "text"],
+					"note": "The variant chosen at that moment: in an input its id as the value, sent by a form inside the product (an alert for the Walnut top); elsewhere its number"
+				},
+				{
 					"label": "Bundle components",
 					"value": "components",
 					"on": ["container"],
@@ -1236,8 +1242,68 @@
 					"name": "data-fallback",
 					"placeholder": "there",
 					"on": ["any"],
-					"with": ["[product]", "[variant]", "[customer]", "[company]", "[order]", "[line-item]", "[subscription]", "[address]", "[cart-item]", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]"],
+					"with": ["[product]", "[variant]", "[customer]", "[company]", "[order]", "[line-item]", "[subscription]", "[address]", "[cart]", "[cart-item]", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]", "[form-value]", "[configurator-price]", "[configurator-formula]"],
 					"note": "Shown when the value is missing, instead of an empty or removed element: Hi, there"
+				}
+			]
+		},
+		{
+			"id": "form-field",
+			"label": "Form field",
+			"inside": [],
+			"items": [
+				{
+					"label": "Required (component prop)",
+					"name": "data-required",
+					"placeholder": "True",
+					"on": ["input"],
+					"note": "In any form of the page (a Smootify form or a plain Webflow form): the field is required like with required, which Webflow drops when bound to a component prop. True or empty: required; False: not"
+				}
+			]
+		},
+		{
+			"id": "form-values",
+			"label": "Form values in the page",
+			"inside": ["smootify-product"],
+			"items": [
+				{
+					"label": "Field value",
+					"name": "form-value",
+					"placeholder": "Recipient name",
+					"on": ["text"],
+					"note": "What the customer gave that field of the add-to-cart (configurator field or dynamic property), as they type; the field's Name in Webflow"
+				},
+				{
+					"label": "Formula variable",
+					"name": "data-variable",
+					"placeholder": "length",
+					"with": ["[form-value]"],
+					"note": "The value a configurator formula reads instead: length, file, a measure"
+				},
+				{
+					"label": "Configurator price",
+					"name": "configurator-price",
+					"placeholder": "total",
+					"on": ["text"],
+					"note": "base (the variant's price), total (the configured price) or a field's Name (what it adds)"
+				},
+				{
+					"label": "Configurator calculation",
+					"name": "configurator-formula",
+					"placeholder": "Width * Depth / 10000",
+					"on": ["text"],
+					"note": "A calculation on the configurator's values, data-digits decimals (2)"
+				},
+				{
+					"label": "If the field counts",
+					"name": "if-configurator",
+					"placeholder": "Engraving",
+					"note": "Shown only while that configurator field counts in the price"
+				},
+				{
+					"label": "Unless the field counts",
+					"name": "unless-configurator",
+					"placeholder": "Engraving"
 				}
 			]
 		},
@@ -1491,6 +1557,27 @@
 				{
 					"label": "Previous page",
 					"value": "prev"
+				}
+			]
+		},
+		{
+			"id": "metaobject-actions",
+			"label": "Metaobject form buttons",
+			"inside": ["metaobject-creator", "metaobject-editor"],
+			"name": "data-action",
+			"on": ["button"],
+			"items": [
+				{
+					"label": "Share the new entry",
+					"value": "share",
+					"inside": ["metaobject-creator"],
+					"note": "In the form's success state: shares the created entry's link (the device's share sheet, else copied); data-copy always copies, data-title titles the share"
+				},
+				{
+					"label": "Delete the entry",
+					"value": "delete",
+					"inside": ["metaobject-editor"],
+					"note": "Deletes the entry its owner is editing; data-confirm asks first, data-redirect goes there after"
 				}
 			]
 		},
@@ -2352,7 +2439,20 @@
 				{
 					"label": "Empty state",
 					"value": "empty-state",
-					"on": ["container"]
+					"on": ["container"],
+					"note": "A search without results; not before a search"
+				},
+				{
+					"label": "Before a search",
+					"value": "no-query",
+					"on": ["container"],
+					"note": "Shown while there is no query: what are you looking for, suggestions"
+				},
+				{
+					"label": "With a search",
+					"value": "with-query",
+					"on": ["container"],
+					"note": "Shown while there is a query: the results row"
 				}
 			]
 		},
@@ -3200,6 +3300,14 @@
 				{
 					"label": "Has no subscriptions",
 					"value": "no-subscriptions"
+				},
+				{
+					"label": "Has store credit",
+					"value": "has-store-credit"
+				},
+				{
+					"label": "Has no store credit",
+					"value": "no-store-credit"
 				},
 				{
 					"label": "Subscribed to emails",

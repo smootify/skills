@@ -25,7 +25,9 @@ through the Webflow MCP. They are no longer manual: build them like any other di
 
 | What | Calls |
 |---|---|
-| An instance on a page | `insert_component_instance` with the `pageId` (works headless). **`after` an instance is rejected**: insert `before` the next sibling, or `prepend` / `append` in the parent |
+| An instance on a page | `insert_component_instance` with the `pageId` (works headless). **An instance cannot be the anchor** of `before` or `after`: anchor on a plain element, or `prepend` / `append` in the parent |
+| A page like one that exists | `create_page` with `duplicateOf`, then remove the sections it does not need: the copy keeps the source's element ids, so the ids you already know work on it |
+| A form's redirect | `set_settings` key `redirect` on the `FormForm` (`/newsletter-confirmed`) |
 | An instance inside a component | `insert_component_instance` with `scope_component_id` |
 | A prop value or a CMS binding on a page instance | `set_component_instance_prop_values` |
 | The site's custom code | `get_site_freeform_code`, then `set_site_freeform_code` with the **whole** block: it replaces what was there |

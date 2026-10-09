@@ -1,6 +1,6 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-08",
+  "generatedAt": "2026-10-09",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
     "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0)",
@@ -2431,7 +2431,7 @@
       "outsideContext": {
         "effect": "removed",
         "debugger": false,
-        "detail": "no form or selects; outside a row nothing is prefilled"
+        "detail": "no form or selects; outside a row nothing is prefilled. 2.0: without the country select it is a \"Set as default\" form (a hidden defaultAddress input with value=\"true\", a submit): it needs no selects and sends only the default, the address stays as it is"
       },
       "requires": {
         "plan": null,
@@ -3653,7 +3653,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Lets the customer type the unit price the product is added at.",
+      "purpose": "Lets the customer type the unit price the product is added at. 2.0: not on a gift card product (Shopify issues the card for its variant's value whatever was paid): there it removes itself, and no price source (the configurator's either) changes a gift card's price.",
       "source": "v2/src/components/server-extensions/name-your-price-element.ts:12",
       "section": "Server extensions (plan server)",
       "context": {
@@ -3672,7 +3672,7 @@
       "outsideContext": {
         "effect": "removed",
         "debugger": false,
-        "detail": "also without a smootify-product ancestor"
+        "detail": "also without a smootify-product ancestor, or on a gift card product"
       },
       "requires": {
         "plan": "server",
@@ -3787,7 +3787,7 @@
       "outsideContext": {
         "effect": "inert",
         "debugger": false,
-        "detail": "goes to / without ?id, a session or the order"
+        "detail": "logged in, goes to / without ?id or the order; logged out on an account page the access rule decides (accountPageRedirectTo, the login comes back to the order), elsewhere /"
       },
       "requires": {
         "plan": null,
@@ -5405,7 +5405,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Full search results page driven by the query in the url or its text inputs, with count and pagination.",
+      "purpose": "Full search results page driven by the query in the url or its text inputs (2.0: type=\"search\" too), filled with the query, with count and pagination.",
       "source": "v2/src/components/search-discovery/search-page-element.ts:14",
       "section": "Search page and predictive search",
       "context": {
@@ -5783,7 +5783,7 @@
       "outsideContext": {
         "effect": "removed",
         "debugger": true,
-        "detail": "without Customer Accounts, a session or a credit account"
+        "detail": "without Customer Accounts or a session; 2.0: without a credit account a zero balance and no transactions (1.x: removed), with body.has-store-credit / .no-store-credit"
       },
       "requires": {
         "plan": null,
@@ -6816,11 +6816,13 @@
       "has-addresses",
       "has-names",
       "has-orders",
+      "has-store-credit",
       "has-subscriptions",
       "logged-in",
       "no-addresses",
       "no-names",
       "no-orders",
+      "no-store-credit",
       "no-subscriptions",
       "not-logged-in"
     ],
@@ -6832,6 +6834,7 @@
       "continue",
       "coupon",
       "decline",
+      "delete",
       "gift-card",
       "load",
       "load-in-view",
@@ -6846,7 +6849,8 @@
       "prev",
       "previous",
       "remove",
-      "save"
+      "save",
+      "share"
     ],
     "data-prop": [
       "compareAtPrice",
@@ -7067,6 +7071,7 @@
       "count",
       "empty-state",
       "image",
+      "no-query",
       "price",
       "query",
       "search-page",
@@ -7074,7 +7079,8 @@
       "title",
       "type",
       "url",
-      "vendor"
+      "vendor",
+      "with-query"
     ],
     "selected-option": [
       "bg-color",
@@ -7148,6 +7154,7 @@
       "components",
       "discount-percentage",
       "discounted-amount",
+      "id",
       "image",
       "number",
       "option1-name",
@@ -7968,6 +7975,22 @@
         "link"
       ],
       "note": "The product page on this variant"
+    },
+    {
+      "kind": "attribute",
+      "group": "variant",
+      "name": "variant",
+      "value": "id",
+      "inside": [
+        "smootify-product",
+        "smootify-variant",
+        "box-item"
+      ],
+      "on": [
+        "input",
+        "text"
+      ],
+      "note": "The variant chosen at that moment: in an input its id as the value, sent by a form inside the product (an alert for the Walnut top); elsewhere its number"
     },
     {
       "kind": "attribute",
@@ -9801,13 +9824,102 @@
         "[line-item]",
         "[subscription]",
         "[address]",
+        "[cart]",
         "[cart-item]",
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[form-value]",
+        "[configurator-price]",
+        "[configurator-formula]"
       ],
       "note": "Shown when the value is missing, instead of an empty or removed element: Hi, there"
+    },
+    {
+      "kind": "attribute",
+      "group": "form-field",
+      "name": "data-required",
+      "placeholder": "True",
+      "inside": [],
+      "on": [
+        "input"
+      ],
+      "note": "In any form of the page (a Smootify form or a plain Webflow form): the field is required like with required, which Webflow drops when bound to a component prop. True or empty: required; False: not"
+    },
+    {
+      "kind": "attribute",
+      "group": "form-values",
+      "name": "form-value",
+      "placeholder": "Recipient name",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "What the customer gave that field of the add-to-cart (configurator field or dynamic property), as they type; the field's Name in Webflow"
+    },
+    {
+      "kind": "attribute",
+      "group": "form-values",
+      "name": "data-variable",
+      "placeholder": "length",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": null,
+      "with": [
+        "[form-value]"
+      ],
+      "note": "The value a configurator formula reads instead: length, file, a measure"
+    },
+    {
+      "kind": "attribute",
+      "group": "form-values",
+      "name": "configurator-price",
+      "placeholder": "total",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "base (the variant's price), total (the configured price) or a field's Name (what it adds)"
+    },
+    {
+      "kind": "attribute",
+      "group": "form-values",
+      "name": "configurator-formula",
+      "placeholder": "Width * Depth / 10000",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "A calculation on the configurator's values, data-digits decimals (2)"
+    },
+    {
+      "kind": "attribute",
+      "group": "form-values",
+      "name": "if-configurator",
+      "placeholder": "Engraving",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": null,
+      "note": "Shown only while that configurator field counts in the price"
+    },
+    {
+      "kind": "attribute",
+      "group": "form-values",
+      "name": "unless-configurator",
+      "placeholder": "Engraving",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": null
     },
     {
       "kind": "attribute",
@@ -10337,6 +10449,32 @@
       "on": [
         "button"
       ]
+    },
+    {
+      "kind": "attribute",
+      "group": "metaobject-actions",
+      "name": "data-action",
+      "value": "share",
+      "inside": [
+        "metaobject-creator"
+      ],
+      "on": [
+        "button"
+      ],
+      "note": "In the form's success state: shares the created entry's link (the device's share sheet, else copied); data-copy always copies, data-title titles the share"
+    },
+    {
+      "kind": "attribute",
+      "group": "metaobject-actions",
+      "name": "data-action",
+      "value": "delete",
+      "inside": [
+        "metaobject-editor"
+      ],
+      "on": [
+        "button"
+      ],
+      "note": "Deletes the entry its owner is editing; data-confirm asks first, data-redirect goes there after"
     },
     {
       "kind": "attribute",
@@ -12258,7 +12396,34 @@
       ],
       "on": [
         "container"
-      ]
+      ],
+      "note": "A search without results; not before a search"
+    },
+    {
+      "kind": "attribute",
+      "group": "search-page",
+      "name": "search",
+      "value": "no-query",
+      "inside": [
+        "smootify-search-page"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "Shown while there is no query: what are you looking for, suggestions"
+    },
+    {
+      "kind": "attribute",
+      "group": "search-page",
+      "name": "search",
+      "value": "with-query",
+      "inside": [
+        "smootify-search-page"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "Shown while there is a query: the results row"
     },
     {
       "kind": "attribute",
@@ -14015,6 +14180,22 @@
       "group": "customer",
       "name": "customer-condition",
       "value": "no-subscriptions",
+      "inside": [],
+      "on": null
+    },
+    {
+      "kind": "condition",
+      "group": "customer",
+      "name": "customer-condition",
+      "value": "has-store-credit",
+      "inside": [],
+      "on": null
+    },
+    {
+      "kind": "condition",
+      "group": "customer",
+      "name": "customer-condition",
+      "value": "no-store-credit",
       "inside": [],
       "on": null
     },

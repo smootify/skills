@@ -340,7 +340,8 @@ What a prop cannot drive, so annotate it differently:
 **Popovers inside a component.** A trigger and its panel are tied by an id, and a component placed twice would
 repeat it. Add `@prop: string Popover ID`, bind it with `@bind: attr:popovertarget = Popover ID` on the trigger
 and `@bind: domId = Popover ID` on the panel, and give each instance its own value with `@set`. Never ask about
-it again in the same file.
+it again in the same file. Inside a template Smootify repeats (an address card, a cart line) a popover would repeat
+its id in every copy: annotate a `details` > `summary` there, never a Popover.
 
 ## Step 4 — The Smootify markup inside each component
 
@@ -533,14 +534,26 @@ and what you would add. The person decides; the design keeps its style.
   results, wishlist items link to their page. Navbar, footer, breadcrumb, account nav and every button
   ("Shop now", "View all", "Continue shopping") have a destination. A card nobody can open is the first thing a
   shopper tries.
+- **A breadcrumb has at least one link, or it is not there.** One that holds only the current page ("Gift card")
+  leads nowhere: leave it out. On a template every product shares, the breadcrumb that starts from the product's
+  collection sits in a region shown only on products that have one (a gift card or a bookable service often has
+  none), and the trail matches what the page is: no "Desks /" above a visit.
 - **Every panel can be opened and closed.** A trigger, a close that is a real button, and the panel never covers
   the field or trigger that opened it.
 - **Every list has an empty state and every page a logged-out state.** A carousel, a review list, "Recently
   viewed", an empty cart or quote, a wishlist with nothing in it, an account page or a gift list for a visitor who
   is not logged in: annotate what shows, or that the section hides itself. A section with only a title and arrows,
   or a page with only the header and footer, is a failed check.
+- **Empty states are required, not suggestions.** Before the build, each of these has a drawn state, or one the
+  person approved in the report: the cart; search with no results; a collection or a filter with no products; the
+  account's orders, addresses, subscriptions and store credit (no orders, no addresses, € 0.00 with no movements);
+  a wishlist, a gift list, "Recently viewed"; a booking day with no free slot; the 404. Annotate each with its
+  condition (`customer-condition="no-orders"` / `"has-orders"`, `no-addresses`, `is-empty-cart`,
+  `filter="empty-state"`, `search="empty-state"`…), or with the section hiding itself where that is the design's
+  choice. One that is missing goes in the report's open questions, not among the suggestions, and the build does
+  not start on that page until it has an answer.
 - **What belongs to one state lives in that state's region.** "View all results for …" inside
-  `search-with-query`, a badge with a count only above zero, a "Sold out" label inside the sold-out condition.
+  `search-with-query` (on the search page `search="with-query"`), a badge with a count only above zero, a "Sold out" label inside the sold-out condition.
 - **Data the shopper expects to be theirs is not sample text.** A name, an order number, a total, a page count:
   find the attribute that fills it, or flag it.
 - **Every form can be sent and understood.** Each field has the Name Smootify reads, a label, and the type it
@@ -556,6 +569,29 @@ and what you would add. The person decides; the design keeps its style.
   the picture before Smootify loads. A slide or thumbnail with no image annotated is a failed check.
 - **Controls are what they look like.** A button is a button, a link is a link, an icon-only control has an
   accessible name, and images that carry meaning have alt text.
+- **A label promises only what the control does.** A link called "Edit" on a cart line that only opens the product
+  page, a "Change" that only links away: say in the report what the control really does and suggest a label that
+  says it, or that the control goes when another element already does the same (the line's title already links to
+  the product).
+- **Texts that come from the store are written for the shopper.** A dynamic property's title, an option name, a
+  metaobject field Smootify prints is what the shopper reads next to the field and on the order. Where the design
+  shows a technical name ("Confirm", "Quote no."), suggest the sentence the shopper should read ("I checked the
+  measurements") and note it as a store prerequisite, since the text lives in Shopify, not in Webflow.
+- **Every page can be reached and every anchor exists.** Each page has at least one link that leads to it (navbar,
+  footer, a card: an About nobody links is a page nobody finds), the footer has its legal links at every size,
+  and every link to an anchor (`/care-guide#engraving`) points to a section that carries that id.
+- **Contact details are links.** An email is a `mailto:` link, a phone a `tel:` link: annotate them as links, with
+  a link prop on the component when the same component also shows plain values.
+- **A difference written in a note is a prop.** "No number shown", "without the image": when a note describes
+  how one use differs from another, it is a boolean prop the person sets, not a note the build ignores.
+- **Dynamic text never sits inside a text prop.** A prop's text is static: a title such as "Nothing found for
+  “desk”" cannot hold the query. Keep the prop's text fixed and put the value in its own element (the line above
+  with `search="query"`).
+- **Layout choices are drawn, not noted.** A field at full width, a text aligned to the title without an empty
+  column, which accordion item starts open: draw them in the frame or set them with a prop, so the build reads
+  them. A layout intention left in a note comes back as a review note after the build.
+- **An image is its picture.** Annotate the image as the image fill of its rectangle, never an export of the card
+  around it (photo, band and text): reused elsewhere, the card export brings its text along.
 
 **Checkpoint 2.** Before writing, show the person the plan: per component its variants, props (with what each
 is bound to) and slots; per page what is placed and how it is connected; and every open question. Write after

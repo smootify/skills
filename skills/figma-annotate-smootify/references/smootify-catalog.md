@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-08.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-09.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -93,7 +93,7 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `smootify-product[data-id="wishlist"]` | Card template repeated once per saved product (the first one in the page); without a smootify-variant[data-product-id="wishlist"] also once per saved variant, as its product's card on that variant. A page opened from a wishlist-share link (?w=) shows that list instead of the visitor's, with body.is-shared-wishlist. | ovunque | — | resta inerte | "Wishlist" | `data-id` |
 | `smootify-search` | Predictive search: products and query suggestions as the customer types, in a Webflow Dropdown or a popover. The search field is input[name="query"]; without one, the only text field (2.0), whatever its Webflow Name, is named query (predictive-search-element.ts:35). A results popover (2.0) opens as the customer types, and also on a focus or click of the field, empty or not, so search-no-query shows its suggestions. | ovunque | uno fra `input[name="query"]`, `input[type="text"]`, `input[type="search"]`, `input:not([type])` | resta inerte | "Predictive Search" | `limit` |
 | `smootify-search-discovery` | Faceted product list: runs the search, renders the cards, active chips, count and pagination, and hosts the filter and sort widgets. | ovunque | `smootify-product` | si rimuove | "Search & discovery" | `data-wait`, `limit`, `auto-close-details`, `disable-scroll`, `disable-scroll-on-load-more`, `avoid-webflow-restart`, `hide-empty`, `hide-if-single`, `sync-query-params`, `page-range`, `animation`, `easing`, `duration`, `stagger`, `data-expand`, `data-collection`, `data-vendor`, `data-tag`, `unavailable-products`, `body`, `menu` |
-| `smootify-search-page` | Full search results page driven by the query in the url or its text inputs, with count and pagination. | ovunque | `smootify-product` | si rimuove | "Search" | `data-wait`, `limit`, `disable-scroll`, `disable-scroll-on-load-more`, `auto-close-details`, `avoid-webflow-restart`, `page-range`, `animation`, `easing`, `duration`, `stagger`, `unavailable-products` |
+| `smootify-search-page` | Full search results page driven by the query in the url or its text inputs (2.0: type="search" too), filled with the query, with count and pagination. | ovunque | `smootify-product` | si rimuove | "Search" | `data-wait`, `limit`, `disable-scroll`, `disable-scroll-on-load-more`, `auto-close-details`, `avoid-webflow-restart`, `page-range`, `animation`, `easing`, `duration`, `stagger`, `unavailable-products` |
 | `smootify-shop-pay` | Shows Shopify's Shop Pay button for the current variant or the cart lines. The button fills the element whatever the display of its class (2.0, v2/src/styles/skeleton.css:125): the element's width sizes the button. | `smootify-product` o `smootify-cart` | — | resta inerte | — | — |
 | `smootify-variant` | Repeats its block once per variant of a product. | ovunque | — | resta inerte | — | `data-product-id`, `unique-by` |
 | `smootify-variant[data-product-id="wishlist"]` | Variant card template (its .w-dyn-item, else itself) repeated once per saved variant (the first one in the page), with the smootify-variant markup; without a smootify-product[data-id="wishlist"] also once per saved product, as the card of its first available variant. | ovunque | — | resta inerte | "Wishlist" | `data-product-id` |
@@ -140,7 +140,7 @@ Presenti solo con il piano `server` (e l'estensione accesa); senza, vengono rimo
 | `file-uploader` | Uploads files to Shopify and adds their names, gids and admin links to the cart line. | `smootify-add-to-cart` o `dynamic-property` | — | resta inerte | piano server + "Product File Upload" | `name`, `data-multiple`, `data-required`, `data-preview`, `data-only-images`, `min-file-size`, `max-file-size`, `min-resolution`, `data-error-<code>` |
 | `metaobject-creator` | Creates a metaobject from a Webflow form: every filled field whose name does not start with _; a name the form repeats (a checkbox group with each checkbox's value, a multiple select) sends all its values; a lone checkbox sends true / false. The backend converts each value to its field type: rating from a number (the field's scale), list.* from repeated values, a comma separated text or a JSON array, boolean, number_decimal with a comma, url without https://, references from a numeric id, rich_text_field from lines (one paragraph each), money in the shop currency, date_time from datetime-local, dimension / volume / weight from "2.5 cm" (a select data-unit-for="<name>" gives the unit of that field, its own name is not sent); a value already in Shopify's format passes as it is. A definition without the publishable capability gets no status (data-draft is ignored there). The backend refuses Shopify's standard types (shopify--…), the app-reserved ones ($app:…) and Smootify's own (magic_box, combinations, dynamic_property, option), with the form error "This form cannot create entries of this metaobject type". customer-field="<key>": the entry belongs to the logged-in customer, written by the backend into that field (a customer reference) from the Customer Account token, never from the form; logged out the element is hidden and its form inert (is-customer while logged in), and a request without a valid token is refused ("Log in to send this form"). 2.0: with customer-field the backend also puts the entry, first, into the customer's metafield smootify.<type> (a list of references to that type, created the first time, at most 128: the oldest leave the list), which smootify-metaobjects[data-type="metafield.smootify.<type>"][data-parent-id="customer"] lists on the account pages. Once the entry is created: data-handle and is-created on the host, every a[data-handle-param="<param>"] inside (in the form's success state) links its page with ?<param>=<handle>, the page whose smootify-metaobject[data-handle-param] shows the entry (a gift list), and button[data-action="share"] shares that link: the device's share sheet where there is one, else it is copied (data-copy always copies, data-title titles the share), is-shared / is-copied on the button for two seconds. 2.0: input[type=number][data-quantity-for="<list key>"] beside each checkbox of that list (in the same product card) sends, under its own name, one JSON field {"<product id>": n} with the count of every checked product (at least 1; an unchecked one is left out), such as how many units a gift list asks for. | ovunque | `form` | si rimuove | piano server + "Metaobject creator" | `data-type`, `data-draft`, `customer-field`, `data-copy` |
 | `metaobject-editor` | 2.0: the logged-in customer edits or deletes an entry they own, one a metaobject-creator[customer-field] made (a gift list, a warranty registration). The entry is the one smootify-metaobject would show: data-handle-param (the page url's parameter), else data-id, else data-handle, with data-type. Its form is filled with the entry (v2/src/components/server-extensions/metaobject-editor.ts:34: a text its value, a lone checkbox true, the checkboxes of a list the values in it, a radio or a select its value, a data-quantity-for input its product's count, a file-input its saved files) and sends its fields as metaobject-creator does, as an update. Only the customer whose id is in customer-field gets is-owner and a working form; anyone else, or logged out, gets neither (hidden by skeleton.css, form inert), and the backend checks the token's customer against the entry again ("This entry belongs to another customer"); the customer field itself never changes. button[data-action="delete"] deletes the entry, after data-confirm="<question>" when set, and takes it out of the customer's smootify.<type> list; then is-deleted on the host (form inert) and data-redirect="<url>" goes there; a refusal shows in the form's .w-form-fail. | ovunque | `form` | si rimuove | piano server + "Metaobject creator" | `data-type`, `customer-field`, `data-handle-param`, `data-id`, `data-handle`, `data-confirm` |
-| `name-your-price` | Lets the customer type the unit price the product is added at. | `smootify-add-to-cart` | `input[type="number"]` | si rimuove | piano server + "Name your price" | `data-invalid-price` |
+| `name-your-price` | Lets the customer type the unit price the product is added at. 2.0: not on a gift card product (Shopify issues the card for its variant's value whatever was paid): there it removes itself, and no price source (the configurator's either) changes a gift card's price. | `smootify-add-to-cart` | `input[type="number"]` | si rimuove | piano server + "Name your price" | `data-invalid-price` |
 | `newsletter-subscribe` | Subscribes the email of a Webflow form to the newsletter. | ovunque | `form input[type="email"]` | si rimuove | piano server + "Newsletter Subscription" | `tags` |
 
 ## Tag marker (46)
@@ -285,13 +285,13 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `defaultAddress` · `display-name` · `email` · `first-name` · `last-name` · `phone` · `tags`
 
-### `customer-condition=…` (12)
+### `customer-condition=…` (14)
 
-`email-not-subscribed` · `email-subscribed` · `has-addresses` · `has-names` · `has-orders` · `has-subscriptions` · `logged-in` · `no-addresses` · `no-names` · `no-orders` · `no-subscriptions` · `not-logged-in`
+`email-not-subscribed` · `email-subscribed` · `has-addresses` · `has-names` · `has-orders` · `has-store-credit` · `has-subscriptions` · `logged-in` · `no-addresses` · `no-names` · `no-orders` · `no-store-credit` · `no-subscriptions` · `not-logged-in`
 
-### `data-action=…` (22)
+### `data-action=…` (24)
 
-`accept` · `buy-again` · `close` · `close-cart` · `continue` · `coupon` · `decline` · `gift-card` · `load` · `load-in-view` · `load-more` · `minus` · `next` · `open` · `open-cart` · `page` · `plus` · `preferences` · `prev` · `previous` · `remove` · `save`
+`accept` · `buy-again` · `close` · `close-cart` · `continue` · `coupon` · `decline` · `delete` · `gift-card` · `load` · `load-in-view` · `load-more` · `minus` · `next` · `open` · `open-cart` · `page` · `plus` · `preferences` · `prev` · `previous` · `remove` · `save` · `share`
 
 ### `data-prop=…` (22)
 
@@ -385,9 +385,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `body` · `description` · `handle` · `image` · `title` · `url`
 
-### `search=…` (13)
+### `search=…` (15)
 
-`collection` · `compare-at-price` · `count` · `empty-state` · `image` · `price` · `query` · `search-page` · `suggested-query` · `title` · `type` · `url` · `vendor`
+`collection` · `compare-at-price` · `count` · `empty-state` · `image` · `no-query` · `price` · `query` · `search-page` · `suggested-query` · `title` · `type` · `url` · `vendor` · `with-query`
 
 ### `selected-option=…` (5)
 
@@ -421,9 +421,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `dropzone` · `error` · `errors` · `item` · `list` · `name` · `preview` · `progress` · `remove` · `size`
 
-### `variant=…` (24)
+### `variant=…` (25)
 
-`barcode` · `components` · `discount-percentage` · `discounted-amount` · `image` · `number` · `option1-name` · `option1-value` · `option2-name` · `option2-value` · `option3-name` · `option3-value` · `quantity-increment` · `quantity-max` · `quantity-min` · `sku` · `stock` · `swatch1` · `swatch2` · `swatch3` · `title` · `unit-price` · `url` · `weight`
+`barcode` · `components` · `discount-percentage` · `discounted-amount` · `id` · `image` · `number` · `option1-name` · `option1-value` · `option2-name` · `option2-value` · `option3-name` · `option3-value` · `quantity-increment` · `quantity-max` · `quantity-min` · `sku` · `stock` · `swatch1` · `swatch2` · `swatch3` · `title` · `unit-price` · `url` · `weight`
 
 ### `wishlist=…` (1)
 

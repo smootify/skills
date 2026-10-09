@@ -20,8 +20,11 @@ time**: Studio owns it and may add fields. Do not rely on a memory of it. In sho
 - one note per file, `notes/<YYYY-MM-DD>/<id>.json`, with `<id>-element.png` (the element) and `<id>-window.png`
   (the whole window), and `<id>-after.png` once Studio has looked again after a fix;
 - what to read: `note`, `type`, `severity`, `url`, `window.device`, `publishedAt`, `element` (`selector`, `tag`,
-  `classes`, `attributes`, `text`, `html`, `rect`), `smootify` (the Smootify elements around it, nearest first),
-  `consoleErrors`, `replies`;
+  `classes`, `attributes`, `text`, `html`, `rect`, and `kind`: `"area"` for a zone the person dragged, with the
+  selectors it covers in `inside`, `"page"` for the whole page, absent for one element), `smootify` (the Smootify
+  elements around it, nearest first), `smootifyScript` (`version`: `"1.x"`, `"2.0"` or `null`, and the scripts the
+  page loads), `consoleErrors`, `failedRequests` (calls to Smootify or Shopify that failed in the two minutes
+  before the note: `url` without query string, `status`, `0` when nothing answered), `replies`;
 - what you write, and nothing else: `status`, `resolution` and a new entry in `replies`.
 
 If `notes/README.md` says something different from this list, the README wins.
@@ -49,7 +52,8 @@ Take the open notes one at a time, oldest first, and finish each one before the 
 1. **Read the note.** The text, the type and severity, the device it was taken on, both screenshots, the element and
    the Smootify elements around it, the console errors. A note that was reopened carries the reason in its last
    reply: start from there, not from your previous answer.
-2. **Look at the published page**, at the note's width, before anything else. Compare it with the screenshots. If
+2. **Look at the published page**, at the note's width, before anything else. A note on an area covers every
+   element in `inside`; a note on the page has no element, so read the window screenshot. Compare it with the screenshots. If
    `publishedAt` is older than the last change on the site, the note may describe an old version: check what is live
    now.
 3. **Check the site first.** Most notes are about how the site is built, not about Smootify. With the Webflow MCP,
@@ -81,7 +85,8 @@ Every answer names one cause and a confidence from 0 to 1:
 **Be very careful before blaming Smootify or a skill.** Most of the time Smootify works and the configuration is
 wrong. Something that looks like a bug is usually one of these:
 
-- the site loads the 1.x script while the markup is written for 2.0, or the other way round;
+- the site loads the 1.x script while the markup is written for 2.0, or the other way round: read
+  `smootifyScript.version` first (`null` means the page loads no Smootify script at all);
 - an attribute value that is not in the documentation, a typo, or a value on the wrong element;
 - an element outside the parent it needs, so Smootify removes it or ignores it;
 - a state that the design never styled (a combo class such as `is-active`, `is-invalid` or `is-disabled`);
@@ -95,7 +100,10 @@ Choose a cause other than `site` only when all of these hold:
 
 - the site's markup matches the documentation for that element, checked with the Smootify MCP or the docs;
 - the documentation says what should happen, and the page does something else;
-- you have ruled out the store's data and the published version.
+- you have ruled out the store's data and the published version;
+- `failedRequests` is empty, or you have checked what failed: a request with status `0`, a 401 or a 404 to
+  Smootify or Shopify usually means a page loaded mid-deploy, a missing token or a store setting, not a bug in the
+  script.
 
 How to set the confidence:
 
