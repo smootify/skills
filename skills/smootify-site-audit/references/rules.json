@@ -16701,7 +16701,8 @@
       "empty",
       "is-filtered",
       "has-pagination",
-      "has-page-numbers"
+      "has-page-numbers",
+      "is-single-result"
     ],
     "smootify-search-page": [
       "inited",
@@ -16709,7 +16710,8 @@
       "is-filtered",
       "has-pagination",
       "has-page-numbers",
-      "has-query"
+      "has-query",
+      "is-single-result"
     ]
   },
   "publicApi": [

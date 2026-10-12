@@ -453,8 +453,8 @@ Scritte da Smootify a runtime sull'host. Non vanno messe in `@style`: servono pe
 - `smootify-product` → `loaded`, `w-dyn-bind-empty`, `price-varies`, `is-variable`, `has-subscription`, `is-on-sale`, `is-free`, `is-available`, `is-not-available`, `not-existing-variant`, `is-currently-out-of-stock`, `many-in-stock`, `last-in-stock`, `low-stock`, `low-not-last-stock`, `is-new`
 - `smootify-variant` → `loaded`, `is-on-sale`, `is-available`, `is-not-available`, `last-in-stock`, `low-stock`, `not-existing-variant`
 - `smootify-cart` → `loaded`, `is-rendered`, `is-empty-cart`, `has-taxes`, `has-empty-quote`
-- `smootify-search-discovery` → `inited`, `empty`, `is-filtered`, `has-pagination`, `has-page-numbers`
-- `smootify-search-page` → `inited`, `is-empty`, `is-filtered`, `has-pagination`, `has-page-numbers`, `has-query`
+- `smootify-search-discovery` → `inited`, `empty`, `is-filtered`, `has-pagination`, `has-page-numbers`, `is-single-result`
+- `smootify-search-page` → `inited`, `is-empty`, `is-filtered`, `has-pagination`, `has-page-numbers`, `has-query`, `is-single-result`
 
 ## Campi dei form (41)
 
