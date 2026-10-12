@@ -403,6 +403,13 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
 - **The consent preferences button hides while the banner shows.** `button[data-is="preferences-button"]` is
   hidden while the cookie banner is on screen and shows once the shopper has chosen: that is how it works, not a
   bug to fix.
+- **Toasts are one global component.** `smootify-toasts` goes once per page, in a component that is on every page,
+  with a class that places it (position fixed and its offsets); each `[toast="…"]` template inside it is designed in
+  place (the Designer shows them, the published site hides them), with `[toast-item]` on the parts Smootify fills and
+  `button[data-action="close"]`. On a site without a mini cart, the `added-to-cart` template is what tells the
+  shopper the product is in the cart: build it when the design draws a toast, and its "View cart" is a link to the
+  cart page with `data-action="open-cart"`. Optional parts (`variant-title`) are hidden when empty: design the toast
+  so it holds without them.
 
 ## Webflow rules the build must apply
 

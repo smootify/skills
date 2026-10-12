@@ -2,28 +2,54 @@
 
 Use this map to find the right doc page for each topic.
 
-**The pages below describe 1.x until the new 2.0 docs are published.** Cite them for dashboard, Shopify and Webflow
-setup that did not change, and for 1.x sites; for 2.0 behaviour cite the glossary
-(`https://cdn.smootify.io/components-v2/glossary.json`), `rules.json`, or the storefront's `v2/CHANGELOG.md`,
-`v2/BREAKING-CHANGES.md`, `v2/MIGRATION.md`. Rows below note where a page no longer matches 2.0.
+**A 2.0 site: cite the 2.0 docs, `https://www.smootify.io/docs/…`.** Every page is fetchable as markdown by adding
+`.md` to its path (`https://www.smootify.io/docs/build/cart.md`), and `https://www.smootify.io/llms.txt` lists them
+all. Elements and attribute values have a page each: the `reference` URLs in `rules.json`.
 
-2.0 features with no doc page yet (cite the CHANGELOG section and the glossary / `rules.json`):
-- product gallery (`[product="gallery"]`, `[gallery=…]`)
-- popovers (Webflow's Popover or any `[popover]` opened by `button[popovertarget]`: mini cart, store availability, back in stock, filter and sort panels)
-- `smootify-consent` (the cookie banner built in Webflow)
-- upload markup (`[upload=…]`, the uploader for product file upload)
-- buy again (`[data-action="buy-again"]` in the account orders)
-- market suggestion (`[popover][data-is="market-dialog"]`)
-- analytics pixels (loaded with the visitor's consent)
-- JavaScript API (the 2.0 `window.Smootify` surface, `publicApi` and the events in `rules.json`)
-
-When citing a doc page in your response to the user, use the public URL: `https://docs.smootify.io{path}` (where `{path}` is shown below).
-
-If you need the raw markdown of a single page (for live fetch fallback), use: `https://docs.smootify.io/llms.mdx{path}/content.md`
-
-The complete docs are also available as a single markdown file at `https://docs.smootify.io/llms-full.txt`.
+**A 1.x site: cite `docs.smootify.io`**, the tables after the 2.0 one. When citing one of those pages, use
+`https://docs.smootify.io{path}`; its raw markdown is `https://docs.smootify.io/llms.mdx{path}/content.md`, and the
+whole set is `https://docs.smootify.io/llms-full.txt`.
 
 ---
+
+## Smootify 2.0 (www.smootify.io/docs)
+
+| Issue area or topic | Page |
+|---|---|
+| Install, the loader, the options script | `/docs/start/install`, `/docs/reference/options` |
+| What 2.0 removed, renamed or changed; URL defaults | `/docs/start/changes` |
+| Moving a 1.x site (accounts, loader, options, markup, scripts) | `/docs/start/migrate` |
+| What is new in 2.0 | `https://www.smootify.io/changelog/2-0` |
+| 1.x bugs 2.0 fixes (numbers that differ after the move) | `/docs/start/whats-fixed` |
+| The debugger | `/docs/start/debugger` |
+| Something does not work: where to start | `/docs/start/troubleshooting` |
+| CMS collections, sync, 404 on product / collection links | `/docs/start/cms`, `/docs/start/migrate` ("Set the options") |
+| Images, page weight, loading placeholders | `/docs/start/performance` |
+| Publish, domains, hand-off | `/docs/start/publish`, `/docs/start/domains`, `/docs/start/hand-off` |
+| Product page, add to cart, variant selectors | `/docs/build/product-page`, `/docs/build/swatches`, `/docs/build/variants-list` |
+| Product gallery (`[product="gallery"]`) | `/docs/build/product-gallery` |
+| Product cards and lists, related products | `/docs/build/product-cards`, `/docs/build/product-lists` |
+| Collection page, search & discovery, filters | `/docs/build/collection-page`, `/docs/build/filters` |
+| Search page, predictive search | `/docs/build/search-page`, `/docs/build/predictive-search` |
+| Cart, cart extras, upsells, gift cards | `/docs/build/cart`, `/docs/build/cart-extras`, `/docs/build/cart-upsells`, `/docs/build/gift-cards` |
+| Popovers (mini cart, panels) | `/docs/build/popovers` |
+| Navbar, markets switcher | `/docs/build/navbar`, `/docs/features/markets` |
+| Account, addresses, orders and buy again, subscriptions | `/docs/build/account`, `/docs/build/addresses`, `/docs/build/orders`, `/docs/build/account-subscriptions` |
+| Metafields, customer data | `/docs/build/metafields`, `/docs/build/customer-data` |
+| Cookie banner (`smootify-consent`) | `/docs/features/cookie-consent` |
+| Market suggestion | `/docs/features/market-suggestion` |
+| Analytics pixels | `/docs/features/analytics` |
+| Add-ons, Magic Box, configurator, file uploads, booking, metaobject creator | `/docs/features/add-ons`, `/docs/features/magic-box`, `/docs/features/product-configurator`, `/docs/features/file-uploads`, `/docs/features/booking`, `/docs/features/metaobject-creator` |
+| Wishlist, back in stock, store availability, quotes | `/docs/features/wishlist`, `/docs/features/back-in-stock`, `/docs/features/store-availability`, `/docs/features/quotes` |
+| JavaScript API, events, filters, custom scripts | `/docs/developers/javascript-api`, `/docs/developers/events`, `/docs/developers/filters`, `/docs/developers/scripts` |
+| CSS, state classes | `/docs/developers/css`, `/docs/reference/state-classes` |
+| Every element, attribute value and condition | `/docs/reference/elements`, `/docs/reference/attributes`, `/docs/reference/conditions` |
+
+---
+
+# Smootify 1.x (docs.smootify.io)
+
+The pages below describe 1.x. Rows note where a page no longer matches 2.0.
 
 ## Getting started
 
@@ -228,7 +254,7 @@ When the user has an issue in one of these areas, look in this section first:
 | Add to Cart not working | `/docs/ecommerce/products/add-to-cart` |
 | Cart page issues | `/docs/cart/cart-page` |
 | Mini Cart issues | `/docs/cart/mini-cart` |
-| Images not loading | `/docs/ecommerce/products/elements` (Specific Image; Images and Media are 1.x, deprecated in 2.0 → product gallery, CHANGELOG "`[product="gallery"]`") |
+| Images not loading | `/docs/ecommerce/products/elements` (Specific Image; Images and Media are 1.x, deprecated in 2.0 → the product gallery) |
 | Slow images / CDN | `/docs/ecommerce/products/elements` (Dynamic CDN Compression) |
 | 404 on product/collection links | `/docs/custom-code/js` (Options Customizer) |
 | Search returns nothing | `/docs/search-filters/search-and-discovery` or `/docs/search-filters/search-page` |
@@ -244,7 +270,7 @@ When the user has an issue in one of these areas, look in this section first:
 | Wishlist not saving | `/docs/ecommerce/add-ons` |
 | Bundles / Magic Box issues | `/docs/ecommerce/add-ons/magic-box` |
 | Dynamic pricing / configurator | `/docs/ecommerce/add-ons/product-configurator` |
-| Cookie consent / GDPR | 1.x: `/docs/analytics/cookie-consent`; 2.0: the `smootify-consent` block (`rules.json`) |
+| Cookie consent / GDPR | `/docs/analytics/cookie-consent` (2.0: `smootify-consent`, see the 2.0 table) |
 | Analytics tracking (GA, Meta) | `/docs/analytics/integrations` |
 | Custom JS / events | `/docs/custom-code/js/events` and `/docs/custom-code/js/api` |
 | Sync issues (products not appearing in Webflow) | `/docs/ecommerce/faqs` (Sync Issues section) |

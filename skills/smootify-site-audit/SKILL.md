@@ -20,34 +20,43 @@ When the **Smootify MCP** is connected (`https://mcp.smootify.io/mcp`, tools suc
 Use it instead of applying the rules by hand:
 
 - **Published URL:** `audit_site` (or `audit_page` per page). It covers the version, the options, the link bases,
-  the markup, the custom code, the pixels and the licence, with one finding per cause.
+  the markup, the custom code, the pixels and the licence, with one finding per cause. It takes its pages from
+  `sitemap.xml`, or without one from the links of the page you give it: check that it reached a product page, a
+  collection page and the cart, and pass the missing ones to `audit_page`.
 - **Webflow site in the Designer:** read the page tree with the Webflow MCP and pass it to `check_markup` as an
   `outline` (`{tag, type, attributes, children}`). For a component, pass it with `pastedInside`.
 - **Symptom only:** `diagnose` with the symptom and, when there is one, the page URL.
 - **Store questions** (metafields empty, swatches missing): `probe_storefront` on the product page.
 
-Report its findings as they are: severity, message, fix, where. Then apply the rules of this skill **only** to
-what the report lists under `coverage.notChecked`, and to the audit parts the MCP does not have yet: the runtime
-audit (B) and the account and extension usage. Without the MCP, apply everything below by hand.
+Report its findings as they are: severity, message, fix, where. Its `source` names the rule, not a page the user
+can open: cite `contract §1 <tag>` as the element's page (`reference` of that tag in `rules.json`,
+`https://www.smootify.io/docs/reference/elements/<tag>`), `glossary <group>` as
+`https://www.smootify.io/docs/reference/attributes/<group>` (conditions: `/docs/reference/conditions/<group>`), and
+MIGRATION / BREAKING-CHANGES / CHANGELOG as the public pages in principle 2. Then apply the rules of this skill
+**only** to what the report lists under `coverage.notChecked`, and to the audit parts the MCP does not have yet: the
+support checklist (images without CDN sizing, search & discovery limits…), the runtime audit (B) and the account and
+extension usage. Without the MCP, apply everything below by hand.
 
 ## Operating principles
 
 1. **Structure comes from `rules.json`.** `references/rules.json` is the authority on which tags exist, what
    each must be nested inside, and which attribute values are legal. Never invent a tag or an attribute: if it
    is not in `rules.json`, it does not exist.
-2. **Every claim about behaviour cites a source.** Until the new 2.0 docs are published,
-   `https://docs.smootify.io/` describes 1.x. So:
-   - for **2.0 behaviour** the references are the glossary
-     (`https://cdn.smootify.io/components-v2/glossary.json`), `references/rules.json`, and the storefront's
-     `v2/CHANGELOG.md`, `v2/BREAKING-CHANGES.md` and `v2/MIGRATION.md`; cite the glossary entry or the section
-     you relied on;
-   - **docs.smootify.io** only for what did not change: dashboard, Shopify and Webflow setup (CMS collections,
-     sync, domains, headless app, markets…), and for 1.x behaviour when the site runs 1.x. Each page is
-     fetchable as markdown at `https://docs.smootify.io/llms.mdx{path}/content.md` — e.g.
-     `/docs/ecommerce/products/elements` → `https://docs.smootify.io/llms.mdx/docs/ecommerce/products/elements/content.md`.
-     `references/doc-map.md` maps topics to paths and marks what changed in 2.0.
+2. **Every claim about behaviour cites a source the user can open.** For a 2.0 site:
+   - an element: its page, the `reference` of the tag in `rules.json`
+     (`https://www.smootify.io/docs/reference/elements/<tag>`); an attribute value: the `reference` of its entry in
+     `attributes` (`https://www.smootify.io/docs/reference/attributes/<group>`, conditions under
+     `/docs/reference/conditions/<group>`), or the glossary itself (`https://cdn.smootify.io/components-v2/glossary.json`);
+   - what 2.0 removed, renamed or changed: `https://www.smootify.io/docs/start/changes`; moving a 1.x site, the URL
+     defaults and the options: `https://www.smootify.io/docs/start/migrate`; what is new:
+     `https://www.smootify.io/changelog/2-0`; the debugger: `https://www.smootify.io/docs/start/debugger`; image
+     sizes and loading: `https://www.smootify.io/docs/start/performance`; everything else through
+     `references/doc-map.md`.
+   - Every page of `https://www.smootify.io/docs/` is fetchable as markdown by adding `.md` to its path
+     (`https://www.smootify.io/docs/start/changes.md`).
+   - **docs.smootify.io** describes 1.x: cite it only when the site runs 1.x.
 
-   Fetch, then explain, then cite. Do not paraphrase from memory.
+   Fetch, then explain, then cite. Do not paraphrase from memory, and never cite a file the user cannot open.
 3. **No general-knowledge fallback.** Do not answer Smootify questions from training knowledge about Webflow
    or Shopify. If none of the sources above covers it, say so and point to the Discord:
    `https://discord.com/invite/MKeQqEZmjd`.
@@ -102,6 +111,18 @@ can mention other versions (a local-build switch, a comment):
   judged against 1.x (cite docs.smootify.io).
 - Neither found → no Smootify script: that is the first blocker (support check 2), and the rest is "Not checked".
 
+Then two mismatches between the loader and the site, each **one blocker**, not a list of defects:
+
+- **2.0 markup on a 1.x loader.** The loader is `assets/latest` but the page carries markup only 2.0 knows: any
+  selector of `onlyIn2` in `rules.json` (`smootify-consent`, `[popover][data-is="market-dialog"]`,
+  `[product="gallery"]`, `booking-calendar`…). Report one error, "2.0 markup on the 1.x loader: switch the loader",
+  with what that markup does on 1.x today (a cookie banner designed in Webflow shown open next to Shopify's, a gallery
+  that stays empty…). The rest of the structural findings stay under "Moving to 2.0".
+- **Link bases that do not match the loader** (support check 2): 1.x builds `/product/…`, `/collection/…`,
+  `/vendor/…` links, 2.0 `/products/…`, `/collections/…`, `/vendors/…`. CMS pages on the other form, with no
+  `productsBase` / `collectionsBase` / `vendorsBase` in `SmootifyUserOptions`, mean every link Smootify writes is a
+  404. Count it once, whichever direction.
+
 ### A. Structural audit
 
 For every page that contains Smootify elements, check against `rules.json`:
@@ -118,7 +139,9 @@ For every page that contains Smootify elements, check against `rules.json`:
   `[policy]`, `button[data-is="direct-add-to-cart"]`, `selector: true`): match them as selectors.
 - **Required descendants.** `context.mustContain` must all be there (e.g. `smootify-add-to-cart` must contain a
   `form`), and one of `context.mustContainOneOf` (e.g. `variant-popover`: `[popover] a` or
-  `[popover] button:not([popovertarget])`). A missing one follows `outsideContext` too.
+  `[popover] button:not([popovertarget])`). `context.mustContainWhen` adds children only for one form of the
+  element: an `edit-address` with a `select[name="countryCode"]` also needs the zone select, while one without it is
+  a "Set as default" form and needs only its `form`. A missing one follows `outsideContext` too.
 - **What it needs.** `requires` lists the plan (`plan: "server"`), the licence extensions (`extensions`, the names
   of the licence field `a`) and Customer Accounts (`accounts`). The licence and the accounts setting are not in
   the HTML: list them under "Not checked" unless the licence was read.
@@ -128,8 +151,8 @@ For every page that contains Smootify elements, check against `rules.json`:
 - **Removed tags.** An entry with `kind: "removed"` (`removed: true`: the classic-account forms, `smootify-prop`,
   `add-to-wishlist`, `sm-debugger`…) does nothing on a 2.0 site; `replacement` names what to use instead.
 - **Unknown tags.** A custom tag that looks like Smootify's (`smootify-*`, or a prefix Smootify uses) and is not
-  in `tags` is a finding. Tags with `origin: "glossary"` are named by the glossary and not by the contract: never
-  report them as unknown.
+  in `tags` is a finding. If `tags` has entries with `origin: "glossary"` (named by the glossary, not by the
+  contract), they are known: never report them as unknown.
 - **Attribute values.** The vocabularies come from the Smootify glossary
   (`cdn.smootify.io/components-v2/glossary.json`), the same file the Designer App and the Figma skills read.
   A value used with an attribute listed in `bindings` (`product=`, `variant=`, `cart=`, `cart-item=`,
@@ -144,22 +167,38 @@ For every page that contains Smootify elements, check against `rules.json`:
   entry's `on` also lists `link` (the consent banner's actions, for example, work on any element). For every
   other attribute `on` is a hint about the usual element, not a requirement: `skeleton="button"` on a link is
   fine.
+- **Generic attribute names.** Entries marked `generic: true` (`name`, `type`, `data-name`, `data-wait`,
+  `property`, `index`, `data-type`, `data-format`, `data-required`) use names every page uses for its own reasons:
+  Webflow writes a `data-name` on every field and a `data-wait` on every submit, and `name="email"` is in every
+  newsletter and contact form. They are never "outside their place": check them only where one of their entries is
+  in place (its `inside` matches), and there only what they need to work (`name="buy-now"` on an element with the
+  button tag). A `name="email"` outside a `booking-form`, a `name="note"` outside the cart, a `data-wait` on any
+  submit: not findings.
+- **Submit buttons tied with `form=`.** A `[type="submit"][form="<id>"]` outside its form (a sticky add-to-cart
+  bar) submits the Smootify form whose `id` is that value, and gets its `data-state`, `data-wait` and disabled state.
+  Check that the page has exactly one element with that id and that it is a `form`. No match: the button submits
+  nothing — an **error**, whatever else is said about its children (Webflow names a Form Block's form
+  `wf-form-<Name>`, so a bar written for `product-form` points nowhere unless the form's ID was set). Two elements
+  with that id: a **warning**.
 - **Skeleton.** In 2.0 every element Smootify renders into loses its `[skeleton]` (and so do the hosts and the
   repeated rows), so a `[skeleton]` is never a finding by itself: on an element Smootify does not write (a
   `smootify-product[data-id="loader"]` placeholder, a `smootify-metaobject[data-handle="load"]` waiting for a
   script) it is the designer's choice. On a 1.x site, placeholders on account, policy, wishlist-count,
   store-location and box-item elements stayed forever: report them under "Moving to 2.0" (fixed there).
 - **Loaders.** `smootify-product[data-id="loader"]` is a design tool, not leftover markup: CMS lists that search &
-  discovery, the search page and the sliders fill later. Never report it, and never suggest removing it.
+  discovery, the search page and the sliders fill later. `rules.json` gives it a context, as the contract does, but
+  a loader outside it is never a finding: never report it, and never suggest removing it.
 - **Host attributes.** An attribute listed in a tag's own `hostAttributes`, on that tag, is checked against those,
   not against glossary entries of other elements with the same name (`data-buy-now` on
   `smootify-magic-box-cart` is its own option, not the buy-again one). `ancestorAttributes` are read on the
   ancestor named in `on` (`single-addon-swatch` on `smootify-add-to-cart`), and `writes` are the attributes
   Smootify sets itself: never report those as the designer's.
-- **Server-plan elements.** Tags with `serverPlanOnly: true` are removed from the page unless the site is on
-  the `server` plan. The plan is not visible in the HTML or the Designer tree, so do not report them as
-  findings: list them under "Not checked" — "<tags> found; if the site is not on the server plan, these are
-  removed". That also explains a user's "my element disappeared".
+- **Server-plan elements.** Tags with `serverPlanOnly: true` (elements only) are removed from the page unless the
+  site is on the `server` plan. The markers they use (`input[type="file"]`, `[upload=…]`, `error-message`) go with
+  their host: never list a marker, or a plain file input, as "removed without the server plan". The plan is not
+  visible in the HTML or the Designer tree, so do not report them as findings: list them under "Not checked" —
+  "<tags> found; if the site is not on the server plan, these are removed". That also explains a user's "my element
+  disappeared".
 
 #### Severities
 
@@ -173,13 +212,24 @@ Each rule type has a fixed severity. Use these, and state in the report which ru
 
 These are the severities the MCP engine uses: a report from `audit_page` or `check_markup` already carries them.
 
+**Judge by effect, then by rule type.** A value not in the vocabulary is an `error` because the element stays
+empty. When something else makes the element work, or the value only keeps an element as designed, it is `info`:
+
+- `data-action="reset"` on a `button[type="reset"]`: the button's own type resets the form;
+- an unknown `data-prop` or `location` value on a label inside a `country-switcher` or `location-switcher`
+  toggle: Smootify leaves that element as designed, which keeps a fixed label ("Change ▾") in the toggle. Say so,
+  and suggest `data-prop="name"` / `location="name"` only if the text should follow the country.
+
+A submit tied with `form=` to a form id that does not exist is an `error` (see "Submit buttons tied with `form=`").
+
 The support checks carry their own severity, mapped the same way: blocker → `error`, important → `warning`,
 minor → `info`.
 
 #### One finding per cause
 
-Group occurrences by rule + attribute or tag + reason. One group is one finding, with the number of occurrences,
-the pages, and up to three example selectors. A product card repeated forty times in a Collection List is one
+Group occurrences by element + cause, not by rule. One group is one finding, with the number of occurrences,
+the pages, and up to three example selectors. Two rules hitting the same elements for the same reason (a
+`max-width` outside its `inside` and without its `with` on the same images) are one finding, counted once. A product card repeated forty times in a Collection List is one
 finding with a count of forty, not forty findings. When many values fail for the same missing or wrong host —
 every `market-dialog=` value in a dialog that is not `[popover][data-is="market-dialog"]`, every `data-prop` inside
 a `location-switcher` — report the host once, with the values it carries, not one finding per value.
@@ -187,7 +237,7 @@ a `location-switcher` — report the host once, with the values it carries, not 
 Then run the support checklist in `references/support-checks.md` — eleven checks distilled from real support
 tickets (CMS structure, script order, image CDN compression, add-to-cart structure, cart, template pages,
 Search & Discovery, Apple-device performance). Those are hand-won and still authoritative; do not skip them
-because the structural pass was clean.
+because the structural pass was clean. Each one states its severity.
 
 ### B. Runtime audit — in the browser, only with a published URL
 
@@ -195,11 +245,20 @@ because the structural pass was clean.
 - Which `smootify:*` events actually fire. `smootify:loaded` never firing means the script never booted;
   `smootify:product_loaded` missing on a PDP points at `data-id` or CMS binding.
 - Whether `window.Smootify` exists and the licence resolved (a plan banner in the page is a strong signal).
-- On a `.webflow.io` page running 2.0, the **debugger** does the runtime half itself. Its
-  Components pane lists every Smootify element with its status (loaded, loading, not found, not running), including
-  store-locator, the magic box tags, every server extension and the selector hosts (`[popover][data-is="market-dialog"]`,
+- **Look at the page as a guest.** A screenshot of the home and of a product page, logged out, after Smootify has
+  run: two cookie banners at once, a banner or panel shown open when it should not be, customer-only or
+  company-only elements (prices for companies, a quote list) visible to a guest, blocks left empty. The static pass
+  cannot see these; they are often the most visible defects.
+- On a `.webflow.io` page running 2.0, the **debugger** (`?smootify-debug=1`,
+  `https://www.smootify.io/docs/start/debugger`) helps with the runtime half. Its Components pane lists every
+  Smootify element with its status (loaded, loading, not found, not running), including store-locator, the magic box
+  tags, every server extension and the selector hosts (`[popover][data-is="market-dialog"]`,
   `button[data-is="preferences-button"]`, `[policy]`). Its Checks pane warns about the Customer Accounts key for
-  all 18 account elements. Read it, and quote it, instead of repeating those checks by hand.
+  all 18 account elements. Quote it, and still run the structural pass: it does not report everything (an element
+  that removed itself is simply gone from the page), and when it and `rules.json` disagree, `rules.json` wins.
+- If a defect comes from the runtime rather than the markup (the debugger or the page contradicts the reference
+  for markup that is right), say which loader channel and version the page runs and report it as a runtime issue
+  for Smootify, not as the site's.
 - The site's custom code against the 2.0 surface in `rules.json` (with the MCP: `check_custom_code`, or
   `audit_page`, which checks the inline scripts): a listener on an event that is not in
   `documentEvents` or `elementEvents` never runs (`notEmittedDocumentEvents`, today `smootify:color_patterns`,
@@ -207,8 +266,11 @@ because the structural pass was clean.
   but should move to `smootify:wishlist:*`; a `window.Smootify.<method>` call not in `publicApi` fails. CSS or
   interactions that target a state class not in `stateClasses` never apply. On a 1.x site these go under
   "Moving to 2.0".
-- Page weight and Core Web Vitals on the product template — the page that matters commercially.
-- Images served raw from the Shopify CDN without sizing parameters.
+- Page weight and Core Web Vitals on a product page, a collection page and the cart: the commercial pages, and the
+  ones where cards and lines arrive late. Lab LCP over 2.5 s or CLS over 0.1 is a `warning` (lab numbers: say so,
+  and that field data decides); a console error from Smootify or a failed Smootify request is a `warning`, an
+  error at boot (`smootify:loaded` never fires) an `error`.
+- Images served raw from the Shopify CDN without sizing parameters: support check 3.
 
 ### C. Opportunity checks — what the store is paying for and not using
 
@@ -247,7 +309,8 @@ what changes when the site switches to the 2.0 loader, not current bugs.">
    - What is wrong:
    - Why it breaks:
    - Fix:
-   - Reference: <glossary entry / rules.json / CHANGELOG · BREAKING-CHANGES · MIGRATION section, or doc URL for unchanged setup>
+   - Reference: <public URL: the element or attribute page (`reference` in rules.json), /docs/start/changes,
+     /docs/start/migrate, /changelog/2-0, or docs.smootify.io for a 1.x site>
 
 ### Warnings / Info
 …
@@ -290,8 +353,9 @@ Smootify documents → `https://help.shopify.com`. Anything else → the Discord
 ## References
 
 - `references/rules.json` — generated from Smootify's markup contract and glossary. **Never edit by hand**:
-  tags and contexts are fixed in `v2/docs/markup-contract.md` in `storefront`, attribute values (with their
-  `inside`, `on`, `aliases`, `deprecated`) in the glossary (`cdn.smootify.io/components-v2/glossary.json`),
-  state classes, events and public API in the 2.0 sources; then rerun the generator.
+  tags and contexts come from Smootify's markup contract, attribute values (with their `inside`, `on`, `with`,
+  `aliases`, `deprecated`) from the glossary (`cdn.smootify.io/components-v2/glossary.json`), state classes,
+  events and public API from the 2.0 runtime; Smootify regenerates it. Each tag and attribute carries the public
+  page to cite (`reference`).
 - `references/support-checks.md` — the eleven support-derived checks.
 - `references/doc-map.md` — topic → doc path, with what the 1.x docs do not cover yet.
