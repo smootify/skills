@@ -124,7 +124,7 @@ Before Phase 4, verify every `@bind` on a component's descendants references a p
 
 | `@element` | Webflow `type` | Notes |
 |---|---|---|
-| `DOM` | `type: "DOM"` + `set_dom_config` | Standard tags: section, nav, header, footer, main, aside, article, span |
+| `DOM` | `type: "DOM"` + `set_dom_config` | Only tags Webflow does not offer on an element: span, `input`/`button` with reserved attributes, `dialog`… Semantic tags (section, nav, header, footer, main, aside, article, address, figure) are a `DivBlock` with `set_tag` (or the Section element), never DOM |
 | `BY_CUSTOM_TAG` | `type: "BY_CUSTOM_TAG"` + `custom_tag` | Arbitrary tags like `smootify-product`, `web-component` |
 | `Image` | `type: "Image"` | Use `@bind: assetId` for swappable images |
 | `Heading` | `type: "Heading"` | Use element_builder or set_heading_level |
@@ -222,6 +222,7 @@ component — even when every occurrence differs. Differences are props, not cop
 | Visual style (muted, emphasised, active) | A **variant**, not a second component |
 | **An element that exists in one case and not another** | A **second component** — not a conditional, see below |
 | Layout at another breakpoint | Nothing — same element, responsive styles |
+| A block drawn only in the Tablet or Mobile frame (a filter bar that replaces the sidebar, a tab bar that replaces the side nav, cards that replace a table) | Build it too, in the same page or component, hidden with `display: none` at the breakpoints that do not draw it and shown at the ones that do; the Desktop counterpart is hidden there in turn. Never leave it out as "tablet only": the review checks all three widths |
 | An image, a link, whether something shows per instance | `image` / `link` / `boolean` prop |
 | A slot that would sit inside a Form | A **second component** with the content placed directly: Webflow rejects slots inside a Form ("Slots can not be placed inside Form"), so an Add to cart or a metaobject form with different pickers or fields is one component per layout |
 | Parts that only work together (a trigger and the panel it opens, such as the cookie preferences button and the consent banner; a field and its results panel) | **One component**, with both inside the Smootify element that ties them. Two components that must be placed in pairs, and stay in the same element, are a build error |
@@ -356,8 +357,11 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
 - **Class names.** Name classes from the component and the role (`sm-` library classes for shared parts such as
   buttons), never from a layer's sample text or another language.
 - **What the MCP cannot do**, so it goes to the person, in the report, with the page and the element:
-  site redirects, deleting pages, placeholders of native fields when Claude in Chrome is not available, `type="date"` on inputs, the Current state of
-  links and tabs, copying a design into the 404 utility page, publishing.
+  site redirects, deleting pages, page folders, copying a design into the 404 utility page, publishing.
+- **Text fields Smootify does not clone are DOM `input`s** with a Field Label: a Webflow form field always publishes
+  the placeholder "Example Text" and refuses reserved attributes, while a DOM `input` / `textarea` / `button`
+  publishes `placeholder`, `type` (`date` too), `value` and `disabled` as written. Fields inside templates Smootify
+  clones keep the Webflow elements.
 - **Every empty state is built.** The annotation lists the empty states (cart, search, collection and filters,
   orders, addresses, subscriptions, store credit, wishlist, gift lists, recently viewed, a day with no slot, 404).
   Build each one with its condition, and check it on the published page with the state forced (an empty cart, a
@@ -387,6 +391,15 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   admin: style its `h2`, `p` and `ul` with descendant selectors in the site custom code (the style API cannot write
   them). Numbering the sections as the design draws them is a CSS counter, only on a policy the merchant wrote:
   Shopify's automatic privacy policy has its own headings.
+- **Every Smootify submit button has both states.** `[data-state="default"]` and `[data-state="loading"]` go inside
+  every submit of a Smootify form, the compact ones too (a "+ Add" in a table row, a "+ Quote list"): without the
+  loading child the click gives no feedback while the request runs.
+- **A link whose only text is a customer field gets a fallback.** `customer="first-name"` alone inside the header
+  account link leaves an empty, invisible link for a customer without a first name: add `data-fallback="Account"`
+  (or the design's word) to the bound element.
+- **Breadcrumbs link every crumb that has a page.** A Breadcrumbs component with one text prop for the trail leaves
+  "Account" unclickable on the account pages: give it an optional linked parent (a boolean, a label and a link prop)
+  and keep the text prop for the crumbs that have no page ("Service", "Legal").
 - **The consent preferences button hides while the banner shows.** `button[data-is="preferences-button"]` is
   hidden while the cookie banner is on screen and shows once the shopper has chosen: that is how it works, not a
   bug to fix.
@@ -407,6 +420,10 @@ Also from the starter build: each of these broke something before it was known.
   `.w-radio` / `.w-checkbox` a left padding and a float. Where a field sits in a row with a button (discount code,
   search, newsletter) or in a card, reset them on the field's class, or the row comes out taller than the field
   and the button no longer lines up.
+- **Semantic tags are Div Blocks.** `section`, `article`, `aside`, `nav`, `header`, `footer`, `main`, `address`,
+  `figure` are a Div Block with its Tag setting (or Webflow's Section element), never a Custom element: the Custom
+  element is only for tags Webflow does not offer (Smootify's tags, `button`, `details`, `summary`, `dialog`,
+  `select`, `option`…).
 - **Smootify's tags are inline.** A `smootify-*` custom element (and every other Smootify tag) is `inline` by
   default, like any unknown HTML tag: give its class `display: block` (or flex, grid) whenever it carries layout,
   or widths, margins and gaps on it do nothing.
@@ -471,8 +488,11 @@ Also from the starter build: each of these broke something before it was known.
   the wrapper afterwards. Put Smootify attributes on the form or on an element around the Form Block.
 - **A prop bound to an attribute is a `string`**, whatever the annotation says (a limit, a delay, a flag): a
   `number` prop defaults to 0 and cannot be cleared, so the attribute ships as `limit="0"`.
-- **The Current state cannot be styled through the MCP**: a `w--current` combo comes out as `_w--current`. Make
-  the nav links of type *page*, so Webflow marks the current one, and leave the style to the person.
+- **The Current state is styled in CSS**: a `w--current` combo made through the MCP comes out as `_w--current`,
+  but `.x.w--current { … }` in the component's "Include styles" embed or the page CSS works. Webflow marks the
+  current link only on links of type *page*: plain links inside a component take `set_link` to a page with
+  `scope_component_id`, while an instance's Link prop takes only url / email / phone / popover through the MCP
+  (list those as Designer steps when the current state matters).
 - **Not as styles**: a CSS custom property (`--metafield-rating`) and a variable in `accent-color` are refused.
   Put the first in the site custom code, write the second as a literal colour.
 - **The Designer canvas is not the site.** It does not load the site custom code, draws `details` closed, keeps
@@ -481,6 +501,12 @@ Also from the starter build: each of these broke something before it was known.
   the new classes vanish from its canvas and changes to existing ones do not show until the person reloads it.
   Measure only classes the canvas already had; check everything else on the published staging, and say in the
   report what you could only check from the data.
+- **A component that is 100% wide does not go loose in a flex row.** Next to a text block it takes the whole row and
+  squeezes the text to one word per line (a contact card beside "Missing a document?"): wrap it in a div with its
+  own flex basis, since the component's class is shared with the places where 100% is right.
+- **Radios and checkboxes in an embed inside a flex parent.** Webflow's clearfix `::before` / `::after` on `.w-embed`
+  (even with `display: contents`) and on every `.w-radio` / `.w-checkbox` become flex items and add the gap before
+  the first option: set them to `content: none` in the custom code, or the group starts 24-34 px off its column.
 - **A variant's size comes from all its instances.** Before giving a component variant an `aspect-ratio` or a
   height, look at every instance of that variant in the file: a ratio taken from one frame (a card 221 px wide on
   the tablet home) is wrong where the same variant is 432 px wide. When the image keeps one height at every width,
@@ -490,8 +516,9 @@ Also from the starter build: each of these broke something before it was known.
   component's styles (a swatch with a photo).
 - **Images are the picture alone, at 2x.** Export the image fill of the picture's rectangle, never the whole card
   (photo, band and text), or the text comes back wherever the image is reused. `get_screenshot` does not go past
-  the node's size: for a 2x export, add a temporary rectangle with the same fill at twice the size, take the
-  screenshot, delete the rectangle. Product and collection pictures stay in Shopify.
+  the node's size: take the originals with `download_assets` on the frame that holds the photography, and match
+  them to the layers by SHA-1 = `imageHash`. Never add temporary layers to the Figma file. Product and collection
+  pictures stay in Shopify.
 
 ## Workflow
 
@@ -508,8 +535,8 @@ each one, found halfway, stops the build until they answer. Ask for all of it in
   sync from Smootify done, with the product ids at hand (a template needs them, the sample data does not);
 - the Customer Account API client id, when the design has account parts (below), with the staging and live
   domains added to its JavaScript origins and callback URIs in Shopify: from any other origin the login fails;
-- whether to keep Webflow's spam protection (Turnstile) on the site: it guards Smootify's forms too, add to cart
-  included, and its empty slot takes space in the layout;
+- whether to keep Webflow's spam protection (Turnstile) on the site: it guards only plain Webflow forms (Smootify
+  turns it off on its own forms and never sends its token), and its empty slot takes space in the layout;
 - the redirects, policies and other admin settings the design depends on, to put in the report.
 
 **Ask only what the person decides.** A question the catalogue, the contract or the annotation already answers
@@ -587,6 +614,10 @@ every page. Without it nothing works on the published site, and no check of the 
    - every product picture is an `img` (never an empty slide that Smootify fills as a background), and on a CMS
      template its `src` and `alt` are bound to the CMS, so the page shows it before Smootify loads; images Smootify
      fills carry `max-width` (about twice their displayed width, such as `192` on a 96px thumbnail);
+   - in a Collection List or on a CMS template, the card's title, price, compare-at price and product link are bound
+     to the CMS too (Name, Price Formatted, Compare At Price Formatted, the current item's page), not left as sample
+     text for Smootify to replace: the published HTML carries the real content for search engines before Smootify
+     loads. A reused card component exposes them as props (defaults = its sample text) so each list binds them;
    - a state style (the active thumbnail, the selected swatch) sits only on its combo class (`is-active`), never on
      the base class, or every item looks selected;
    - every state class the catalogue lists for what you built (`is-active`, `w--current`, `is-disabled`,
@@ -594,7 +625,18 @@ every page. Without it nothing works on the published site, and no check of the 
      control looks disabled;
    - no block ships empty: every accordion item, tab pane and panel has its bound rows or its text;
    - no Webflow sample text is left: search the published HTML for `Email Form`, "Thank you! Your submission",
-     "First choice", "Checkbox", "Radio", "Example Text";
+     "First choice", "Checkbox", "Radio", "Example Text", and for sample fields (`name="email-N"`,
+     `value="Submit"`, a leftover `required` field that blocks a Smootify form such as a subscription cancel);
+   - every link template Smootify fills (`[product=url|link]`, `[cart-item=url]`, `[subscription=url]`,
+     `[order=url]`) has a fallback URL (`/shop`), so the published HTML never carries `href="#"`;
+   - `img[src=""]` and similar checks run on the rendered DOM, not on the HTML: a selector in the head CSS is a false
+     positive;
+   - the template title and description are bound to the CMS (`update_page_settings` with
+     `{{wf {"path":"name","type":"PlainText"\} }}`, or the Designer's page settings), checked in the published
+     `<title>`;
+   - the template's og:image comes from the CMS too: Image URL is a plain-text field and Webflow's Open Graph image
+     binds only to Image fields, so write `<meta property="og:image" content="{{wf {"path":"image-url","type":"PlainText"\} }}">`
+     in the template's head custom code (the data API accepts it; check the published `og:image`);
    - while pages are still missing, the report lists the links that lead to them.
    With the Smootify MCP connected, run `check_markup` on each component's tree (with the Smootify elements it will
    sit in), and use `resolve_vocabulary` / `get_example` for a value or a structure the annotation lacks instead of
@@ -627,6 +669,7 @@ If there are nested or repeated (sibling) components:
 | ~~Cannot set CMS bindings via MCP~~ | **They can.** An attribute binds to a CMS field with `set_settings`, key `attributes`, `static_json` carrying `[{"name":"data-id","value":{"sourceType":"cms","collectionId":"…","collectionName":"Products","fieldId":"…","fieldName":"Shopify ID","fieldGroup":null,"fieldType":"plainText"}}]` — it replaces the whole attribute list, so pass the static ones too. A Collection List's source, filters, sort and limit are `set_settings` keys on the `DynamoWrapper` |
 | ~~Cannot create interactions~~ | `data_interactions_tool` (IX3). Confirm in Preview: an accepted interaction can still not run |
 | ~~Cannot install fonts programmatically~~ | `data_fonts_tool > create_font` |
+| A reset of the native popover's UA styles in the site's head code (`[popover]{margin:0;border:0;padding:0;inset:auto}`) loads after Webflow's CSS with the same specificity as a class, so it wipes every popover's own padding, border and position (the Spannbach market dialog shipped as a bare strip) | Write the reset with zero specificity: `:where([popover]){…}`, so the popover's class always wins |
 | The native Popover element (beta) cannot be created or copied | Build the same markup with the `popover` / `popovertarget` attributes; the element itself is `@manual: popover` |
 | Bindings not visible in `get_all_elements` | Always use `get_settings type: "all_raw_settings"` to verify |
 | ~~Cannot set per-instance prop overrides via MCP~~ | **Not true** — `set_component_instance_prop_values` works, variants included. Verified 2026-09-21 |
@@ -639,14 +682,17 @@ If there are nested or repeated (sibling) components:
 | A FormSelect has no setting for its options | A DOM `select` with DOM `option` children: `set_attributes` for each `value`, `set_settings` `text` for the label |
 | An instance cannot be the anchor of `before` / `after` (`insert_component_instance`, `data_element_builder`) | `prepend` / `append` in the parent, or anchor on a plain element next to it |
 | Slots cannot be placed inside a Form, and an instance cannot be detached on a template | A second component for each layout of the form (see *Component Decision Rules*) |
-| No tool for site redirects, deleting pages, noindex, `type="date"`, the Current state, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
-| A form field's Name written through the API does not reach the published HTML (it still publishes `field-N`) | Set every Name in the Designer's settings panel, through Claude in Chrome, and check it on the published page |
+| No tool for site redirects, deleting pages, page folders, noindex, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
 | Placeholders, Form names and native Popovers have no MCP tool | Do them in the Designer through Claude in Chrome page by page, before the page is published for review, not at the end; check the published page for inputs without a placeholder |
 | `move_element` rejects an instance as anchor; `set_style` replaces every class of the element; `element_snapshot_tool` fails when the Designer is not on the element's page | Anchor on a plain element; pass all the classes the element keeps; open the page first |
 | `bulk_update_pages` answers ok and changes nothing | `update_page_settings`, one page at a time |
 | `unlink_component_instance` is refused by the permission system | Do not work around it: build what the instance should contain another way (a second component) |
 | The Webflow Navbar (`w-nav`) cannot be created; a new Form Block comes with Name, Email and Submit; a new Rich Text with sample headings and lists | Build the nav from Div blocks; delete the sample content right after creating the element |
 | `transform_element_to_component` leaves an element without its class when the style does not exist yet | Create the styles first, then transform |
+| A radio's `groupName` written through the API lands only in `data-name`: the published radios get a different `name="radio-N"` each, so the group does not exist and the form sends the wrong name | A radio group a form sends (a score, a choice saved to a metafield or metaobject field) is an HTML Embed with native `input type="radio" name="<key>"` and their labels, styled by class |
+| `FormTextInput` takes only text, email, password, tel, number and url as type | A date field (`purchase_date`) is an HTML Embed with `input type="date" name="<key>"` |
+| A custom attribute (`customer-condition`, `if-metafield`, …) cannot be set on a component instance | Wrap the instance in a Div Block that carries the attribute |
+| `transform_element_to_component` refuses an element that contains a Collection List bound to the CMS (a Magic Box with its category lists, a product slider) | Convert it in the Designer (right click → Create component, through Claude in Chrome); the Designer also turns the list's source, filters and limit into component props. Add the other props with the data API afterwards |
 
 ## Summary Output Template
 

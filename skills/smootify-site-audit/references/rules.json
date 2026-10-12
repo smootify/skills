@@ -1,6 +1,6 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-09",
+  "generatedAt": "2026-10-11",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
     "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0)",
@@ -240,8 +240,8 @@
       "kind": "marker",
       "registered": false,
       "selector": true,
-      "purpose": "Closes the market suggestion and remembers it was seen.",
-      "source": "v2/src/components/markets/market-dialog.ts:102",
+      "purpose": "Switches to the suggested market when it is not the current one, closes the suggestion and remembers it was seen; with a country-switcher inside the dialog it only closes (the visitor chooses there). Closing the dialog any other way stays on the market. (1.x: only closed)",
+      "source": "v2/src/components/markets/market-dialog.ts:104",
       "section": "Markets and consent",
       "context": {
         "anywhere": false,
@@ -1161,7 +1161,7 @@
       "registered": false,
       "selector": false,
       "purpose": "Template of one item of a bundle line, cloned per item.",
-      "source": "v2/src/components/cart/cart-renderer.ts:232",
+      "source": "v2/src/components/cart/cart-renderer.ts:202",
       "section": "Cart",
       "context": {
         "anywhere": false,
@@ -1272,7 +1272,7 @@
       "registered": false,
       "selector": false,
       "purpose": "Template of one cart line: the first is cloned per line, the others are removed.",
-      "source": "v2/src/components/cart/cart-renderer.ts:28",
+      "source": "v2/src/components/cart/cart-renderer.ts:48",
       "section": "Cart",
       "context": {
         "anywhere": false,
@@ -2806,7 +2806,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Price range facet with two number inputs, two range handles and a progress bar.",
+      "purpose": "Price range facet with two number inputs, two range handles and a progress bar. The handles move by whole units: with a bound in cents (Shopify's {\"price\":{\"min\":0,\"max\":179.99}}) they run from 0 to 180, a handle at its end means the facet's own bound (the search keeps the 179.99 products when only the other handle moves) and the number inputs and labels show 179.99; a typed number never narrows the range (1.x: the max handle stopped at 179) (v2/src/components/search-discovery/price-range.ts:53). The host's hide-empty and hide-if-single leave it shown: Shopify gives the price range as one value with count 0 (2.0; 1.x hid it with either, v2/src/domain/search.ts:374).",
       "source": "v2/src/components/search-discovery/filter-price-element.ts:12",
       "section": "Search & discovery",
       "context": {
@@ -15063,7 +15063,7 @@
         "required": false,
         "requiredNote": "",
         "does": "a bare `select[name=\"optionN\"]` picks that option; never a line property",
-        "source": "v2/src/components/add-to-cart/atc-element.ts:131"
+        "source": "v2/src/components/add-to-cart/atc-element.ts:136"
       },
       {
         "name": "`Recipient email`",
@@ -15386,7 +15386,7 @@
         "required": false,
         "requiredNote": "",
         "does": "the order note, saved before checkout and prefilled; a field whose name is `Note` becomes `note` (1.x read only a textarea)",
-        "source": "v2/src/components/cart/cart-form.ts:120"
+        "source": "v2/src/components/cart/cart-form.ts:118"
       },
       {
         "name": "`coupon`",
@@ -15397,7 +15397,7 @@
         "required": false,
         "requiredNote": "",
         "does": "a discount code, applied by `button[data-action=\"coupon\"]` or Enter, cleared after; a field whose name is `Coupon` becomes `coupon`",
-        "source": "v2/src/components/cart/cart-form.ts:54"
+        "source": "v2/src/components/cart/cart-form.ts:52"
       },
       {
         "name": "`gift-card` (or `Gift Card`)",
@@ -15409,7 +15409,7 @@
         "required": false,
         "requiredNote": "",
         "does": "a gift card code, applied by `button[data-action=\"gift-card\"]` (Enter only with `gift-card`)",
-        "source": "v2/src/components/cart/cart-form.ts:54"
+        "source": "v2/src/components/cart/cart-form.ts:52"
       },
       {
         "name": "`email`",
@@ -15420,7 +15420,7 @@
         "required": false,
         "requiredNote": "",
         "does": "with a quote (`draft-order`): the email of the draft order (the logged-in customer otherwise); without a quote a cart attribute",
-        "source": "v2/src/components/cart/cart-form.ts:126"
+        "source": "v2/src/components/cart/cart-form.ts:124"
       },
       {
         "name": "`quantity`",
@@ -15431,7 +15431,7 @@
         "required": false,
         "requiredNote": "",
         "does": "inside a cart line: that line's quantity",
-        "source": "v2/src/components/cart/cart-form.ts:176"
+        "source": "v2/src/components/cart/cart-form.ts:174"
       },
       {
         "name": "`draft-order` (submit button)",
@@ -15442,7 +15442,7 @@
         "required": false,
         "requiredNote": "",
         "does": "sends the cart as a quote (draft order) instead of the checkout",
-        "source": "v2/src/components/cart/cart-form.ts:119"
+        "source": "v2/src/components/cart/cart-form.ts:117"
       },
       {
         "name": "any other name",
@@ -15451,7 +15451,7 @@
         "required": false,
         "requiredNote": "",
         "does": "a cart attribute named as the field's `data-name`, saved before checkout; refilled for text, textarea, select, radio and checkbox; a multiple select is joined with `,`",
-        "source": "v2/src/components/cart/cart-form.ts:72"
+        "source": "v2/src/components/cart/cart-form.ts:70"
       }
     ],
     "smootify-search": [
@@ -15596,7 +15596,8 @@
       "is-empty",
       "is-filtered",
       "has-pagination",
-      "has-page-numbers"
+      "has-page-numbers",
+      "has-query"
     ]
   },
   "publicApi": [

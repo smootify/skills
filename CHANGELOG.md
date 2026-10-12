@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.0.0-beta.21
+
+From two more demo store builds with Smootify 2.0 (an industrial B2B parts store and a food subscription store) and their review notes.
+
+- Blocks drawn only in the Tablet or Mobile frame (a filter bar that replaces the sidebar, cards that replace a table) are built too and shown only at those breakpoints.
+- Semantic tags (`section`, `nav`, `header`, `footer`, `article`…) are Div Blocks with their Tag setting, never Custom elements. Text fields Smootify does not clone are DOM `input`s, so placeholders, `type="date"` and reserved attributes publish as written. Radio groups and date fields a form sends are HTML Embeds. Attributes that must sit on a component instance go on a Div Block around it.
+- SEO: cards in Collection Lists and on CMS templates bind title, prices and product link to the CMS, so the published HTML carries the real content before Smootify loads; a template's og:image comes from the Image URL field through the head custom code.
+- An element with a Collection List bound to the CMS (a Magic Box, a product slider) becomes a component in the Designer, which also exposes the list's filters as props.
+- Webflow's spam protection guards only plain Webflow forms: Smootify turns it off on its own forms.
+- The Current state of nav links is styled in CSS; 2x images come from `download_assets`, never from temporary layers in the Figma file. Two limitations that were not real are gone (form field names, the Current state).
+- A reset of the native popover in the head code goes inside `:where()`, or it wipes every popover's own styles.
+- Every Smootify submit button has both `[data-state="default"]` and `[data-state="loading"]`, the compact ones in table rows too. A link whose only text is a customer field (the header's first name) gets `data-fallback`. Breadcrumbs link every crumb that has a page.
+- A component that is 100% wide is wrapped in its own column inside a flex row; Webflow's clearfix pseudo-elements on embeds of radios and checkboxes are removed so the group lines up with its column.
+- The phase 6 checks on the published page cover the new rules (titles and og:image of templates, link fallbacks instead of `href="#"`, sample form fields, checks on the rendered DOM).
+- The catalogue and the audit rules follow the 2.0 contract of 2026-10-11: company-only elements removed for guests, the market dialog's Continue switches market, Turnstile, booking `data-required`, cart discount lists, `[form-value]`, the price filter, `max-file-size` units.
+
 ## 2.0.0-beta.20
 
 - `smootify-iterate` has a sixth cause, `store`: the note comes from the store's data or setup in Shopify (a metafield or metaobject definition, an option value without its image, a product's price or description, a pickup location, a market, a Search & Discovery filter). The site is left as it is, and the answer says what the store must have and where it is set in the Shopify admin. Smootify Studio shows it as "Store (Shopify admin)" and never sends it to Smootify.

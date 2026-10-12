@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-09.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-11.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -57,7 +57,7 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `filter-dropdown` | Single-choice facet in a Webflow Dropdown; the toggle text shows the current value. | `smootify-search-discovery` | `form`, `.w-dropdown .w-dropdown-link` | si rimuove | "Search & discovery" | `label`, `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis` |
 | `filter-list` | Single-choice facet: one radio label per facet value. | `smootify-search-discovery` | `form`, `label` | si rimuove | "Search & discovery" | `label`, `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis` |
 | `filter-popover` | Single-choice facet in a popover; the trigger shows the current value, a pick closes it. | `smootify-search-discovery` | `form`, `[popover] :is(a, button:not([popovertarget]))` | si rimuove | "Search & discovery" | `label`, `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis` |
-| `filter-price` | Price range facet with two number inputs, two range handles and a progress bar. | `smootify-search-discovery` | `form`, `form input[type="number"]`, `form input[type="range"]`, `[filter-price="progress"]` | si rimuove | "Search & discovery" | `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis` |
+| `filter-price` | Price range facet with two number inputs, two range handles and a progress bar. The handles move by whole units: with a bound in cents (Shopify's {"price":{"min":0,"max":179.99}}) they run from 0 to 180, a handle at its end means the facet's own bound (the search keeps the 179.99 products when only the other handle moves) and the number inputs and labels show 179.99; a typed number never narrows the range (1.x: the max handle stopped at 179) (v2/src/components/search-discovery/price-range.ts:53). The host's hide-empty and hide-if-single leave it shown: Shopify gives the price range as one value with count 0 (2.0; 1.x hid it with either, v2/src/domain/search.ts:374). | `smootify-search-discovery` | `form`, `form input[type="number"]`, `form input[type="range"]`, `[filter-price="progress"]` | si rimuove | "Search & discovery" | `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis` |
 | `filter-search` | Free-text query of the block; typing or submitting sets the search query, also in a collection (data-collection). | `smootify-search-discovery` | `form` | si rimuove | "Search & discovery" | — |
 | `filter-select` | Single-choice facet in a native select; the first option is the placeholder. | `smootify-search-discovery` | `form`, `select` | si rimuove | "Search & discovery" | `label`, `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis` |
 | `filter-swatches` | Facet as swatch buttons painted from the value's native swatch; a click toggles the value. | `smootify-search-discovery` | `form`, `button` | si rimuove | "Search & discovery" | `label`, `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis`, `multiple` |
@@ -152,7 +152,7 @@ annotano come gli altri, con il solo `@tag`.
 - `[consent-condition="sale-of-data"]` — Shown only in sale-of-data regions (CSS only). (dentro `smootify-consent`; letto da `smootify-consent`)
 - `[consent-panel="banner"]` — Shown while the banner is required, hidden while the preferences panel is open (CSS only). (dentro `smootify-consent`; letto da `smootify-consent`)
 - `[consent-panel="preferences"]` — Shown only while the preferences panel is open (CSS only). (dentro `smootify-consent`; letto da `smootify-consent`)
-- `[popover][data-is="market-dialog"] button[data-action="continue"]` — Closes the market suggestion and remembers it was seen. (dentro `[popover][data-is="market-dialog"]`; letto da `[popover][data-is="market-dialog"]`)
+- `[popover][data-is="market-dialog"] button[data-action="continue"]` — Switches to the suggested market when it is not the current one, closes the suggestion and remembers it was seen; with a country-switcher inside the dialog it only closes (the visitor chooses there). Closing the dialog any other way stays on the market. (1.x: only closed) (dentro `[popover][data-is="market-dialog"]`; letto da `[popover][data-is="market-dialog"]`)
 - `[upload="dropzone"]` — Drop and click area; defaults to the element itself. (dentro `file-uploader` o `file-input` o `configurator-file-input`; letto da `file-uploader`, `file-input`, `configurator-file-input`)
 - `[upload="error"]` — The item's error message, hidden without one. (dentro `[upload="item"]`; letto da `file-uploader`, `file-input`, `configurator-file-input`)
 - `[upload="errors"]` — Messages of the rejected files, hidden without any. (dentro `file-uploader` o `file-input` o `configurator-file-input`; letto da `file-uploader`, `file-input`, `configurator-file-input`)
@@ -445,7 +445,7 @@ Scritte da Smootify a runtime sull'host. Non vanno messe in `@style`: servono pe
 - `smootify-variant` → `loaded`, `is-on-sale`, `is-available`, `is-not-available`, `last-in-stock`, `low-stock`, `not-existing-variant`
 - `smootify-cart` → `loaded`, `is-rendered`, `is-empty-cart`, `has-taxes`, `has-empty-quote`
 - `smootify-search-discovery` → `inited`, `empty`, `is-filtered`, `has-pagination`, `has-page-numbers`
-- `smootify-search-page` → `inited`, `is-empty`, `is-filtered`, `has-pagination`, `has-page-numbers`
+- `smootify-search-page` → `inited`, `is-empty`, `is-filtered`, `has-pagination`, `has-page-numbers`, `has-query`
 
 ## Campi dei form (41)
 
