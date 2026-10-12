@@ -4863,7 +4863,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Build-a-box: the add-to-cart forms inside it add to the box instead of the cart.",
+      "purpose": "Build-a-box: the add-to-cart forms inside it add to the box instead of the cart. 2.0: its pieces stay through a reload or another page until the box goes to the cart (a week at most); the card (smootify-product) of a picked product takes is-in-box and data-in-box (how many of it); the total takes the box's discount only once the box can be bought.",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/smootify-magic-box",
       "section": "Extensions",
