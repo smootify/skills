@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-12.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-13.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -132,7 +132,7 @@ Presenti solo con il piano `server` (e l'estensione accesa); senza, vengono rimo
 | `configurator-dropdown` | Webflow dropdown over a hidden select whose chosen option carries the formula step. | `smootify-add-to-cart` | `select`, `.w-dropdown .w-dropdown-link` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-field` | Groups configurator fields; has no effect of its own. Every configurator field counts the value it already has when it mounts (typed before the configurator loaded, restored by the browser on Back, a default value / checked / selected), as the add to cart sends it. | `smootify-add-to-cart` | — | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-file-input` | File uploader that is also a formula step, with the number of files as variable. | `smootify-add-to-cart` | — | si rimuove | piano server + "Product configurator" | `data-formula`, `name`, `data-multiple`, `data-required`, `data-preview`, `data-only-images`, `min-file-size`, `max-file-size`, `min-resolution`, `data-error-<code>` |
-| `configurator-input` | Text input whose formula step is on while its value is valid, with its length as variable. | `smootify-add-to-cart` | uno fra `input`, `textarea` | si rimuove | piano server + "Product configurator" | `data-formula` |
+| `configurator-input` | Text input whose formula step is on while its value is valid, with its length as variable. 2.0: also letters, its characters without spaces ("Studio Rossi": length 12, letters 11). | `smootify-add-to-cart` | uno fra `input`, `textarea` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-popover` | The configurator dropdown with its options in a popover. | `smootify-add-to-cart` | `select`, `[popover] :is(a, button:not([popovertarget]))` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-radio` | Radios whose checked option carries the formula step. | `smootify-add-to-cart` | `input[type="radio"]` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-select` | Select whose chosen option carries the formula step. | `smootify-add-to-cart` | `select` | si rimuove | piano server + "Product configurator" | `data-formula` |

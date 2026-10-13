@@ -1,6 +1,6 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-12",
+  "generatedAt": "2026-10-13",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
     "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 824e85df11076e34)",
@@ -1593,7 +1593,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Text input whose formula step is on while its value is valid, with its length as variable.",
+      "purpose": "Text input whose formula step is on while its value is valid, with its length as variable. 2.0: also letters, its characters without spaces (\"Studio Rossi\": length 12, letters 11).",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/configurator-input",
       "section": "Server extensions (plan server)",
