@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-13.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-14.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.

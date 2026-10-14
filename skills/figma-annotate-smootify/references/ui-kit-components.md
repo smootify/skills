@@ -107,8 +107,9 @@ questa lista.
 - Varianti Figma: Miniature = Sotto | A lato | Nessuna; Zoom = Sì | No; Formato = Slider | Griglia di lightbox.
 - Stati: miniatura attiva; media Immagine | Video | Video esterno | 3D (miniatura con icona play o 3D).
 - Contenuto: slider, miniature, link zoom (icona), griglia di immagini che aprono la lightbox.
-- Prop Webflow: `Includi video e 3D` → `include-media`; `Solo immagini della variante` → `only-variant-images`;
-  `Immagini per alt` → `variant-images="alt"`.
+- Prop Webflow: `Includi video e 3D` → `include-media`; `Solo immagini della variante` → `variant-images` (senza
+  valore: gruppi per posizione); `Immagini per alt` → `variant-images="alt"` al posto del precedente. Mai
+  `only-variant-images`: Webflow toglie dalla pagina pubblicata gli attributi che cominciano con "on".
 - Markup: `[product=gallery]` con `[gallery=slider]` (Slider di Webflow), `[gallery=thumbnails]`,
   `[gallery=lightbox]` (un link che apre tutto), `[gallery=lightboxes]` (un link per immagine); slide e miniature
   ricevono `data-media-type=image|video|external-video|model`.
