@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-14",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
-    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 824e85df11076e34)",
+    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 64e5b798174b1c04)",
     "surface": "v2/src: domain/views.ts, kernel/events.ts, compat/public-api.ts",
     "snapshot": "v2/test/contract/snapshots/v1.json (tipi di metafield, eventi degli elementi della 1.x)"
   },
@@ -7147,6 +7147,9 @@
     "if-credit-transaction": [
       "expires"
     ],
+    "include-media": [
+      ""
+    ],
     "line-item": [
       "image",
       "name",
@@ -7406,6 +7409,10 @@
       "unit-price",
       "url",
       "weight"
+    ],
+    "variant-images": [
+      "",
+      "alt"
     ],
     "wishlist": [
       "count"
@@ -7712,6 +7719,57 @@
         "container"
       ],
       "note": "Holds the gallery parts",
+      "reference": "https://www.smootify.io/docs/reference/attributes/product"
+    },
+    {
+      "kind": "attribute",
+      "group": "product",
+      "name": "include-media",
+      "value": "",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "container"
+      ],
+      "with": [
+        "[product=\"gallery\"]"
+      ],
+      "note": "Adds the product's videos, YouTube and Vimeo videos and 3D models; without it the gallery shows images only",
+      "reference": "https://www.smootify.io/docs/reference/attributes/product"
+    },
+    {
+      "kind": "attribute",
+      "group": "product",
+      "name": "variant-images",
+      "value": "",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "container"
+      ],
+      "with": [
+        "[product=\"gallery\"]"
+      ],
+      "note": "Each image linked to a variant starts a group that runs until the next linked image",
+      "reference": "https://www.smootify.io/docs/reference/attributes/product"
+    },
+    {
+      "kind": "attribute",
+      "group": "product",
+      "name": "variant-images",
+      "value": "alt",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "container"
+      ],
+      "with": [
+        "[product=\"gallery\"]"
+      ],
+      "note": "Each image goes with the variants its alt text names after the last #; an image without a tag shows for every variant",
       "reference": "https://www.smootify.io/docs/reference/attributes/product"
     },
     {

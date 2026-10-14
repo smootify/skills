@@ -342,6 +342,10 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `expires`
 
+### `include-media=…` (1)
+
+``
+
 ### `line-item=…` (12)
 
 `image` · `name` · `option` · `price` · `quantity` · `sku` · `title` · `totalDiscount` · `totalPrice` · `unitPrice` · `variantTitle` · `vendor`
@@ -433,6 +437,10 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 ### `variant=…` (25)
 
 `barcode` · `components` · `discount-percentage` · `discounted-amount` · `id` · `image` · `number` · `option1-name` · `option1-value` · `option2-name` · `option2-value` · `option3-name` · `option3-value` · `quantity-increment` · `quantity-max` · `quantity-min` · `sku` · `stock` · `swatch1` · `swatch2` · `swatch3` · `title` · `unit-price` · `url` · `weight`
+
+### `variant-images=…` (2)
+
+`` · `alt`
 
 ### `wishlist=…` (1)
 
