@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-14.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-15.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -22,7 +22,7 @@ qualsiasi con quell'attributo.
 tipo di elemento va ogni valore e quali valori ripetono l'elemento. La sezione "Valori leciti" qui sotto
 è solo l'elenco dei nomi.
 
-## Elementi (89)
+## Elementi (92)
 
 "Dentro" è vincolante: uno di quei contenitori deve essere un antenato. "Fuori contesto" dice cosa succede
 se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
@@ -43,6 +43,7 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `country-switcher` | Lists the market's countries in a Webflow dropdown or a popover and changes country on a pick; when Shopify has a language with the country's ISO code (IT → Italian) it changes language too. With Webflow Localization (a Webflow locale switcher, or the page's hreflang alternate links) the language goes through Webflow: the page moves to that language's locale (it-IT before it when the site has both), and without a locale for that language only the country changes. | ovunque | uno fra `.w-dropdown .w-dropdown-link`, `[popover] :is(a, button:not([popovertarget]))` | si rimuove | — | — |
 | `create-address` | Form that creates an address, with country and zone selects filled from the shop. | ovunque | `form`, `select[name="countryCode"]`, `select[name="zoneCode"]` | si rimuove | Customer Accounts | — |
 | `customer-addresses` | Lists the customer's addresses, one row per address, with edit and delete forms armed. | ovunque | `customer-address` | si rimuove | Customer Accounts | — |
+| `customer-draft-orders` | 2.0: paged list of the customer's draft orders (quotes: from the cart's quote, or made for them by the merchant), the newest first, one row per draft order. Shopify lists the ones the store sent (invoice sent, then completed) and those it keeps in review: a quote still open in the admin, a cart quote included, appears once the merchant sends its invoice (checked on the E2E store, 2026-10-14). Shopify answers it with the Customer Account API's draft orders permission (Headless channel); without it the list loads empty and sets neither has- nor no-draft-orders | ovunque | `customer-draft-order` | si rimuove | Customer Accounts | `limit` |
 | `customer-metafields-editor` | Form that prefills and saves the customer's custom metafields; 2.0: once saved, the customer is read again and the form comes back 5 s after its success message. | ovunque | `form` | si rimuove | Customer Accounts | — |
 | `customer-orders` | Paged list of the customer's orders, one row per order. | ovunque | `customer-order` | si rimuove | Customer Accounts | `limit` |
 | `customer-subscribe-email` | Form that subscribes the customer to email marketing. | ovunque | `form` | si rimuove | Customer Accounts | — |
@@ -68,15 +69,17 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `location-switcher` | Lists the shop's pickup locations in a Webflow dropdown or a popover and changes location on a pick. | ovunque | uno fra `.w-dropdown .w-dropdown-link`, `[popover] :is(a, button:not([popovertarget]))` | si rimuove | — | — |
 | `logout-form` | Clears the customer session and follows Shopify's logout url when there is one. | ovunque | `form` | si rimuove | — | — |
 | `modal-backdrop` | Backdrop and animated panel of a <details> modal. | `details` | — | resta inerte | — | — |
+| `order-edit-request` | 2.0: form where the customer asks to remove lines not yet shipped (Shopify's orderRequestEdit, removals only: the merchant resolves or declines it in the admin). Same rows and form as order-return, without reasons | `order-page` o `customer-order` | `form`, `request-line-item` | si rimuove | Customer Accounts | `is-requestable`, `has-request`, `loaded` |
 | `order-page` | Renders the single order named in the page url. | ovunque | — | resta inerte | Customer Accounts | — |
+| `order-return` | 2.0: form where the customer asks to return delivered lines of its order (Shopify's orderRequestReturn: the return reaches the admin as requested, the merchant approves it). Read once the order is painted: a request-line-item row per returnable line, with what can be returned; the form sends the rows asked for, then reads the order again. The form hides when nothing can be returned | `order-page` o `customer-order` | `form`, `request-line-item` | si rimuove | Customer Accounts | `is-requestable`, `has-request`, `loaded` |
 | `passwordless-login` | Starts the Customer Accounts login when its form is submitted. | ovunque | `form` | si rimuove | Customer Accounts | — |
 | `print-button` | Prints the printable-element its target names. | ovunque | — | si rimuove | — | `data-target` |
 | `printable-element` | A region that a print-button prints alone. | ovunque | — | resta inerte | — | `id` |
 | `product-slider` | At boot, each CMS item with a product card becomes a slide of a Webflow slider or Swiper. | ovunque | `.w-dyn-item smootify-product`, uno fra `.w-slider-mask .w-slide`, `swiper-container swiper-slide` | resta inerte | — | — |
-| `quantity-input` | Number input with plus and minus buttons for a quantity. | `smootify-product` o `cart-item` | `input` | si rimuove | — | `data-disable-max` |
+| `quantity-input` | Number input with plus and minus buttons for a quantity. In a product, min, step and max come from the variant's quantity rules: Shopify's (B2B catalogs) together with the Smootify purchase rules (2.0, HQ #68), max from the stock without a rule maximum; a quantity the rules refuse moves to the nearest they take. | `smootify-product` o `cart-item` | `input` | si rimuove | — | `data-disable-max` |
 | `smootify-account-component` | Embeds Shopify's account web component (login menu) while the visitor is logged out. | ovunque | — | si rimuove | Customer Accounts | — |
 | `smootify-add-to-cart` | Product form that turns the selection into cart lines. | `smootify-product` | `form` | si rimuove | — | `use-magic-box`, `box-title`, `box-image`, `single-addon-swatch`, `allow-unavailable`, `avoid-option-update` |
-| `smootify-cart` | Renders the cart and opens or closes it as a mini cart. | ovunque | — | resta inerte | — | `data-open`, `data-draft` |
+| `smootify-cart` | Renders the cart and opens or closes it as a mini cart. | ovunque | — | resta inerte | — | `data-open`, `data-draft`, `data-free-gift` |
 | `smootify-consent` | Cookie banner and preferences panel built in Webflow over Shopify's Customer Privacy API: shown while Shopify asks for consent and the visitor has not answered, the preferences while open. With button[data-is="preferences-button"] inside (one component, e.g. in the Footer, the banner in a [popover] or [consent-panel]) it stays for the button wherever the consent applies, the banner closed until asked; elsewhere it is hidden whole (2.0). | ovunque | — | resta inerte | — | — |
 | `smootify-magic-box` | Build-a-box: the add-to-cart forms inside it add to the box instead of the cart. 2.0: its pieces stay through a reload or another page until the box goes to the cart (a week at most); the card (smootify-product) of a picked product takes is-in-box and data-in-box (how many of it); the total takes the box's discount only once the box can be bought. | ovunque | `smootify-magic-box-cart` | si rimuove | "Magic Box" | `data-handle`, `data-title`, `data-image`, `data-min`, `data-max`, `data-step`, `data-unique`, `data-unique-per-category`, `data-all-categories`, `data-auto-remove-category`, `data-only-one`, `data-only-one-per-category`, `data-full-error`, `data-too-many-error` |
 | `smootify-magic-box-cart` | Box panel: picked items, counters, totals and the form that adds the whole box to the cart. | `smootify-magic-box` | `form`, `box-item` | si rimuove | "Magic Box" | `data-buy-now` |
@@ -144,7 +147,7 @@ Presenti solo con il piano `server` (e l'estensione accesa); senza, vengono rimo
 | `name-your-price` | Lets the customer type the unit price the product is added at. 2.0: not on a gift card product (Shopify issues the card for its variant's value whatever was paid): there it removes itself, and no price source (the configurator's either) changes a gift card's price. | `smootify-add-to-cart` | `input[type="number"]` | si rimuove | piano server + "Name your price" | `data-invalid-price` |
 | `newsletter-subscribe` | Subscribes the email of a Webflow form to the newsletter. | ovunque | `form input[type="email"]` | si rimuove | piano server + "Newsletter Subscription" | `tags` |
 
-## Tag marker (46)
+## Tag marker (48)
 
 Non sono custom element registrati: sono **template** che l'elemento che li legge clona o riempie. Si
 annotano come gli altri, con il solo `@tag`.
@@ -168,18 +171,20 @@ annotano come gli altri, con il solo `@tag`.
 - `cart-item` — Template of one cart line: the first is cloned per line, the others are removed. (dentro `smootify-cart`; letto da `smootify-cart`, `quantity-input`)
 - `currency-code` — Text set to the current currency ISO code, anywhere in the document. With one country the switcher goes; a currency-code outside it still gets the currency (2.0). (dentro ovunque; letto da `country-switcher`)
 - `customer-address` — Address row template, cloned once per address; 2.0: the customer's default address's row gets is-default (:60). (dentro `customer-addresses`; letto da `customer-addresses`, `delete-address`)
+- `customer-draft-order` — 2.0: draft order row template, cloned once per draft order. (dentro `customer-draft-orders`; letto da `customer-draft-orders`)
 - `customer-order` — Order row template, cloned once per order and painted like an order page. (dentro `customer-orders`; letto da `customer-orders`)
 - `customer-subscription` — Subscription row template, cloned once per contract. (dentro `customer-subscriptions`; letto da `customer-subscriptions`, `subscription-activate`, `subscription-cancel`, `subscription-pause`)
 - `empty-state` — Shown while the box, or the metaobject list, is empty (CSS). (dentro `smootify-magic-box-cart` o `smootify-metaobjects`; letto da `smootify-magic-box-cart`, `smootify-metaobjects`)
 - `error-message` — Error text shown only while the field is invalid (CSS only): a value out of its limits, or (2.0) a required configurator-radio group with no choice, which marks its host is-invalid instead of the browser bubble until a radio is picked. The browser's own message never shows on these fields, so a design gives each one an error-message with its limits. (dentro `configurator-input` o `configurator-dimension` o `configurator-radio`; letto da `configurator-input`, `configurator-dimension`, `configurator-radio`)
 - `input[type="file"]` — The file picker; created hidden when missing. (dentro `file-uploader` o `file-input` o `configurator-file-input`; letto da `file-uploader`, `file-input`, `configurator-file-input`)
 - `items-list` — Shown while the box holds items (CSS on the box cart's is-empty). (dentro `smootify-magic-box-cart`; letto da `smootify-magic-box-cart`)
-- `line-item` — Order line row template, cloned once per line of the order. (dentro `customer-order` o `order-page`; letto da `order-page`, `customer-orders`)
+- `line-item` — Order line row template, cloned once per line of the order (2.0: or of the draft order). (dentro `customer-order` o `order-page` o `customer-draft-order`; letto da `order-page`, `customer-orders`, `customer-draft-orders`)
 - `map` — Container the Mapbox map is drawn into. (dentro `store-locator`; letto da `store-locator`)
 - `map-marker` — Marker template, one per location with coordinates. (dentro `store-locator`; letto da `store-locator`)
 - `model-viewer` — 3D viewer Smootify creates for each 3D model of a product. (dentro `smootify-product`; letto da `smootify-product`)
 - `order-fulfillment` — Fulfillment row template, cloned once per fulfillment of the order. (dentro `customer-order` o `order-page`; letto da `order-page`, `customer-orders`)
 - `quantity-input script[type="application/json"]` — Quantity-break table applied to the configured price: each break's price applies from its min quantity (included) up to the next break. (dentro `smootify-add-to-cart`; letto da `configurator-input`, `configurator-checkbox`, `configurator-radio`, `configurator-select`, `configurator-dropdown`, `configurator-popover`, `configurator-dimension`, `configurator-file-input`)
+- `request-line-item` — 2.0: row template of order-return / order-edit-request, cloned once per line that can be asked for, with [line-item="…"] (its quantity: how many can be asked for) and its fields (see the form fields). (dentro `order-return` o `order-edit-request`; letto da `order-return`, `order-edit-request`)
 - `search-empty` — Shown only when a query returned no products. (dentro `smootify-search`; letto da `smootify-search`)
 - `search-no-query` — Region shown only without a query; its suggested-query links set the query on click. (dentro `smootify-search`; letto da `smootify-search`)
 - `search-result` — Result template, cloned per product and filled through its search bindings. (dentro `smootify-search`; letto da `smootify-search`)
@@ -250,9 +255,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `above-units` · `current-total` · `missing-units`
 
-### `cart=…` (10)
+### `cart=…` (11)
 
-`compare-at-total` · `count` · `discount` · `duties` · `gift-card` · `savings` · `shipping` · `subtotal` · `taxes` · `total`
+`compare-at-total` · `count` · `discount` · `duties` · `gift-card` · `pay-later` · `savings` · `shipping` · `subtotal` · `taxes` · `total`
 
 ### `cart-condition=…` (2)
 
@@ -270,9 +275,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `image` · `quantity` · `title` · `url` · `variant`
 
-### `condition=…` (38)
+### `condition=…` (39)
 
-`above-bundle-limits` · `available-at-location` · `below-bundle-limits` · `disabled` · `fixed-price` · `has-cart-upsells` · `has-complementary` · `has-items-in-last-viewed` · `has-items-in-wishlist` · `has-related` · `in-backorder` · `in-stock` · `is-free` · `is-new` · `is-not-variable` · `is-paid` · `is-variable` · `last-in-stock` · `low-not-last-stock` · `low-stock` · `many-in-stock` · `no-items-in-last-viewed` · `no-items-in-wishlist` · `no-stores` · `no-subscription` · `not-available-as-local-pickup` · `not-available-at-location` · `not-in-backorder` · `not-new` · `not-on-sale` · `on-sale` · `out-of-stock` · `own-wishlist` · `product-available` · `product-unavailable` · `shared-wishlist` · `subscription` · `variable-price`
+`above-bundle-limits` · `available-at-location` · `below-bundle-limits` · `disabled` · `fixed-price` · `has-cart-upsells` · `has-complementary` · `has-items-in-last-viewed` · `has-items-in-wishlist` · `has-price-breaks` · `has-related` · `in-backorder` · `in-stock` · `is-free` · `is-new` · `is-not-variable` · `is-paid` · `is-variable` · `last-in-stock` · `low-not-last-stock` · `low-stock` · `many-in-stock` · `no-items-in-last-viewed` · `no-items-in-wishlist` · `no-stores` · `no-subscription` · `not-available-as-local-pickup` · `not-available-at-location` · `not-in-backorder` · `not-new` · `not-on-sale` · `on-sale` · `out-of-stock` · `own-wishlist` · `product-available` · `product-unavailable` · `shared-wishlist` · `subscription` · `variable-price`
 
 ### `consent-condition=…` (1)
 
@@ -286,17 +291,17 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `defaultAddress` · `display-name` · `email` · `first-name` · `last-name` · `phone` · `tags`
 
-### `customer-condition=…` (14)
+### `customer-condition=…` (16)
 
-`email-not-subscribed` · `email-subscribed` · `has-addresses` · `has-names` · `has-orders` · `has-store-credit` · `has-subscriptions` · `logged-in` · `no-addresses` · `no-names` · `no-orders` · `no-store-credit` · `no-subscriptions` · `not-logged-in`
+`email-not-subscribed` · `email-subscribed` · `has-addresses` · `has-draft-orders` · `has-names` · `has-orders` · `has-store-credit` · `has-subscriptions` · `logged-in` · `no-addresses` · `no-draft-orders` · `no-names` · `no-orders` · `no-store-credit` · `no-subscriptions` · `not-logged-in`
 
 ### `data-action=…` (24)
 
 `accept` · `buy-again` · `close` · `close-cart` · `continue` · `coupon` · `decline` · `delete` · `gift-card` · `load` · `load-in-view` · `load-more` · `minus` · `next` · `open` · `open-cart` · `page` · `plus` · `preferences` · `prev` · `previous` · `remove` · `save` · `share`
 
-### `data-prop=…` (22)
+### `data-prop=…` (23)
 
-`compareAtPrice` · `currency-iso-code` · `currency-name` · `currency-symbol` · `currentQuantity` · `discount-amount` · `discount-percentage` · `flag` · `iso-code` · `left` · `leftQuantity` · `leftQuantityPercentage` · `leftQuantityWidth` · `maxQuantity` · `minQuantity` · `minutes` · `missingCategories` · `name` · `price` · `progress-width` · `seconds` · `total`
+`compareAtPrice` · `compareAtTotal` · `currency-iso-code` · `currency-name` · `currency-symbol` · `currentQuantity` · `discount-amount` · `discount-percentage` · `flag` · `iso-code` · `left` · `leftQuantity` · `leftQuantityPercentage` · `leftQuantityWidth` · `maxQuantity` · `minQuantity` · `minutes` · `missingCategories` · `name` · `price` · `progress-width` · `seconds` · `total`
 
 ### `data-state=…` (2)
 
@@ -305,6 +310,14 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 ### `discount=…` (2)
 
 `amount` · `title`
+
+### `draft-order=…` (17)
+
+`billing-address` · `created-at` · `email` · `invoice-url` · `item-count` · `name` · `order-number` · `order-url` · `phone` · `shipping-address` · `status` · `subtotal-price` · `total-discounts` · `total-price` · `total-shipping` · `total-tax` · `updated-at`
+
+### `draft-order-condition=…` (2)
+
+`has-discounts` · `in-review`
 
 ### `filter=…` (9)
 
@@ -346,9 +359,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 ``
 
-### `line-item=…` (12)
+### `line-item=…` (13)
 
-`image` · `name` · `option` · `price` · `quantity` · `sku` · `title` · `totalDiscount` · `totalPrice` · `unitPrice` · `variantTitle` · `vendor`
+`image` · `name` · `option` · `price` · `quantity` · `sku` · `title` · `totalDiscount` · `totalPrice` · `unitPrice` · `variant-title` · `variantTitle` · `vendor`
 
 ### `location=…` (8)
 
@@ -378,9 +391,21 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `has-fulfillments`
 
+### `order-edit-request=…` (3)
+
+`reason` · `request` · `status`
+
+### `order-return=…` (5)
+
+`created-at` · `name` · `reason` · `request` · `status`
+
 ### `policy=…` (8)
 
 `contact-information` · `legal-notice` · `privacy` · `refund` · `shipping` · `subscription` · `terms` · `terms-of-sale`
+
+### `price-break=…` (7)
+
+`add` · `max` · `min` · `price` · `range` · `savings` · `total`
 
 ### `product=…` (26)
 
@@ -434,9 +459,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `dropzone` · `error` · `errors` · `item` · `list` · `name` · `preview` · `progress` · `remove` · `size`
 
-### `variant=…` (25)
+### `variant=…` (28)
 
-`barcode` · `components` · `discount-percentage` · `discounted-amount` · `id` · `image` · `number` · `option1-name` · `option1-value` · `option2-name` · `option2-value` · `option3-name` · `option3-value` · `quantity-increment` · `quantity-max` · `quantity-min` · `sku` · `stock` · `swatch1` · `swatch2` · `swatch3` · `title` · `unit-price` · `url` · `weight`
+`barcode` · `components` · `discount-percentage` · `discounted-amount` · `id` · `image` · `number` · `option1-name` · `option1-value` · `option2-name` · `option2-value` · `option3-name` · `option3-value` · `pay-later` · `price-at-quantity` · `price-breaks` · `quantity-increment` · `quantity-max` · `quantity-min` · `sku` · `stock` · `swatch1` · `swatch2` · `swatch3` · `title` · `unit-price` · `url` · `weight`
 
 ### `variant-images=…` (2)
 
@@ -458,13 +483,13 @@ Venivano dalla 1.x o dalle prime 2.0: qualcuno funziona ancora, qualcuno non pi�
 
 Scritte da Smootify a runtime sull'host. Non vanno messe in `@style`: servono per disegnare gli stati.
 
-- `smootify-product` → `loaded`, `w-dyn-bind-empty`, `price-varies`, `is-variable`, `has-subscription`, `is-on-sale`, `is-free`, `is-available`, `is-not-available`, `not-existing-variant`, `is-currently-out-of-stock`, `many-in-stock`, `last-in-stock`, `low-stock`, `low-not-last-stock`, `is-new`
+- `smootify-product` → `loaded`, `w-dyn-bind-empty`, `price-varies`, `is-variable`, `has-subscription`, `is-on-sale`, `is-free`, `is-available`, `is-not-available`, `not-existing-variant`, `is-currently-out-of-stock`, `many-in-stock`, `last-in-stock`, `low-stock`, `low-not-last-stock`, `is-new`, `has-price-breaks`
 - `smootify-variant` → `loaded`, `is-on-sale`, `is-available`, `is-not-available`, `last-in-stock`, `low-stock`, `not-existing-variant`
 - `smootify-cart` → `loaded`, `is-rendered`, `is-empty-cart`, `has-taxes`, `has-empty-quote`
 - `smootify-search-discovery` → `inited`, `empty`, `is-filtered`, `has-pagination`, `has-page-numbers`, `is-single-result`
 - `smootify-search-page` → `inited`, `is-empty`, `is-filtered`, `has-pagination`, `has-page-numbers`, `has-query`, `is-single-result`
 
-## Campi dei form (41)
+## Campi dei form (43)
 
 Il **Name** di ogni campo (impostazione del campo in Webflow, non un attributo custom) dice a Smootify cosa
 contiene. Si annota con `@attr: name=<Name>` sul campo, scritto esattamente come qui: maiuscole comprese.
@@ -586,6 +611,18 @@ Non legge campi: the submit logs out and follows Shopify's logout url.
 ### `newsletter-subscribe`
 
 - the first `input[type="email"]` (any name) — email — **obbligatorio** (removed without it) — renamed `email`: the address subscribed; every other field is ignored
+
+### `order-edit-request`
+
+- `quantity` (in each `request-line-item`) — number input or select — how many of the line are asked for, kept between 0 and what the line allows (`max` written; a select gets its options, from 1 with a checkbox, else 0)
+- a checkbox (in each `request-line-item`, any name) — checkbox — the row is asked for only while ticked: its `quantity` field, else all of the line
+
+### `order-return`
+
+- `quantity` (in each `request-line-item`) — number input or select — how many of the line are asked for, kept between 0 and what the line allows (`max` written; a select gets its options, from 1 with a checkbox, else 0)
+- a checkbox (in each `request-line-item`, any name) — checkbox — the row is asked for only while ticked: its `quantity` field, else all of the line
+- `reason` (in each `request-line-item`) — select — **obbligatorio** (, when it offers reasons: Shopify refuses a return line without one, so a row asked for without it shows "Choose a reason for <title>" in `.w-form-fail` and nothing is sent) — filled with the return reasons Shopify suggests for the line's product category, after the designer's first option when its value is empty (`Choose a reason`), the visitor's choice kept when the order is read again; hidden and disabled when Shopify suggests none
+- `note` (in each `request-line-item`) — textarea or text input — the customer's note on the line, up to 300 characters
 
 ### `passwordless-login`
 

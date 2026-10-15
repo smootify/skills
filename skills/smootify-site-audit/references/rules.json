@@ -1,9 +1,9 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-14",
+  "generatedAt": "2026-10-15",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
-    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 64e5b798174b1c04)",
+    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 64959cc4d30ce807)",
     "surface": "v2/src: domain/views.ts, kernel/events.ts, compat/public-api.ts",
     "snapshot": "v2/test/contract/snapshots/v1.json (tipi di metafield, eventi degli elementi della 1.x)"
   },
@@ -2022,6 +2022,87 @@
       "writes": []
     },
     {
+      "tag": "customer-draft-order",
+      "kind": "marker",
+      "registered": false,
+      "selector": false,
+      "purpose": "2.0: draft order row template, cloned once per draft order.",
+      "onlyIn2": false,
+      "reference": "https://www.smootify.io/docs/reference/elements/customer-draft-order",
+      "section": "Account",
+      "context": {
+        "anywhere": false,
+        "requiresAncestorOneOf": [
+          "customer-draft-orders"
+        ],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "inert",
+        "debugger": false,
+        "detail": ""
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": false
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [],
+      "ancestorAttributes": [],
+      "writes": [
+        "data-status",
+        "OPEN",
+        "INVOICE_SENT",
+        "COMPLETED",
+        "is-in-review"
+      ],
+      "readBy": [
+        "customer-draft-orders"
+      ]
+    },
+    {
+      "tag": "customer-draft-orders",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "2.0: paged list of the customer's draft orders (quotes: from the cart's quote, or made for them by the merchant), the newest first, one row per draft order. Shopify lists the ones the store sent (invoice sent, then completed) and those it keeps in review: a quote still open in the admin, a cart quote included, appears once the merchant sends its invoice (checked on the E2E store, 2026-10-14). Shopify answers it with the Customer Account API's draft orders permission (Headless channel); without it the list loads empty and sets neither has- nor no-draft-orders",
+      "onlyIn2": false,
+      "reference": "https://www.smootify.io/docs/reference/elements/customer-draft-orders",
+      "section": "Account",
+      "context": {
+        "anywhere": true,
+        "requiresAncestorOneOf": [],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "customer-draft-order"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": "no row template; logged out shows an empty list"
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": true
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [
+        "limit"
+      ],
+      "ancestorAttributes": [],
+      "writes": []
+    },
+    {
       "tag": "customer-metafields-editor",
       "kind": "element",
       "registered": true,
@@ -2089,7 +2170,10 @@
       "serverPlanOnly": false,
       "hostAttributes": [],
       "ancestorAttributes": [],
-      "writes": [],
+      "writes": [
+        "data-order-id",
+        "order-page"
+      ],
       "readBy": [
         "customer-orders"
       ]
@@ -3300,7 +3384,7 @@
       "kind": "marker",
       "registered": false,
       "selector": false,
-      "purpose": "Order line row template, cloned once per line of the order.",
+      "purpose": "Order line row template, cloned once per line of the order (2.0: or of the draft order).",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/line-item",
       "section": "Account",
@@ -3308,7 +3392,8 @@
         "anywhere": false,
         "requiresAncestorOneOf": [
           "customer-order",
-          "order-page"
+          "order-page",
+          "customer-draft-order"
         ],
         "ancestorSelectors": [],
         "notInside": [],
@@ -3332,7 +3417,8 @@
       "writes": [],
       "readBy": [
         "order-page",
-        "customer-orders"
+        "customer-orders",
+        "customer-draft-orders"
       ]
     },
     {
@@ -3827,6 +3913,49 @@
       ]
     },
     {
+      "tag": "order-edit-request",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "2.0: form where the customer asks to remove lines not yet shipped (Shopify's orderRequestEdit, removals only: the merchant resolves or declines it in the admin). Same rows and form as order-return, without reasons",
+      "onlyIn2": false,
+      "reference": "https://www.smootify.io/docs/reference/elements/order-edit-request",
+      "section": "Account",
+      "context": {
+        "anywhere": false,
+        "requiresAncestorOneOf": [
+          "order-page",
+          "customer-order"
+        ],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "form",
+          "request-line-item"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": "outside an order, or without a form or a row"
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": true
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [
+        "is-requestable",
+        "has-request",
+        "loaded"
+      ],
+      "ancestorAttributes": [],
+      "writes": []
+    },
+    {
       "tag": "order-fulfillment",
       "kind": "marker",
       "registered": false,
@@ -3896,6 +4025,49 @@
       },
       "serverPlanOnly": false,
       "hostAttributes": [],
+      "ancestorAttributes": [],
+      "writes": []
+    },
+    {
+      "tag": "order-return",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "2.0: form where the customer asks to return delivered lines of its order (Shopify's orderRequestReturn: the return reaches the admin as requested, the merchant approves it). Read once the order is painted: a request-line-item row per returnable line, with what can be returned; the form sends the rows asked for, then reads the order again. The form hides when nothing can be returned",
+      "onlyIn2": false,
+      "reference": "https://www.smootify.io/docs/reference/elements/order-return",
+      "section": "Account",
+      "context": {
+        "anywhere": false,
+        "requiresAncestorOneOf": [
+          "order-page",
+          "customer-order"
+        ],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "form",
+          "request-line-item"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": "outside an order, or without a form or a row"
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": true
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [
+        "is-requestable",
+        "has-request",
+        "loaded"
+      ],
       "ancestorAttributes": [],
       "writes": []
     },
@@ -4047,7 +4219,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Number input with plus and minus buttons for a quantity.",
+      "purpose": "Number input with plus and minus buttons for a quantity. In a product, min, step and max come from the variant's quantity rules: Shopify's (B2B catalogs) together with the Smootify purchase rules (2.0, HQ #68), max from the stock without a rule maximum; a quantity the rules refuse moves to the nearest they take.",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/quantity-input",
       "section": "Product and variants",
@@ -4188,6 +4360,46 @@
       "writes": [],
       "removed": true,
       "replacement": "passwordless-login"
+    },
+    {
+      "tag": "request-line-item",
+      "kind": "marker",
+      "registered": false,
+      "selector": false,
+      "purpose": "2.0: row template of order-return / order-edit-request, cloned once per line that can be asked for, with [line-item=\"…\"] (its quantity: how many can be asked for) and its fields (see the form fields).",
+      "onlyIn2": false,
+      "reference": "https://www.smootify.io/docs/reference/elements/request-line-item",
+      "section": "Account",
+      "context": {
+        "anywhere": false,
+        "requiresAncestorOneOf": [
+          "order-return",
+          "order-edit-request"
+        ],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "inert",
+        "debugger": false,
+        "detail": ""
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": false
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [],
+      "ancestorAttributes": [],
+      "writes": [],
+      "readBy": [
+        "order-return",
+        "order-edit-request"
+      ]
     },
     {
       "tag": "reset-form",
@@ -4628,7 +4840,8 @@
       "serverPlanOnly": false,
       "hostAttributes": [
         "data-open",
-        "data-draft"
+        "data-draft",
+        "data-free-gift"
       ],
       "ancestorAttributes": [],
       "writes": []
@@ -6926,6 +7139,7 @@
       "discount",
       "duties",
       "gift-card",
+      "pay-later",
       "savings",
       "shipping",
       "subtotal",
@@ -6977,6 +7191,7 @@
       "has-complementary",
       "has-items-in-last-viewed",
       "has-items-in-wishlist",
+      "has-price-breaks",
       "has-related",
       "in-backorder",
       "in-stock",
@@ -7027,12 +7242,14 @@
       "email-not-subscribed",
       "email-subscribed",
       "has-addresses",
+      "has-draft-orders",
       "has-names",
       "has-orders",
       "has-store-credit",
       "has-subscriptions",
       "logged-in",
       "no-addresses",
+      "no-draft-orders",
       "no-names",
       "no-orders",
       "no-store-credit",
@@ -7067,6 +7284,7 @@
     ],
     "data-prop": [
       "compareAtPrice",
+      "compareAtTotal",
       "currency-iso-code",
       "currency-name",
       "currency-symbol",
@@ -7096,6 +7314,29 @@
     "discount": [
       "amount",
       "title"
+    ],
+    "draft-order": [
+      "billing-address",
+      "created-at",
+      "email",
+      "invoice-url",
+      "item-count",
+      "name",
+      "order-number",
+      "order-url",
+      "phone",
+      "shipping-address",
+      "status",
+      "subtotal-price",
+      "total-discounts",
+      "total-price",
+      "total-shipping",
+      "total-tax",
+      "updated-at"
+    ],
+    "draft-order-condition": [
+      "has-discounts",
+      "in-review"
     ],
     "filter": [
       "active",
@@ -7161,6 +7402,7 @@
       "totalDiscount",
       "totalPrice",
       "unitPrice",
+      "variant-title",
       "variantTitle",
       "vendor"
     ],
@@ -7233,6 +7475,18 @@
     "order-condition": [
       "has-fulfillments"
     ],
+    "order-edit-request": [
+      "reason",
+      "request",
+      "status"
+    ],
+    "order-return": [
+      "created-at",
+      "name",
+      "reason",
+      "request",
+      "status"
+    ],
     "policy": [
       "contact-information",
       "legal-notice",
@@ -7242,6 +7496,15 @@
       "subscription",
       "terms",
       "terms-of-sale"
+    ],
+    "price-break": [
+      "add",
+      "max",
+      "min",
+      "price",
+      "range",
+      "savings",
+      "total"
     ],
     "product": [
       "category",
@@ -7397,6 +7660,9 @@
       "option2-value",
       "option3-name",
       "option3-value",
+      "pay-later",
+      "price-at-quantity",
+      "price-breaks",
       "quantity-increment",
       "quantity-max",
       "quantity-min",
@@ -8358,6 +8624,48 @@
       "kind": "attribute",
       "group": "variant",
       "name": "variant",
+      "value": "price-breaks",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "One copy per row of the B2B buyer's volume pricing; a click sets the form's quantity, the current row takes is-active. No copy without breaks",
+      "reference": "https://www.smootify.io/docs/reference/attributes/variant"
+    },
+    {
+      "kind": "attribute",
+      "group": "variant",
+      "name": "variant",
+      "value": "price-at-quantity",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The price of one at the form's quantity, from its volume pricing row; follows the quantity",
+      "reference": "https://www.smootify.io/docs/reference/attributes/variant"
+    },
+    {
+      "kind": "attribute",
+      "group": "variant",
+      "name": "variant",
+      "value": "pay-later",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "On PayPal's or Klarna's pay later placement, or the element around it: the form's total, followed as it changes",
+      "reference": "https://www.smootify.io/docs/reference/attributes/variant"
+    },
+    {
+      "kind": "attribute",
+      "group": "variant",
+      "name": "variant",
       "value": "swatch1",
       "inside": [
         "smootify-variant"
@@ -8531,6 +8839,102 @@
         "link"
       ],
       "reference": "https://www.smootify.io/docs/reference/attributes/component"
+    },
+    {
+      "kind": "attribute",
+      "group": "price-break",
+      "name": "price-break",
+      "value": "range",
+      "inside": [
+        "smootify-product [variant=\"price-breaks\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "1–9, 10–49, 50+",
+      "reference": "https://www.smootify.io/docs/reference/attributes/price-break"
+    },
+    {
+      "kind": "attribute",
+      "group": "price-break",
+      "name": "price-break",
+      "value": "min",
+      "inside": [
+        "smootify-product [variant=\"price-breaks\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/price-break"
+    },
+    {
+      "kind": "attribute",
+      "group": "price-break",
+      "name": "price-break",
+      "value": "max",
+      "inside": [
+        "smootify-product [variant=\"price-breaks\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Hidden on the last row",
+      "reference": "https://www.smootify.io/docs/reference/attributes/price-break"
+    },
+    {
+      "kind": "attribute",
+      "group": "price-break",
+      "name": "price-break",
+      "value": "price",
+      "inside": [
+        "smootify-product [variant=\"price-breaks\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/price-break"
+    },
+    {
+      "kind": "attribute",
+      "group": "price-break",
+      "name": "price-break",
+      "value": "savings",
+      "inside": [
+        "smootify-product [variant=\"price-breaks\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "-10% below the variant's price; hidden on the first row",
+      "reference": "https://www.smootify.io/docs/reference/attributes/price-break"
+    },
+    {
+      "kind": "attribute",
+      "group": "price-break",
+      "name": "price-break",
+      "value": "total",
+      "inside": [
+        "smootify-product [variant=\"price-breaks\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The row's first quantity at its price",
+      "reference": "https://www.smootify.io/docs/reference/attributes/price-break"
+    },
+    {
+      "kind": "attribute",
+      "group": "price-break",
+      "name": "price-break",
+      "value": "add",
+      "inside": [
+        "smootify-product [variant=\"price-breaks\"]"
+      ],
+      "on": [
+        "button"
+      ],
+      "note": "Adds the row's first quantity to the cart; the form's quantity stays",
+      "reference": "https://www.smootify.io/docs/reference/attributes/price-break"
     },
     {
       "kind": "attribute",
@@ -9212,6 +9616,20 @@
     },
     {
       "kind": "attribute",
+      "group": "price",
+      "name": "data-prop",
+      "value": "compareAtTotal",
+      "inside": [
+        "smootify-price"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The struck-through total; hidden when nothing is on sale",
+      "reference": "https://www.smootify.io/docs/reference/attributes/price"
+    },
+    {
+      "kind": "attribute",
       "group": "selling-plan",
       "name": "subscription-group",
       "value": "name",
@@ -9359,6 +9777,20 @@
         "container"
       ],
       "note": "Template: one per gift card",
+      "reference": "https://www.smootify.io/docs/reference/attributes/cart"
+    },
+    {
+      "kind": "attribute",
+      "group": "cart",
+      "name": "cart",
+      "value": "pay-later",
+      "inside": [
+        "smootify-cart"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "On PayPal's or Klarna's pay later placement, or the element around it: the cart's total",
       "reference": "https://www.smootify.io/docs/reference/attributes/cart"
     },
     {
@@ -11857,7 +12289,8 @@
       "name": "line-item",
       "value": "name",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11870,7 +12303,8 @@
       "name": "line-item",
       "value": "title",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11881,9 +12315,28 @@
       "kind": "attribute",
       "group": "line-item",
       "name": "line-item",
+      "value": "variant-title",
+      "inside": [
+        "line-item",
+        "request-line-item"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Red / L; removed for a product without variants",
+      "aliases": [
+        "variantTitle"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/line-item"
+    },
+    {
+      "kind": "attribute",
+      "group": "line-item",
+      "name": "line-item",
       "value": "quantity",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11896,7 +12349,8 @@
       "name": "line-item",
       "value": "vendor",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11909,7 +12363,8 @@
       "name": "line-item",
       "value": "sku",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11922,7 +12377,8 @@
       "name": "line-item",
       "value": "unitPrice",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11938,7 +12394,8 @@
       "name": "line-item",
       "value": "price",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11951,7 +12408,8 @@
       "name": "line-item",
       "value": "totalDiscount",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11967,7 +12425,8 @@
       "name": "line-item",
       "value": "totalPrice",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "text"
@@ -11983,7 +12442,8 @@
       "name": "line-item",
       "value": "image",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "image"
@@ -11996,7 +12456,8 @@
       "name": "line-item",
       "value": "option",
       "inside": [
-        "line-item"
+        "line-item",
+        "request-line-item"
       ],
       "on": [
         "container"
@@ -12222,6 +12683,430 @@
         "tracking-url"
       ],
       "reference": "https://www.smootify.io/docs/reference/attributes/fulfillment"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "name",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "#D12",
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "status",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Open, Invoice sent or Completed, or the SmootifyStatusLabels texts",
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "invoice-url",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "link"
+      ],
+      "note": "Where the customer pays it; removed once paid",
+      "aliases": [
+        "invoiceUrl"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "order-url",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "link"
+      ],
+      "note": "The order the quote became; removed until then",
+      "aliases": [
+        "orderUrl"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "order-number",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "orderNumber"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "email",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "phone",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "billing-address",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "billingAddress"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "shipping-address",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "shippingAddress"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "subtotal-price",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "subtotalPrice"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "total-price",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "totalPrice"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "total-tax",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "totalTax"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "total-shipping",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "totalShipping"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "total-discounts",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Removed when the quote has no discount",
+      "aliases": [
+        "totalDiscounts"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "item-count",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The pieces",
+      "aliases": [
+        "itemCount"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "created-at",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "createdAt"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "draft-order",
+      "name": "draft-order",
+      "value": "updated-at",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "updatedAt"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/draft-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-return",
+      "name": "order-return",
+      "value": "reason",
+      "inside": [
+        "order-return"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Like Return window expired, or the SmootifyStatusLabels text; removed when a line can be returned",
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-return"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-return",
+      "name": "order-return",
+      "value": "request",
+      "inside": [
+        "order-return"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "Removed when no return was asked",
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-return"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-return",
+      "name": "order-return",
+      "value": "name",
+      "inside": [
+        "order-return"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "#1001-R1",
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-return"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-return",
+      "name": "order-return",
+      "value": "status",
+      "inside": [
+        "order-return"
+      ],
+      "on": [
+        "text"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-return"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-return",
+      "name": "order-return",
+      "value": "created-at",
+      "inside": [
+        "order-return"
+      ],
+      "on": [
+        "text"
+      ],
+      "aliases": [
+        "createdAt"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-return"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-edit-request",
+      "name": "order-edit-request",
+      "value": "reason",
+      "inside": [
+        "order-edit-request"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Like Edit window expired, or the SmootifyStatusLabels text; removed when a line can be removed",
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-edit-request"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-edit-request",
+      "name": "order-edit-request",
+      "value": "request",
+      "inside": [
+        "order-edit-request"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "Removed when no removal was asked",
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-edit-request"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-edit-request",
+      "name": "order-edit-request",
+      "value": "status",
+      "inside": [
+        "order-edit-request"
+      ],
+      "on": [
+        "text"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-edit-request"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-request-fields",
+      "name": "name",
+      "value": "quantity",
+      "inside": [
+        "order-return request-line-item",
+        "order-edit-request request-line-item"
+      ],
+      "on": [
+        "input"
+      ],
+      "note": "A number input or a select, up to what the line allows",
+      "generic": true,
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-request-fields"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-request-fields",
+      "name": "name",
+      "value": "reason",
+      "inside": [
+        "order-return request-line-item"
+      ],
+      "on": [
+        "input"
+      ],
+      "note": "A select Smootify fills with Shopify's reasons; required when it has some",
+      "generic": true,
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-request-fields"
+    },
+    {
+      "kind": "attribute",
+      "group": "order-request-fields",
+      "name": "name",
+      "value": "note",
+      "inside": [
+        "order-return request-line-item"
+      ],
+      "on": [
+        "input"
+      ],
+      "note": "A textarea, up to 300 characters",
+      "generic": true,
+      "reference": "https://www.smootify.io/docs/reference/attributes/order-request-fields"
     },
     {
       "kind": "attribute",
@@ -15034,6 +15919,18 @@
       "kind": "condition",
       "group": "product",
       "name": "condition",
+      "value": "has-price-breaks",
+      "inside": [
+        "smootify-product"
+      ],
+      "on": null,
+      "note": "B2B volume pricing; needs a [variant=\"price-breaks\"] on the page",
+      "reference": "https://www.smootify.io/docs/reference/conditions/product"
+    },
+    {
+      "kind": "condition",
+      "group": "product",
+      "name": "condition",
       "value": "not-available-as-local-pickup",
       "inside": [
         "smootify-product"
@@ -15358,6 +16255,26 @@
       "kind": "condition",
       "group": "customer",
       "name": "customer-condition",
+      "value": "has-draft-orders",
+      "inside": [],
+      "on": null,
+      "note": "Needs customer-draft-orders on the page",
+      "reference": "https://www.smootify.io/docs/reference/conditions/customer"
+    },
+    {
+      "kind": "condition",
+      "group": "customer",
+      "name": "customer-condition",
+      "value": "no-draft-orders",
+      "inside": [],
+      "on": null,
+      "note": "Needs customer-draft-orders on the page",
+      "reference": "https://www.smootify.io/docs/reference/conditions/customer"
+    },
+    {
+      "kind": "condition",
+      "group": "customer",
+      "name": "customer-condition",
       "value": "has-store-credit",
       "inside": [],
       "on": null,
@@ -15514,6 +16431,30 @@
       ],
       "on": null,
       "reference": "https://www.smootify.io/docs/reference/conditions/order"
+    },
+    {
+      "kind": "condition",
+      "group": "draft-order",
+      "name": "draft-order-condition",
+      "value": "in-review",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": null,
+      "note": "A B2B order the merchant has yet to approve",
+      "reference": "https://www.smootify.io/docs/reference/conditions/draft-order"
+    },
+    {
+      "kind": "condition",
+      "group": "draft-order",
+      "name": "draft-order-condition",
+      "value": "has-discounts",
+      "inside": [
+        "customer-draft-order"
+      ],
+      "on": null,
+      "note": "Around the discount's label and amount",
+      "reference": "https://www.smootify.io/docs/reference/conditions/draft-order"
     },
     {
       "kind": "condition",
@@ -15950,6 +16891,90 @@
         "required": null,
         "requiredNote": "",
         "does": "not sent: only the first and last name go to Shopify"
+      }
+    ],
+    "order-return": [
+      {
+        "name": "`quantity` (in each `request-line-item`)",
+        "names": [
+          "quantity",
+          "request-line-item"
+        ],
+        "field": "number input or select",
+        "required": false,
+        "requiredNote": "",
+        "does": "how many of the line are asked for, kept between 0 and what the line allows (`max` written; a select gets its options, from 1 with a checkbox, else 0)"
+      },
+      {
+        "name": "a checkbox (in each `request-line-item`, any name)",
+        "names": [
+          "request-line-item"
+        ],
+        "field": "checkbox",
+        "required": false,
+        "requiredNote": "",
+        "does": "the row is asked for only while ticked: its `quantity` field, else all of the line"
+      },
+      {
+        "name": "`reason` (in each `request-line-item`)",
+        "names": [
+          "reason",
+          "request-line-item"
+        ],
+        "field": "select",
+        "required": true,
+        "requiredNote": ", when it offers reasons: Shopify refuses a return line without one, so a row asked for without it shows \"Choose a reason for <title>\" in `.w-form-fail` and nothing is sent",
+        "does": "filled with the return reasons Shopify suggests for the line's product category, after the designer's first option when its value is empty (`Choose a reason`), the visitor's choice kept when the order is read again; hidden and disabled when Shopify suggests none"
+      },
+      {
+        "name": "`note` (in each `request-line-item`)",
+        "names": [
+          "note",
+          "request-line-item"
+        ],
+        "field": "textarea or text input",
+        "required": false,
+        "requiredNote": "",
+        "does": "the customer's note on the line, up to 300 characters"
+      },
+      {
+        "name": "",
+        "names": [],
+        "field": "",
+        "required": null,
+        "requiredNote": "",
+        "does": "a row with neither a `quantity` field nor a checkbox is shown only; nothing asked: \"Choose at least one item\" in `.w-form-fail`"
+      }
+    ],
+    "order-edit-request": [
+      {
+        "name": "`quantity` (in each `request-line-item`)",
+        "names": [
+          "quantity",
+          "request-line-item"
+        ],
+        "field": "number input or select",
+        "required": false,
+        "requiredNote": "",
+        "does": "how many of the line are asked for, kept between 0 and what the line allows (`max` written; a select gets its options, from 1 with a checkbox, else 0)"
+      },
+      {
+        "name": "a checkbox (in each `request-line-item`, any name)",
+        "names": [
+          "request-line-item"
+        ],
+        "field": "checkbox",
+        "required": false,
+        "requiredNote": "",
+        "does": "the row is asked for only while ticked: its `quantity` field, else all of the line"
+      },
+      {
+        "name": "",
+        "names": [],
+        "field": "",
+        "required": null,
+        "requiredNote": "",
+        "does": "a row with neither a `quantity` field nor a checkbox is shown only; nothing asked: \"Choose at least one item\" in `.w-form-fail`"
       }
     ],
     "create-address": [
@@ -16736,7 +17761,8 @@
       "last-in-stock",
       "low-stock",
       "low-not-last-stock",
-      "is-new"
+      "is-new",
+      "has-price-breaks"
     ],
     "smootify-variant": [
       "loaded",
