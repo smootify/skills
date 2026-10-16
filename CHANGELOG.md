@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.32 · 2026-10-16
+
+- The steps the MCP cannot do in the Designer go through the browser, the built-in one or Claude in Chrome.
+- A native Popover takes no id: its CSS goes on its class. Its open and close animations are an interaction with the **Popover toggle** trigger, which the MCP cannot author: they are set in the Designer.
+
 ## 2.0.0-beta.31 · 2026-10-16
 
 - Popovers are always Webflow's native Popover element, placed in the Designer through Claude in Chrome: only the native one has **Animate open** and **Animate close**. The MCP's limits are no longer offered as a reason to fall back to the `popover` attribute, which stays only for a Designer without the element. A published native popover has the class `w-popover` and `data-w-popover-mode`.
