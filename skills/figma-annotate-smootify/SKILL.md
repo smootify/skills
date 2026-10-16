@@ -731,8 +731,8 @@ requires (the builder adds it from the catalogue) or for a container a `@wrap` c
   (prefer a boolean prop or a split, and write it only if the person insists), or a block of a CMS template
   that shows only for some items (one Products template for several kinds of product). The MCP cannot read or
   write it;
-- `popover` — the native Popover element of Webflow (beta). The MCP cannot create it; the same markup works
-  with the `popover` / `popovertarget` attributes, which it can;
+- `popover` — the open and close animation of a native Popover (the Popover toggle interaction): the MCP creates
+  the Popover itself, but not its animation;
 - `other` — anything else, described so precisely that someone (or an agent driving the Designer in Chrome)
   can do it without looking at the design: the element, the panel, the value.
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.36 · 2026-10-16
+
+- Native Popovers are created through the Webflow MCP (`data_element_builder`, type `Popover`), and the trigger links to them in mode `popover`. Only their open and close animation (IX3, the Popover toggle trigger) is still set in the Designer: Webflow confirms it is not in the MCP yet.
+
 ## 2.0.0-beta.35 · 2026-10-16
 
 - How to animate a native Popover: **Animate open/close** in its settings, changed in the Interactions panel, set on the component definition so every instance gets it; **Conditional playback** to skip the breakpoints where the panel is not a popover; after publishing, check that the motion is really in the published site.
