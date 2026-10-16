@@ -288,6 +288,9 @@ Look for a capability the store's own data shows it needs, and a Smootify featur
 - Per-product option forms duplicated across templates, where `dynamic-property` would let the merchant
   define them in Shopify once.
 - A configurator hand-wired in JavaScript, where `configurator-field[data-formula]` exists.
+- Popovers built with the `popover` attribute on a div (no class `w-popover`, no `data-w-popover-mode`), where
+  Webflow's native Popover element would give them **Animate open** and **Animate close** and Smootify drives it the
+  same way: one opportunity for all of them, with the list of ids.
 
 ## Output
 

@@ -285,9 +285,12 @@ components and no manual step.
 
 Learned on the starter build (beta.10, October 2026). Each one cost a question or a manual step there.
 
-- **Popovers.** When the site has Webflow's Popover element (the beta), use it: the MCP cannot create it yet, so
-  place it in the Designer through Claude in Chrome, inside the Smootify element it belongs to, and position it as
-  the design draws it. The element writes `popover`, `popovertarget` and the close action itself: add none of them. Its trigger is any Webflow Button or Link Block, with Link → Type *Popover*, its Target and the Action (Toggle, Show, Hide); a close button is the same with Action Hide. A DOM `button` cannot target it. Only on a site without it, build the panel with the `popover` attribute and the trigger with
+- **Popovers are native.** When the Designer offers Webflow's Popover element, every popover is that element, never
+  a div with the `popover` attribute: only the native one has **Animate open** and **Animate close**, and it is what
+  the starter uses. The MCP cannot create it yet, so place it in the Designer through Claude in Chrome, inside the
+  Smootify element it belongs to, and position it as the design draws it. The MCP's limits are not a reason to fall
+  back to attributes: Chrome is the way. A published native popover has the class `w-popover` and
+  `data-w-popover-mode`; one without them is a fallback to fix before review. The element writes `popover`, `popovertarget` and the close action itself: add none of them. Its trigger is any Webflow Button or Link Block, with Link → Type *Popover*, its Target and the Action (Toggle, Show, Hide); a close button is the same with Action Hide. A DOM `button` cannot target it. Only on a site without it, build the panel with the `popover` attribute and the trigger with
   `popovertarget`, and give the panel the design's position in the site custom code: without one, the browser opens
   every popover in the middle of the page, which is right only when the design puts it there. Never put a popover inside a template Smootify repeats (an address card,
   a cart line): every copy repeats the id. Use `details` / `summary` there.
@@ -677,7 +680,7 @@ If there are nested or repeated (sibling) components:
 | ~~Cannot create interactions~~ | `data_interactions_tool` (IX3). Confirm in Preview: an accepted interaction can still not run |
 | ~~Cannot install fonts programmatically~~ | `data_fonts_tool > create_font` |
 | A reset of the native popover's UA styles in the site's head code (`[popover]{margin:0;border:0;padding:0;inset:auto}`) loads after Webflow's CSS with the same specificity as a class, so it wipes every popover's own padding, border and position (the Spannbach market dialog shipped as a bare strip) | Write the reset with zero specificity: `:where([popover]){…}`, so the popover's class always wins |
-| The native Popover element (beta) cannot be created or copied | Build the same markup with the `popover` / `popovertarget` attributes; the element itself is `@manual: popover` |
+| The native Popover element cannot be created or copied through the MCP | Place it in the Designer through Claude in Chrome (see *Popovers are native*). The `popover` / `popovertarget` attributes are only for a site whose Designer has no Popover element; never as a shortcut |
 | Bindings not visible in `get_all_elements` | Always use `get_settings type: "all_raw_settings"` to verify |
 | ~~Cannot set per-instance prop overrides via MCP~~ | **Not true** — `set_component_instance_prop_values` works, variants included. Verified 2026-09-21 |
 | `element_builder`'s `settings[].binding` doesn't reliably pre-apply on built-in element types (Image, Paragraph, Heading, etc.) at creation time | Create the element first (style/text/attributes only), look up its id via `get_all_elements`, then bind with a follow-up `set_settings` call |
