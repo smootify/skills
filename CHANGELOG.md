@@ -1,5 +1,37 @@
 # Changelog
 
+## 2.0.0-beta.31 · 2026-10-16
+
+- Popovers are always Webflow's native Popover element, placed in the Designer through Claude in Chrome: only the native one has **Animate open** and **Animate close**. The MCP's limits are no longer offered as a reason to fall back to the `popover` attribute, which stays only for a Designer without the element. A published native popover has the class `w-popover` and `data-w-popover-mode`.
+- The site audit lists popovers built with the attribute as an opportunity.
+
+## 2.0.0-beta.30 · 2026-10-15
+
+- Rules and catalogs from the Smootify 2.0.0-beta.3 contract: volume prices, quotes and returns in the account, pay later messages, the free gift above a threshold, purchase rules on the quantity fields.
+
+## 2.0.0-beta.29 · 2026-10-14
+
+- The catalogs list the gallery's `include-media` and `variant-images` (by position or by alt), now in the glossary. Rules from the Smootify 2.0.0-beta.2 contract.
+
+## 2.0.0-beta.28 · 2026-10-14
+
+- Rules and catalogs from the Smootify 2.0.0-beta.2 contract. The annotate skill maps the gallery's "only the variant's images" to `variant-images`: Webflow drops `only-variant-images` from published pages.
+
+## 2.0.0-beta.27 · 2026-10-13
+
+- Rules and catalogs from the contract of Smootify 2.0.0-beta.1, the first public beta of the 2.0 runtime.
+
+## 2.0.0-beta.22 to beta.26 · 2026-10-12 and 13
+
+Rules and catalogs followed the 2.0 contract while it was finished before the public beta:
+
+- Singular and plural counts with `[count-condition="one|other"]`, `[data-prop="compareAtTotal"]` in `smootify-price`.
+- `is-in-box` and `data-in-box` on Magic Box product cards.
+- `data-accept` on upload fields, `data-format` on metafield dates, letters in configurator text formulas.
+- A booking window picked in the cart is held only at checkout; a failed add gives an appointment's slot back.
+- Toasts: `smootify-toasts`, `[toast]`, `[toast-item]` in the catalogs, and a build rule for stores without a mini cart.
+- Site audit: the false positives of the trial are gone (`data-state` in every Smootify submit, box-item image sizes, booking-form fields, generic names never out of place), one finding per element and cause, references to the public docs only.
+
 ## 2.0.0-beta.21
 
 From two more demo store builds with Smootify 2.0 (an industrial B2B parts store and a food subscription store) and their review notes.

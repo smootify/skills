@@ -15,6 +15,7 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
 PLAYBOOK=${PLAYBOOK:-$ROOT/../playbook}
 SCRIPTS=${SCRIPTS:-$ROOT/../scripts}
 cd "$ROOT"
+grep -q "^## ${VERSION}" CHANGELOG.md || { echo "CHANGELOG.md has no entry for ${VERSION}: write it first (it is the public changelog, linked from smootify.io/skills)." >&2; exit 1; }
 
 for k in figma-annotate-smootify figma-to-webflow-smootify smootify-site-audit smootify-iterate; do
   rm -rf "skills/$k" && cp -R "$PLAYBOOK/skills/$k" "skills/$k"
