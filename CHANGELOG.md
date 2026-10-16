@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.33 · 2026-10-16
+
+- Rules and catalogs from the Smootify 2.0.0-beta.4 contract: the gift card balance form (`gift-card-balance`, `gift-card="balance"`), a free shipping amount per currency on `free-shipping-bar`.
+
 ## 2.0.0-beta.32 · 2026-10-16
 
 - The steps the MCP cannot do in the Designer go through the browser, the built-in one or Claude in Chrome.

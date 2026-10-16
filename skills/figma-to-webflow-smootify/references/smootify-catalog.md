@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-15.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-16.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -22,7 +22,7 @@ qualsiasi con quell'attributo.
 tipo di elemento va ogni valore e quali valori ripetono l'elemento. La sezione "Valori leciti" qui sotto
 è solo l'elenco dei nomi.
 
-## Elementi (92)
+## Elementi (93)
 
 "Dentro" è vincolante: uno di quei contenitori deve essere un antenato. "Fuori contesto" dice cosa succede
 se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
@@ -62,7 +62,8 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `filter-search` | Free-text query of the block; typing or submitting sets the search query, also in a collection (data-collection). | `smootify-search-discovery` | `form` | si rimuove | "Search & discovery" | — |
 | `filter-select` | Single-choice facet in a native select; the first option is the placeholder. | `smootify-search-discovery` | `form`, `select` | si rimuove | "Search & discovery" | `label`, `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis` |
 | `filter-swatches` | Facet as swatch buttons painted from the value's native swatch; a click toggles the value. | `smootify-search-discovery` | `form`, `button` | si rimuove | "Search & discovery" | `label`, `custom-label`, `selected-value`, `allow-reset`, `show-count`, `hide-parenthesis`, `multiple` |
-| `free-shipping-bar` | Shows the progress towards free shipping from the cart. | ovunque | — | resta inerte | — | `data-amount`, `data-quantity` |
+| `free-shipping-bar` | Shows the progress towards free shipping from the cart; 2.0: data-amount can give a threshold per currency (§2.11). | ovunque | — | resta inerte | — | `data-amount`, `data-quantity` |
+| `gift-card-balance` | (HQ #73) A Webflow form where the visitor types a gift card code and reads its balance, without buying anything: Smootify asks Shopify with a throwaway cart that carries only that code, never the visitor's cart. On success [gift-card="balance"] and [gift-card="code"] are written (§2.11) and Webflow's success state shows; a card used up gets is-empty; an unknown, disabled or expired code shows the form error. Every plan. Inside smootify-cart too (next to its gift card field): the cart never takes its form, field or form states as its own, as with a smootify-product. | ovunque | `form` | si rimuove | — | `data-error-not-found` |
 | `judge-me-reviews` | Judge.me reviews widget for the product. | `smootify-product` | — | si rimuove | — | — |
 | `judge-me-stars` | Judge.me stars badge for the product. | `smootify-product` | — | si rimuove | — | — |
 | `klaviyo-back-in-stock` | Klaviyo back-in-stock form, in a dialog or popover, for the current variant. | `smootify-product` | `form`, `button[type="button"]`, uno fra `dialog`, `[popover]` | si rimuove | — | `data-company-id` |
@@ -129,7 +130,7 @@ Presenti solo con il piano `server` (e l'estensione accesa); senza, vengono rimo
 | Tag | Cosa fa | Dentro | Deve contenere | Fuori contesto | Richiede | Attributi host |
 |---|---|---|---|---|---|---|
 | `booking-calendar` | Shows the slots of a bookable product (its Booking schedule, set in the Shopify admin) for days days, the places left of each, the day in the site's language and the time in the place's time zone; picking a free slot books it as its container says. In a booking-form: the form books it. In a product's add to cart: adding the product holds the slot for the quantity and writes it on the product's lines (a paid appointment); no slot or a full one stops the addition with the message, and an addition that does not get in (Shopify refuses it) gives the slot back. In the cart: the picked slot is written on the cart (a pickup or delivery window) and held only when the visitor checks out, so picking holds no place; a slot taken by someone else meanwhile stops the checkout, with the message in [booking="error"], and with data-required the checkout stops until a slot is picked. The places are counted by Smootify: two visitors cannot book the last one. The availability is kept a minute, so pages opened again ask nothing. | `booking-form` o `smootify-add-to-cart` o `smootify-product` o `smootify-cart` | `[booking="day"] [booking="slot"]` | si rimuove | piano server + "Booking" | `data-product-id`, `days`, `property`, `data-required`, `data-error-required` |
-| `booking-form` | Books the slot picked in its booking-calendar without a cart (an appointment): the booking, with the form's name, email, phone and note fields and the logged-in customer, is saved in the store's Bookings (Shopify admin → Content → Metaobjects) and shown on the product's Smootify booking block. Webflow's success and error states show the answer; a slot that filled up meanwhile is the form error and the calendar shows its places again. | ovunque | `booking-calendar`, `form` | si rimuove | piano server + "Booking" | — |
+| `booking-form` | Books the slot picked in its booking-calendar without a cart (an appointment): the booking, with the form's name, email, phone and note fields and the logged-in customer, is saved in the store's Bookings (Shopify admin → Content → Metaobjects) and shown in the Booking block of the product page in the Shopify admin. Webflow's success and error states show the answer; a slot that filled up meanwhile is the form error and the calendar shows its places again. | ovunque | `booking-calendar`, `form` | si rimuove | piano server + "Booking" | — |
 | `configurator-checkbox` | Checkbox whose formula step is on while checked. | `smootify-add-to-cart` | `input[type="checkbox"]` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-dimension` | Number inputs named after formula variables; the step is on when all hold valid numbers. | `smootify-add-to-cart` | `input[type="number"]` | si rimuove | piano server + "Product configurator" | `data-formula` |
 | `configurator-dropdown` | Webflow dropdown over a hidden select whose chosen option carries the formula step. | `smootify-add-to-cart` | `select`, `.w-dropdown .w-dropdown-link` | si rimuove | piano server + "Product configurator" | `data-formula` |
@@ -339,9 +340,9 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `lightbox` · `lightboxes` · `slider` · `thumbnails`
 
-### `gift-card=…` (2)
+### `gift-card=…` (3)
 
-`amount` · `code`
+`amount` · `balance` · `code`
 
 ### `group-condition=…` (2)
 
@@ -489,7 +490,7 @@ Scritte da Smootify a runtime sull'host. Non vanno messe in `@style`: servono pe
 - `smootify-search-discovery` → `inited`, `empty`, `is-filtered`, `has-pagination`, `has-page-numbers`, `is-single-result`
 - `smootify-search-page` → `inited`, `is-empty`, `is-filtered`, `has-pagination`, `has-page-numbers`, `has-query`, `is-single-result`
 
-## Campi dei form (43)
+## Campi dei form (44)
 
 Il **Name** di ogni campo (impostazione del campo in Webflow, non un attributo custom) dice a Smootify cosa
 contiene. Si annota con `@attr: name=<Name>` sul campo, scritto esattamente come qui: maiuscole comprese.
@@ -587,6 +588,10 @@ Non legge campi: reads no name: the inputs by type and order.
 ### `filter-search`
 
 - every input but the submit (any name) — text — renamed `query`; the first one sets the search & discovery query
+
+### `gift-card-balance`
+
+- a field named `code`, `gift card`, `gift-card`, `gift_card`, `giftcard`, `giftcardcode` or `gift card code` (any case), else the first one filled — text — **obbligatorio** (the not-found error without it) — the gift card code, trimmed, in any case (Shopify ignores case); every other field is ignored
 
 ### `klaviyo-back-in-stock`
 

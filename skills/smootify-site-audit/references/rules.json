@@ -1,9 +1,9 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-15",
+  "generatedAt": "2026-10-16",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
-    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 64959cc4d30ce807)",
+    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 2ae69bfe049183fc)",
     "surface": "v2/src: domain/views.ts, kernel/events.ts, compat/public-api.ts",
     "snapshot": "v2/test/contract/snapshots/v1.json (tipi di metafield, eventi degli elementi della 1.x)"
   },
@@ -1107,7 +1107,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Books the slot picked in its booking-calendar without a cart (an appointment): the booking, with the form's name, email, phone and note fields and the logged-in customer, is saved in the store's Bookings (Shopify admin → Content → Metaobjects) and shown on the product's Smootify booking block. Webflow's success and error states show the answer; a slot that filled up meanwhile is the form error and the calendar shows its places again.",
+      "purpose": "Books the slot picked in its booking-calendar without a cart (an appointment): the booking, with the form's name, email, phone and note fields and the logged-in customer, is saved in the store's Bookings (Shopify admin → Content → Metaobjects) and shown in the Booking block of the product page in the Shopify admin. Webflow's success and error states show the answer; a slot that filled up meanwhile is the form error and the calendar shows its places again.",
       "onlyIn2": true,
       "reference": "https://www.smootify.io/docs/reference/elements/booking-form",
       "section": "Server extensions (plan server)",
@@ -3148,7 +3148,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Shows the progress towards free shipping from the cart.",
+      "purpose": "Shows the progress towards free shipping from the cart; 2.0: data-amount can give a threshold per currency (§2.11).",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/free-shipping-bar",
       "section": "Cart",
@@ -3175,6 +3175,43 @@
       "hostAttributes": [
         "data-amount",
         "data-quantity"
+      ],
+      "ancestorAttributes": [],
+      "writes": []
+    },
+    {
+      "tag": "gift-card-balance",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "(HQ #73) A Webflow form where the visitor types a gift card code and reads its balance, without buying anything: Smootify asks Shopify with a throwaway cart that carries only that code, never the visitor's cart. On success [gift-card=\"balance\"] and [gift-card=\"code\"] are written (§2.11) and Webflow's success state shows; a card used up gets is-empty; an unknown, disabled or expired code shows the form error. Every plan. Inside smootify-cart too (next to its gift card field): the cart never takes its form, field or form states as its own, as with a smootify-product.",
+      "onlyIn2": true,
+      "reference": "https://www.smootify.io/docs/reference/elements/gift-card-balance",
+      "section": "Cart",
+      "context": {
+        "anywhere": true,
+        "requiresAncestorOneOf": [],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "form"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": ""
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": false
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [
+        "data-error-not-found"
       ],
       "ancestorAttributes": [],
       "writes": []
@@ -7376,6 +7413,7 @@
     ],
     "gift-card": [
       "amount",
+      "balance",
       "code"
     ],
     "group-condition": [
@@ -9827,11 +9865,13 @@
       "name": "gift-card",
       "value": "code",
       "inside": [
-        "smootify-cart [cart=\"gift-card\"]"
+        "smootify-cart [cart=\"gift-card\"]",
+        "gift-card-balance"
       ],
       "on": [
         "text"
       ],
+      "note": "The end of the code, such as •••• 4F2A",
       "reference": "https://www.smootify.io/docs/reference/attributes/gift-card"
     },
     {
@@ -9845,6 +9885,21 @@
       "on": [
         "text"
       ],
+      "note": "The amount the card covers on this cart",
+      "reference": "https://www.smootify.io/docs/reference/attributes/gift-card"
+    },
+    {
+      "kind": "attribute",
+      "group": "gift-card",
+      "name": "gift-card",
+      "value": "balance",
+      "inside": [
+        "gift-card-balance"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "What is left on the card, in the form's Success message; 0 with is-empty on gift-card-balance",
       "reference": "https://www.smootify.io/docs/reference/attributes/gift-card"
     },
     {
@@ -17238,6 +17293,24 @@
         "does": "the address Klaviyo alerts (Webflow's default Email field works: `data-name=\"Email\"`); every other field is ignored"
       }
     ],
+    "gift-card-balance": [
+      {
+        "name": "a field named `code`, `gift card`, `gift-card`, `gift_card`, `giftcard`, `giftcardcode` or `gift card code` (any case), else the first one filled",
+        "names": [
+          "code",
+          "gift card",
+          "gift-card",
+          "gift_card",
+          "giftcard",
+          "giftcardcode",
+          "gift card code"
+        ],
+        "field": "text",
+        "required": true,
+        "requiredNote": "the not-found error without it",
+        "does": "the gift card code, trimmed, in any case (Shopify ignores case); every other field is ignored"
+      }
+    ],
     "smootify-add-to-cart": [
       {
         "name": "`quantity`",
@@ -17730,6 +17803,7 @@
     "empty-state",
     "error-message",
     "filter-popover",
+    "gift-card-balance",
     "items-list",
     "metaobject-editor",
     "search-empty",
