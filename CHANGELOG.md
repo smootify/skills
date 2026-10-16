@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.35 · 2026-10-16
+
+- How to animate a native Popover: **Animate open/close** in its settings, changed in the Interactions panel, set on the component definition so every instance gets it; **Conditional playback** to skip the breakpoints where the panel is not a popover; after publishing, check that the motion is really in the published site.
+
 ## 2.0.0-beta.34 · 2026-10-16
 
 - `gift-card-balance`: a used-up gift card shows the form's error like an unknown code (Shopify applies no card with a zero balance); the rules no longer promise `is-empty` for it.

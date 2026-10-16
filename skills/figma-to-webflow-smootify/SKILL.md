@@ -297,6 +297,15 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   `popovertarget`, and give the panel the design's position in the site custom code: without one, the browser opens
   every popover in the middle of the page, which is right only when the design puts it there. Never put a popover inside a template Smootify repeats (an address card,
   a cart line): every copy repeats the id. Use `details` / `summary` there.
+- **Animating a native popover.** Select the Popover in the Designer and click **Animate open/close** in its settings:
+  Webflow creates a "Popover open/close" interaction (Popover toggle trigger, open and close actions on the
+  popover, a fade), ready to change in the Interactions panel into the motion the design asks for. Do it with the
+  component definition open, not on a page instance: the interaction runs on the component, so every instance gets
+  it. A panel that is a popover only on some breakpoints (filters in a column on desktop, a drawer below) gets
+  **Conditional playback** → Breakpoint → *No animation* on the breakpoints where it is not a popover. After
+  publishing, check that the motion you set is in the published `webflow.js` (the `wf:popover-element` actions and
+  their properties, such as `xPercent`, `y` or `scale`), not only the fade: once the Designer put a changed
+  Move Y back to its default on publish.
 - **A trigger lives in the element it opens.** `data-action="open-cart"` opens only the `smootify-cart` that
   contains the button: the cart icon goes inside the same `smootify-cart` as its drawer panel, not in another one.
   The same for the other Smootify triggers: check the catalogue's context before placing a trigger elsewhere.
