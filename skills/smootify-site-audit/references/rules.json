@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-16",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0)",
-    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 2ae69bfe049183fc)",
+    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 3d119102f19e350e)",
     "surface": "v2/src: domain/views.ts, kernel/events.ts, compat/public-api.ts",
     "snapshot": "v2/test/contract/snapshots/v1.json (tipi di metafield, eventi degli elementi della 1.x)"
   },
@@ -3184,7 +3184,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "(HQ #73) A Webflow form where the visitor types a gift card code and reads its balance, without buying anything: Smootify asks Shopify with a throwaway cart that carries only that code, never the visitor's cart. On success [gift-card=\"balance\"] and [gift-card=\"code\"] are written (§2.11) and Webflow's success state shows; a card used up gets is-empty; an unknown, disabled or expired code shows the form error. Every plan. Inside smootify-cart too (next to its gift card field): the cart never takes its form, field or form states as its own, as with a smootify-product.",
+      "purpose": "(HQ #73) A Webflow form where the visitor types a gift card code and reads its balance, without buying anything: Smootify asks Shopify with a throwaway cart that carries only that code, never the visitor's cart. On success [gift-card=\"balance\"] and [gift-card=\"code\"] are written (§2.11) and Webflow's success state shows; an unknown, disabled or expired code shows the form error, and so does a card used up: Shopify applies no card with a zero balance, the same answer as an unknown code (checked on the starter, 2026-10-16), so is-empty comes only from a zero balance Shopify returned. Every plan. Inside smootify-cart too (next to its gift card field): the cart never takes its form, field or form states as its own, as with a smootify-product.",
       "onlyIn2": true,
       "reference": "https://www.smootify.io/docs/reference/elements/gift-card-balance",
       "section": "Cart",
@@ -9899,7 +9899,7 @@
       "on": [
         "text"
       ],
-      "note": "What is left on the card, in the form's Success message; 0 with is-empty on gift-card-balance",
+      "note": "What is left on the card, in the form's Success message. A card used up shows the form's error, as an unknown code",
       "reference": "https://www.smootify.io/docs/reference/attributes/gift-card"
     },
     {

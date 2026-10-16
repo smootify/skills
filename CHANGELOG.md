@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.34 · 2026-10-16
+
+- `gift-card-balance`: a used-up gift card shows the form's error like an unknown code (Shopify applies no card with a zero balance); the rules no longer promise `is-empty` for it.
+
 ## 2.0.0-beta.33 · 2026-10-16
 
 - Rules and catalogs from the Smootify 2.0.0-beta.4 contract: the gift card balance form (`gift-card-balance`, `gift-card="balance"`), a free shipping amount per currency on `free-shipping-bar`.
