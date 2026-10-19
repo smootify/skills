@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.37 · 2026-10-19
+
+- Reading CMS bindings back through the Webflow MCP: an attribute bound to the CMS reads as `null` through `get_attributes`, so read it with `get_settings` (`all_raw_settings`). A component prop bound to the CMS does not show in the prop reads yet (Webflow is fixing it): an empty list does not mean the instance has no props.
+
 ## 2.0.0-beta.36 · 2026-10-16
 
 - Native Popovers are created through the Webflow MCP (`data_element_builder`, type `Popover`), and the trigger links to them in mode `popover`. Only their open and close animation (IX3, the Popover toggle trigger) is still set in the Designer: Webflow confirms it is not in the MCP yet.
