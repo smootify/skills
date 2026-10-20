@@ -293,17 +293,20 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   Designer through the browser (the built-in one, or Claude in Chrome) does it: never fall back to attributes. A published native popover has the class `w-popover` and
   `data-w-popover-mode`; one without them is a fallback to fix before review. A native Popover takes no id (Webflow publishes
   `w-popover-…`): Smootify does not need one, and its CSS goes on its class, never on an id.
-  Its open and close animations are an interaction with the **Popover toggle** trigger, which the MCP cannot author:
-  set them in the Designer too, or leave them to the person (`@manual: popover animation`). The element writes `popover`, `popovertarget` and the close action itself: add none of them. Its trigger is any Webflow Button or Link Block, with Link → Type *Popover*, its Target and the Action (Toggle, Show, Hide); a close button is the same with Action Hide. A DOM `button` cannot target it. Only on a site without it, build the panel with the `popover` attribute and the trigger with
+  Its open and close animations are an interaction with the **Popover toggle** trigger: create it with the MCP
+  (see *Animating a native popover*). The element writes `popover`, `popovertarget` and the close action itself: add none of them. Its trigger is any Webflow Button or Link Block, with Link → Type *Popover*, its Target and the Action (Toggle, Show, Hide); a close button is the same with Action Hide. A DOM `button` cannot target it. Only on a site without it, build the panel with the `popover` attribute and the trigger with
   `popovertarget`, and give the panel the design's position in the site custom code: without one, the browser opens
   every popover in the middle of the page, which is right only when the design puts it there. Never put a popover inside a template Smootify repeats (an address card,
   a cart line): every copy repeats the id. Use `details` / `summary` there.
-- **Animating a native popover.** Select the Popover in the Designer and click **Animate open/close** in its settings:
-  Webflow creates a "Popover open/close" interaction (Popover toggle trigger, open and close actions on the
-  popover, a fade), ready to change in the Interactions panel into the motion the design asks for. Do it with the
-  component definition open, not on a page instance: the interaction runs on the component, so every instance gets
-  it. A panel that is a popover only on some breakpoints (filters in a column on desktop, a drawer below) gets
-  **Conditional playback** → Breakpoint → *No animation* on the breakpoints where it is not a popover. After
+- **Animating a native popover.** With `data_interactions_tool` → `create_interaction`: trigger `wf:popover` whose
+  target is the Popover (`wf:inst`), one timeline with `triggerMetadata.role` `open` and one with `close`, and
+  actions on `wf:popover-element` (and `wf:popover-backdrop` for a drawn backdrop) with `wf:transform` properties
+  (`autoAlpha`, plus the motion the design asks for, such as `y`, `xPercent` or `scale`). The tool's `guide` action
+  gives the exact shape. In the Designer the same thing is the Popover's **Animate open/close** button. Set it on the
+  component (`scope: {type: "component", componentId}`, `wf:inst` targets `[componentId, elementId]`), not on a page
+  instance, so every instance gets it. A panel that is a popover only on some breakpoints (filters in a column on desktop, a drawer below) gets
+  **Conditional playback** on the breakpoints where it is not a popover (`conditionalPlayback: [{type: "breakpoint",
+  breakpoints: ["main"], behavior: "dont-animate"}]`, in the Designer Breakpoint → *No animation*). After
   publishing, check that the motion you set is in the published `webflow.js` (the `wf:popover-element` actions and
   their properties, such as `xPercent`, `y` or `scale`), not only the fade: once the Designer put a changed
   Move Y back to its default on publish.
@@ -693,7 +696,7 @@ If there are nested or repeated (sibling) components:
 | ~~Cannot create interactions~~ | `data_interactions_tool` (IX3). Confirm in Preview: an accepted interaction can still not run |
 | ~~Cannot install fonts programmatically~~ | `data_fonts_tool > create_font` |
 | A reset of the native popover's UA styles in the site's head code (`[popover]{margin:0;border:0;padding:0;inset:auto}`) loads after Webflow's CSS with the same specificity as a class, so it wipes every popover's own padding, border and position (the Spannbach market dialog shipped as a bare strip) | Write the reset with zero specificity: `:where([popover]){…}`, so the popover's class always wins |
-| The native Popover's open/close animation (Popover toggle trigger) cannot be authored through the MCP | The Popover itself is created with `data_element_builder` (type `Popover`); its animation is set in the Designer through the browser (see *Animating a native popover*). The `popover` / `popovertarget` attributes are only for a site whose Designer has no Popover element; never as a shortcut |
+| A native Popover and its animation | The Popover is created with `data_element_builder` (type `Popover`), its open/close animation with `data_interactions_tool` (trigger `wf:popover`, see *Animating a native popover*). The `popover` / `popovertarget` attributes are only for a site whose Designer has no Popover element; never as a shortcut |
 | Bindings not visible in `get_all_elements` | Always use `get_settings type: "all_raw_settings"` to verify |
 | ~~Cannot set per-instance prop overrides via MCP~~ | **Not true** — `set_component_instance_prop_values` works, variants included. Verified 2026-09-21 |
 | `element_builder`'s `settings[].binding` doesn't reliably pre-apply on built-in element types (Image, Paragraph, Heading, etc.) at creation time | Create the element first (style/text/attributes only), look up its id via `get_all_elements`, then bind with a follow-up `set_settings` call |
@@ -706,7 +709,7 @@ If there are nested or repeated (sibling) components:
 | An instance cannot be the anchor of `before` / `after` (`insert_component_instance`, `data_element_builder`) | `prepend` / `append` in the parent, or anchor on a plain element next to it |
 | Slots cannot be placed inside a Form, and an instance cannot be detached on a template | A second component for each layout of the form (see *Component Decision Rules*) |
 | No tool for site redirects, deleting pages, page folders, noindex, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
-| Placeholders, Form names and popover animations have no MCP tool | Do them in the Designer through the browser page by page, before the page is published for review, not at the end; check the published page for inputs without a placeholder |
+| Placeholders and Form names have no MCP tool | Do them in the Designer through the browser page by page, before the page is published for review, not at the end; check the published page for inputs without a placeholder |
 | Reading CMS bindings back (checking a template) | An attribute bound to the CMS reads as `null` through `get_attributes`: read it with `data_element_settings_tool` → `get_settings` type `all_raw_settings`, which shows the collection and the field. A component prop bound to the CMS does not show at all, neither in `get_component_instance_props` nor in `query_elements` (Webflow is fixing it, reported 2026-10-19): an empty prop list does not mean the instance has no props; verify a prop's binding in the Designer or on the published page |
 | `move_element` rejects an instance as anchor; `set_style` replaces every class of the element; `element_snapshot_tool` fails when the Designer is not on the element's page | Anchor on a plain element; pass all the classes the element keeps; open the page first |
 | `bulk_update_pages` answers ok and changes nothing | `update_page_settings`, one page at a time |
