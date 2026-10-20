@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.39 · 2026-10-20
+
+- A component prop bound to the CMS now reads back through the Webflow MCP, with its collection and field (Webflow fixed it). The temporary warning is gone; attributes bound to the CMS are still read with `get_settings`.
+
 ## 2.0.0-beta.38 · 2026-10-20
 
 - A native Popover's open and close animation is now created through the Webflow MCP: `data_interactions_tool` with the `wf:popover` trigger, one timeline per role (`open`, `close`) on `wf:popover-element`, on the component, with conditional playback per breakpoint. Nothing about popovers is left for the Designer.
