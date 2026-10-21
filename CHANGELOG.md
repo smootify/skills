@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.41 · 2026-10-21
+
+- Rules and catalogs from Smootify 2.0.0-beta.5 as republished: in the generic build (Astro) `dynamic-swiper` and `product-slider` do not run (a slider of cards is the site's own), and a Magic Box category marks its slide and its ARIA tab `is-complete`; `data-state` also on the add button of a quantity break (`[price-break="add"]`).
+
 ## 2.0.0-beta.40 · 2026-10-21
 
 - **Smootify for Astro.** The build skill (`figma-to-webflow-smootify`) builds the same annotated Figma either in Webflow or as an Astro project. Its first step picks the platform from the site's licence (or an `astro.config.mjs` in the folder, or Smootify Studio's request); the Webflow build steps are unchanged. The Astro target installs `@smootify/astro` with `npx astro add @smootify/astro`, writes `.astro` components with props, reads Shopify through the integration's content collections, and uses the generic build's markup: native popovers and dialogs, `hidden`, `[slider-track]` sliders, no `w-*` classes.

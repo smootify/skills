@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-21",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0), §2 Form fields, §2.15 Generic build only (Astro, D4), §2.16 Other attributes e §4 Webflow classes and structures",
-    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 3d119102f19e350e)",
+    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 09fab077b0e244df)",
     "surface": "v2/src: domain/views.ts, kernel/events.ts, compat/public-api.ts",
     "snapshot": "v2/test/contract/snapshots/v1.json (tipi di metafield, eventi degli elementi della 1.x)"
   },
@@ -4809,7 +4809,7 @@
       "kind": "marker",
       "registered": false,
       "selector": false,
-      "purpose": "A box category: its add-to-cart forms fill that category, the box moves to the next one. 2.0: is-complete while the box holds a piece of it, also on the .w-slide or the .w-tab-link that shows it (when every category there has one).",
+      "purpose": "A box category: its add-to-cart forms fill that category, the box moves to the next one. 2.0: is-complete while the box holds a piece of it, also on the .w-slide or the .w-tab-link that shows it (generic build: the [slider-track] > * slide or the [role=\"tab\"]; when every category there has one).",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/smootify-box-category",
       "section": "Extensions",
@@ -10005,7 +10005,8 @@
         "[form]",
         "customer-order [data-action=\"buy-again\"]",
         "order-page [data-action=\"buy-again\"]",
-        "smootify-product [data-is=\"direct-add-to-cart\"]"
+        "smootify-product [data-is=\"direct-add-to-cart\"]",
+        "smootify-product [price-break=\"add\"]"
       ],
       "on": [
         "text",
@@ -10047,7 +10048,8 @@
         "[form]",
         "customer-order [data-action=\"buy-again\"]",
         "order-page [data-action=\"buy-again\"]",
-        "smootify-product [data-is=\"direct-add-to-cart\"]"
+        "smootify-product [data-is=\"direct-add-to-cart\"]",
+        "smootify-product [price-break=\"add\"]"
       ],
       "on": [
         "text",
@@ -20774,8 +20776,8 @@
           ".sm-dyn-item"
         ],
         "how": "Non-CMS items that `dynamic-swiper` also turns into slides",
-        "generic": "Unchanged",
-        "status": "unchanged"
+        "generic": "The card of a list (`cardSelector`); `dynamic-swiper` does not run in the generic build",
+        "status": "replaced"
       },
       {
         "structure": ".w-dyn-list",
@@ -20851,8 +20853,8 @@
           "script[type=\"application/json\"]"
         ],
         "how": "`init=\"false\"` first, Swiper's element bundle loaded in its own chunk, slides built from `.w-dyn-item` / `.sm-dyn-item`, params read from the JSON script (then removed), `initialize()`. A `dynamic-swiper` without `swiper-container` is removed",
-        "generic": "Unchanged (Swiper is not Webflow): the slides come from `.sm-dyn-item`",
-        "status": "unchanged"
+        "generic": "Not run: the generic build replaces `product-slider` and `dynamic-swiper` with no-ops, so a list of cards in a slider takes the site's own slider; Smootify wires `[slider-track]` only in `[gallery=\"slider\"]`, the media sliders and Magic Box",
+        "status": "replaced"
       },
       {
         "structure": ".w-tabs, .w-tab-link, .w-tab-pane, .w--tab-active, .w--current, [data-w-tab], .w-radio",
