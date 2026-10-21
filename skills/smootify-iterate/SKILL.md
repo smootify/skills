@@ -1,6 +1,6 @@
 ---
 name: smootify-iterate
-description: Works through the review notes Smootify Studio's Iterate collects on a published Webflow + Smootify site, one note at a time. For each note it finds the cause, fixes the site in Webflow when the cause is the site, and answers inside the note with the cause and how sure it is. Use it when Studio sends the notes to Claude ("Use the smootify-iterate skill"), when a site folder has a notes/ folder with note files, or when the user asks to go through, fix or answer Iterate notes.
+description: Works through the review notes Smootify Studio's Iterate collects on a published Webflow + Smootify or Astro + Smootify site, one note at a time. For each note it finds the cause, fixes the site (in Webflow, or in the Astro project's code) when the cause is the site, and answers inside the note with the cause and how sure it is. Use it when Studio sends the notes to Claude ("Use the smootify-iterate skill"), when a site folder has a notes/ folder with note files, or when the user asks to go through, fix or answer Iterate notes.
 ---
 
 # Smootify iterate
@@ -11,6 +11,39 @@ in Webflow when the site is the cause, and writes back into the note what it did
 
 Studio reads the notes again on its own and shows your answer to the person. When the cause is Smootify itself,
 your answer goes to Smootify's support as it is, so it has to stand on its own.
+
+## Webflow or Astro: decide first
+
+Smootify runs on Webflow or on Astro, one per site. Decide which before the first note, with the same signals as the
+build skill (`figma-to-webflow-smootify`, Phase 0):
+
+1. The licence of the Smootify site id (in the site's `CLAUDE.md`): `https://cdn.smootify.io/keys/<site id>.json`,
+   field `f`: **absent or `0` = Webflow, `1` = Astro**. Any other value: stop and say this version of the skill does
+   not support that platform.
+2. No licence to read: the site's `CLAUDE.md` saying "an Astro site with Smootify", an `astro/` folder or an
+   `astro.config.mjs` in the site's folder, or Studio's request naming Astro (on Astro, Studio's tabs are Build,
+   Iterate, Check, Deploy) mean **Astro**. Otherwise **Webflow**.
+
+**On Webflow everything below applies as written.** On Astro, read it with these differences:
+
+- **The site is the Astro project's code**: `./astro`, or the folder with `astro.config.mjs`. There is no Webflow
+  MCP, Designer or Webflow CMS: never use the Webflow MCP. Products, collections and vendors come from Shopify through
+  the content collections; options and routes from `smootify.config.mjs` and the `userOptions` in `astro.config.mjs`.
+- **A fix is a code edit**, checked with the project's package manager (the lockfile decides: `pnpm exec astro …`
+  or `npx astro …`): `astro check` and `astro build` green, then the page in `astro dev` (it runs in the background;
+  `astro dev stop` when done) at the note's width. The markup rules are in the build skill's
+  `references/target-astro.md` when that skill is installed next to this one (*Generic build contract*, *Element
+  mapping*, *Search & discovery on Astro*). Without it, the short version: the generic build reads HTML, never a `w-*`
+  class or a `data-w-*` attribute; `.sm-dyn-item` is the card boundary; `hidden` replaces Webflow's conditions;
+  dropdowns are `[popover]` + `popovertarget`; sliders are `[slider-track]`, `[slider-prev]`, `[slider-next]`,
+  `[slider-dots]`; the reference is `https://www.smootify.io/docs/astro/reference/generic-build`.
+- **The docs are `https://www.smootify.io/docs/astro/…`**: the same path after `/docs/astro` for most pages
+  (`/docs/build/filters` → `/docs/astro/build/filters`); the list is
+  `https://www.smootify.io/docs/astro/search-index.json`. The Webflow-only pages (CMS, publish, domains, hand-off,
+  migrate, changes, scripts…) have no Astro page: do not cite them.
+- **The Smootify MCP:** pass `platform: "astro"` to the tools that accept it, so the links they return are the Astro
+  ones. `audit_page` works on the published page of the generic build.
+- **Never deploy**, as on Webflow you never publish: Studio's Deploy tab does it.
 
 ## The note format belongs to Studio
 
@@ -34,13 +67,14 @@ If `notes/README.md` says something different from this list, the README wins.
 The person's site, Smootify's public documentation and the public tools. Nothing else.
 
 - **The site:** the Webflow MCP (pages, elements, classes, attributes, components and instances, CMS bindings, the
-  site's custom code and the scripts it loads) and the published page itself.
+  site's custom code and the scripts it loads) and the published page itself. On Astro: the project's code and the
+  published page, never the Webflow MCP.
 - **Smootify:** the Smootify MCP when it is connected (`get_element`, `resolve_vocabulary`, `suggest_attributes`,
   `get_options`, `get_example`, `check_markup`, `audit_page`, `diagnose`, `find_capability`, `probe_storefront`, and
-  `get_changes` / `plan_migration` for a 1.x site), the documentation at smootify.io/docs, and the public
-  instructions of the other Smootify skills.
+  `get_changes` / `plan_migration` for a 1.x site), the documentation at smootify.io/docs (on Astro,
+  smootify.io/docs/astro), and the public instructions of the other Smootify skills.
 - **The site's brief:** `CLAUDE.md` in the site's folder, which Studio writes: the Webflow site, the store, the plan,
-  the collections.
+  the collections (on Astro: the Astro project and where its code is).
 
 You do not have Smootify's source code or its internal notes, and you must not reason as if you did. When the public
 material does not settle a question, say so in the answer instead of guessing.
@@ -59,18 +93,22 @@ Take the open notes one at a time, oldest first, and finish each one before the 
 3. **Check the site first.** Most notes are about how the site is built, not about Smootify. With the Webflow MCP,
    read the element and what is around it: its structure, classes and combo classes, custom attributes, whether it is
    a component or an instance and what its props are, its CMS bindings, the Smootify options in the custom code, and
-   which Smootify script the site loads (1.x or 2.0).
+   which Smootify script the site loads (1.x or 2.0). On Astro, read the same in the code: the page and the
+   components it uses, their attributes and classes, the content entry they read, the options in
+   `smootify.config.mjs` and `astro.config.mjs` (an Astro site always loads 2.0).
 4. **Check what is documented.** With the Smootify MCP and the docs, find what the element and its attributes should
    be and do: `get_element` for a tag, `resolve_vocabulary` for an attribute's values, `check_markup` on the element's
    outline, `audit_page` on the page, `diagnose` with the symptom. Compare with what the site has.
 5. **Decide the cause** (see below), with a confidence.
 6. **When the cause is the site, fix it.** Say in one line what you will change, then change it with the Webflow MCP.
-   Read the element back after every write. Change only what the note is about, but at its source: when the cause
+   Read the element back after every write (on Astro: edit the code, then `astro check`, `astro build` and the page in
+   `astro dev`). Change only what the note is about, but at its source: when the cause
    is a shared component, class or template, fix it there, look at the other places that use it, and list them in
    the answer.
 7. **Answer in the note** (see below). Then the next note.
 
-Never publish the site. Studio tells the person when a fix is waiting for a publish.
+Never publish the site. Studio tells the person when a fix is waiting for a publish (on Astro: never deploy; Studio's
+Deploy tab does it).
 
 ## The cause, and how sure you are
 
@@ -81,8 +119,8 @@ Every answer names one cause and a confidence from 0 to 1:
 | `site` | The site's markup, classes, attributes, bindings, options, content or Webflow settings are wrong or missing. |
 | `runtime` | Smootify's script does not do what its documentation says, on markup that matches the documentation. |
 | `annotate-skill` | The Figma annotation skill wrote a wrong instruction that the build followed. |
-| `build-skill` | The Figma to Webflow skill built against a correct annotation, wrongly. |
-| `store` | The store's data or setup in Shopify: a metafield or metaobject definition, an option value without its image, a product's price or description, a pickup location, a market, a Search & Discovery filter. Nothing to change in Webflow. |
+| `build-skill` | The Figma to Webflow skill (or its Astro output) built against a correct annotation, wrongly. |
+| `store` | The store's data or setup in Shopify: a metafield or metaobject definition, an option value without its image, a product's price or description, a pickup location, a market, a Search & Discovery filter. Nothing to change in Webflow (or in the Astro code). |
 | `missing-feature` | What the person wants is not something Smootify does today, by its documentation. A request, not a bug. |
 
 **Be very careful before blaming Smootify or a skill.** Most of the time Smootify works and the configuration is
@@ -96,7 +134,8 @@ wrong. Something that looks like a bug is usually one of these:
 - a block hidden or shown with CSS where the documentation asks for a condition, or the reverse;
 - the store's data: a product, metafield, market, location or filter that does not exist in Shopify, or is not
   visible to the storefront (the cause is then `store`);
-- a Webflow default that was never reset (a margin, a fixed height, an alignment);
+- a Webflow default that was never reset (a margin, a fixed height, an alignment); on Astro, a `w-*` class or a
+  `data-w-*` attribute the generic build does not read, or `hidden` on an element the runtime shows with classes;
 - a page published before the last changes, or a note taken before a fix: when the element already changed after
   the note's time, answer that it is fixed on the current version and ask to look again after the next publish.
 
@@ -142,7 +181,8 @@ Write only `status`, `resolution` and one new entry in `replies`, as `notes/READ
 - `status`: `resolved` when you changed the site, `rejected` when you left the site as it is (the cause is
   elsewhere, the note asks for something the site should not do, or there was nothing to fix).
 - `text`: plain words for the person. What was wrong, what you changed, what to look at after publishing.
-- `refs`: the documentation pages and the MCP findings you relied on.
+- `refs`: the documentation pages and the MCP findings you relied on (on Astro, the `/docs/astro/…` pages:
+  `https://www.smootify.io/docs/astro/build/filters` in the example above).
 - When the cause is `store`, the `text` says what the store must have and where it is set in the Shopify admin
   (the setting or the definition, with its namespace and key or its type), and how to check the page after.
 - When the cause is `runtime`, a skill or `missing-feature`, the `text` stands on its own for Smootify's support: the page URL, the element, what
@@ -151,7 +191,7 @@ Write only `status`, `resolution` and one new entry in `replies`, as `notes/READ
 
 ## What you never do
 
-- Publish the site.
+- Publish the site (on Astro: deploy it).
 - Work around a Smootify bug on the site (extra scripts, CSS that hides a wrong value, removed attributes). Answer
   with the cause instead, so it gets fixed where it is.
 - Change anything the note is not about, or rewrite the design.

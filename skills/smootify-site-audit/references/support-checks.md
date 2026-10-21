@@ -5,12 +5,19 @@ This checklist is based on the most common configuration errors seen in Smootify
 For each check, link the relevant doc page when explaining the fix: the 2.0 pages (`https://www.smootify.io/docs/…`)
 for a 2.0 site, the `docs.smootify.io` paths for a 1.x site (`doc-map.md` has both).
 
+**On an Astro site** (see *Webflow or Astro* in `SKILL.md`) cite the `Astro:` references, check the project's code
+and its published page instead of the Webflow project, and skip the checks marked **Webflow-only**: they do not
+apply, so they are neither findings nor "Not checked".
+
 Each check states its **severity**: blocker → `error`, important → `warning`, minor → `info`. One cause is one
 finding, however many pages show it; a check the structural pass already reported is not counted again.
 
 ---
 
 ## 1. CMS collections structure
+
+**Webflow-only.** On Astro the products, collections and vendors are content collections loaded from Shopify, with
+no Webflow CMS and no sync: skip this check (`https://www.smootify.io/docs/astro/start/content`).
 
 **Severity:** blocker (a missing collection or Shopify ID field); important (another field required in Webflow that
 the sync does not fill).
@@ -61,6 +68,12 @@ Without the script, no Smootify functionality will execute. With wrong CMS slug 
   `https://www.smootify.io/docs/start/changes` ("New URL defaults"), `https://www.smootify.io/docs/reference/options`
 - 1.x: `/docs/custom-code/js` (the options customizer; its slug defaults are the 1.x ones)
 
+**On Astro** there is no Custom Code panel and no 1.x: check instead that `astro.config.mjs` has `smootify()` in its
+integrations with the site id (read from `smootify.config.mjs`), that the published `<head>` loads the loader from
+`cdn.smootify.io` (never a runtime in the bundle), and that `productsBase` / `collectionsBase` / `vendorsBase` in
+`userOptions` match the page folders (`src/pages/products/[slug].astro`…), with the same blocker severity. References:
+`https://www.smootify.io/docs/astro/start/install`, `https://www.smootify.io/docs/astro/reference/options`.
+
 ---
 
 ## 3. Check for attributes for CDN compression on images loaded from Shopify
@@ -85,6 +98,8 @@ Shopify url by default are raw, by using dynamic cdn compression attributes you 
 - 2.0: `https://www.smootify.io/docs/start/performance`, `https://www.smootify.io/docs/reference/attributes/image-size`
   (which images take the attributes), `https://www.smootify.io/docs/build/product-gallery`
 - 1.x: `/docs/ecommerce/products/elements#dynamic-cdn-compression`
+- Astro: `https://www.smootify.io/docs/astro/start/performance`,
+  `https://www.smootify.io/docs/astro/reference/attributes/image-size`, `https://www.smootify.io/docs/astro/build/product-gallery`
 
 ---
 
@@ -97,7 +112,8 @@ hand, a blocker (the elements stay empty).
 On any page where dynamic product elements appear (price, add-to-cart, variants, gallery, etc.), verify there is a parent **Product Custom Element** (HTML tag: `smootify-product`) wrapping them.
 
 The Product Custom Element must:
-- Be connected to the Shopify ID field of the Webflow CMS (when on a CMS template page)
+- Be connected to the Shopify ID field of the Webflow CMS (when on a CMS template page; on Astro, `data-id` is the
+  content entry's `shopifyId`)
 - Wrap ALL dynamic Smootify elements (price, gallery, add-to-cart, etc.)
 
 **Dynamic elements that REQUIRE smootify-product as ancestor:**
@@ -114,6 +130,7 @@ Without the Product Custom Element parent, Smootify has no context for which pro
 **Doc references:**
 - 2.0: `https://www.smootify.io/docs/reference/elements/smootify-product`, `https://www.smootify.io/docs/build/product-page`
 - 1.x: `/docs/ecommerce/products/custom-element`, `/docs/ecommerce/products/elements`
+- Astro: `https://www.smootify.io/docs/astro/reference/elements/smootify-product`, `https://www.smootify.io/docs/astro/build/product-page`
 
 ---
 
@@ -137,6 +154,7 @@ Smootify renders dynamic data only on elements that explicitly declare what to s
 **Doc references:**
 - 2.0: `https://www.smootify.io/docs/reference/attributes` (one page per group: the `reference` of each entry in `rules.json`)
 - 1.x: `/docs/ecommerce/products/elements`, `/docs/ecommerce/variants`
+- Astro: `https://www.smootify.io/docs/astro/reference/attributes`
 
 ---
 
@@ -158,6 +176,8 @@ Wrong selector structure makes the variant selection non-functional. The user ca
 - 2.0: `https://www.smootify.io/docs/build/product-page`, `https://www.smootify.io/docs/build/swatches`,
   `https://www.smootify.io/docs/reference/elements/smootify-add-to-cart`
 - 1.x: `/docs/ecommerce/products/add-to-cart`, `/docs/ecommerce/variants`
+- Astro: `https://www.smootify.io/docs/astro/build/product-page`, `https://www.smootify.io/docs/astro/build/swatches`,
+  `https://www.smootify.io/docs/astro/reference/elements/smootify-add-to-cart`
 
 ---
 
@@ -176,6 +196,7 @@ Wrong cart structure means items added don't appear, or appear without correct q
 **Doc references:**
 - 2.0: `https://www.smootify.io/docs/build/cart`, `https://www.smootify.io/docs/reference/elements/smootify-cart`
 - 1.x: `/docs/cart`
+- Astro: `https://www.smootify.io/docs/astro/build/cart`, `https://www.smootify.io/docs/astro/reference/elements/smootify-cart`
 
 ---
 
@@ -190,12 +211,17 @@ If diagnosing a Product Detail Page issue:
 - It should have a top-level Product Custom Element wrapping all product content
 - Related products / recommendations sections need their own Product Custom Element setup
 
+On Astro the template is `src/pages/products/[slug].astro` (or the folder of `productsBase`), with a
+`getStaticPaths` over the `products` content collection, instead of a CMS template page; the other two points are the
+same.
+
 **Why it breaks:**
 Wrong template structure prevents the page from being generated for each product, or generates pages with empty data.
 
 **Doc references:**
 - 2.0: `https://www.smootify.io/docs/build/product-page`
 - 1.x: `/docs/ecommerce/products/template`
+- Astro: `https://www.smootify.io/docs/astro/build/product-page`
 
 ---
 
@@ -209,12 +235,17 @@ If diagnosing a Collection Detail Page issue, where the user didn't used Search 
 - Collection list inside, bound to Products with a filter "where Collection equals current collection"
 - Each Product item in the list wrapped in a Product Custom Element
 
+On Astro: `src/pages/collections/[slug].astro` over the `collections` content collection, its products read from
+the entry (`getEntries(c.products)`, which needs the loader option `withProducts: true`), each card an `.sm-dyn-item`
+holding a `smootify-product` whose `data-id` is the product's `shopifyId`.
+
 **Why it breaks:**
 Without correct binding the collection page won't list its products.
 
 **Doc references:**
 - 2.0: `https://www.smootify.io/docs/build/collection-page`, `https://www.smootify.io/docs/build/product-lists`
 - 1.x: `/docs/ecommerce/collections/template`, `/docs/ecommerce/products/listing`
+- Astro: `https://www.smootify.io/docs/astro/build/collection-page`, `https://www.smootify.io/docs/astro/build/product-lists`
 
 ---
 
@@ -230,6 +261,11 @@ If the project has Search and Discovery component:
 - If the page with search and discovery is the collection detail page, check that the `smootify-search-discovery` element has `data-collection` bound to the collection's Shopify ID CMS field: that alone locks the list to that collection (the Collection facet is locked and kept out of the URL), no Collection filter is needed. On a vendor template the same goes for `data-vendor`, bound to the vendor name. In the published HTML an empty `data-collection` is a CMS item with no Shopify ID. (1.x prescribed a filter with `label=Collection` and `selected-value`; on 2.0 `data-collection` is enough, so a missing Collection filter is not a finding)
 - If user used load more or load more in view pagination buttons, suggest to avoid it if their collections have more than 200 products, in that case is better use next/previous pagination buttons instead to avoid performances issues on devices with low ram available.
 
+On Astro the first and third points read differently (the other two are the same): there is no CMS, and the
+server renders real cards inside the wrapper, each `.sm-dyn-item > smootify-product[data-id]`, the first one being
+the template Smootify clones; render no more cards than `limit`, in the collection's default order. `data-collection`
+takes the collection entry's `shopifyId` (numeric id or gid), never the handle.
+
 **Why it breaks:**
 Search and discovery is rendered through js, so no CMS item must be used inside the Search and Discovery wrapper element. If the user did use it, the Search and Discovery component will render incorrectly
 
@@ -237,12 +273,14 @@ Search and discovery is rendered through js, so no CMS item must be used inside 
 - 2.0: `https://www.smootify.io/docs/build/filters`, `https://www.smootify.io/docs/build/collection-page`,
   `https://www.smootify.io/docs/reference/elements/smootify-search-discovery`
 - 1.x: `/docs/search-filters/search-and-discovery`
+- Astro: `https://www.smootify.io/docs/astro/build/filters`, `https://www.smootify.io/docs/astro/build/collection-page`,
+  `https://www.smootify.io/docs/astro/reference/elements/smootify-search-discovery`
 
 ---
 
 ## 11. If user talks about bad performances on Apple devices
 
-**Severity:** minor (advice, only when the user reports it).
+**Severity:** minor (advice, only when the user reports it). **Webflow-only** (Webflow's bot protection).
 
 - Ask the user to disable the webflow bot protection. Apple devices are not fully compatible with Cloudflare turnstile bot protection. If the user disables it, the website performances will be better.
 
@@ -251,9 +289,10 @@ Search and discovery is rendered through js, so no CMS item must be used inside 
 ## How to use this checklist
 
 Run through it sequentially. For each check:
-1. Verify the configuration on what you have: the project over the Webflow MCP, the published HTML, or — with neither — the user's answers
+1. Verify the configuration on what you have: the project over the Webflow MCP (on Astro, the project's code), the published HTML, or — with neither — the user's answers
 2. If you find an issue, note it for the final report with the severity the check states (blocker / important /
    minor, reported as `error` / `warning` / `info`)
 3. If you cannot determine it from what you have, ask the user a targeted question
 4. Always cite a page the user can open: the 2.0 docs (`https://www.smootify.io/docs/…`, the `reference` URLs in
-   `rules.json`) for a 2.0 site, `docs.smootify.io` for a 1.x site
+   `rules.json`) for a 2.0 site, `docs.smootify.io` for a 1.x site, `https://www.smootify.io/docs/astro/…` for an
+   Astro site

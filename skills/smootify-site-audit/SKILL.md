@@ -1,6 +1,6 @@
 ---
 name: smootify-site-audit
-description: Audits a Webflow project that uses Smootify and reports what is broken, what is fragile, and what the store is paying for but not using. Activates when the user asks to review, audit, debug or "check" a Smootify project — whether they give a Webflow site id, a published URL, or a sandbox link. Supersedes the older smootify-auditor skill.
+description: Audits a Webflow or Astro project that uses Smootify and reports what is broken, what is fragile, and what the store is paying for but not using. Activates when the user asks to review, audit, debug or "check" a Smootify project — whether they give a Webflow site id, a published URL, an Astro project folder, or a sandbox link. Supersedes the older smootify-auditor skill.
 ---
 
 # Smootify site audit
@@ -12,6 +12,40 @@ Webflow MCP and, when a published URL exists, from the published pages — inste
 sandbox link and describe the symptom. And its structural rules come from `references/rules.json`, generated
 from three sources: Smootify's markup contract (tags and their contexts, written from the 2.0 sources), the
 Smootify glossary (attribute values) and the 2.0 sources (state classes, events, public API).
+
+## Webflow or Astro: decide first
+
+Smootify runs on Webflow or on Astro, one per site. Decide which before any check, with the same signals as the
+build skill (`figma-to-webflow-smootify`, Phase 0):
+
+1. The licence of the Smootify site id: `https://cdn.smootify.io/keys/<site id>.json`, field `f`: **absent or `0` =
+   Webflow, `1` = Astro**. Any other value: stop and say this version of the skill does not support that platform.
+   On a published page the site id is the `data-site` of the Smootify loader's `<script>`.
+2. No licence to read: the Webflow MCP with a Webflow site id means **Webflow**. Otherwise an `astro.config.mjs` (or
+   an `astro/` folder holding one) in the working folder, a `CLAUDE.md` from Smootify Studio saying "an Astro site
+   with Smootify", a request naming Astro, or `data-smootify-build` on `<html>` in the served HTML (a
+   Webflow page carries `data-wf-site` instead) mean **Astro**. Neither: **Webflow**.
+
+**On Webflow everything below applies as written.** On Astro:
+
+- **What you audit:** the Astro project's code (`./astro`, or the folder with `astro.config.mjs`) and, when there is
+  one, the published page (`*.workers.dev` or the domain). Never the Webflow MCP: there is no Designer, no Webflow CMS
+  and no Webflow publish.
+- **The docs:** cite `https://www.smootify.io/docs/astro/…`. Most pages have the same path after `/docs/astro`
+  (`/docs/build/cart` → `/docs/astro/build/cart`, `/docs/reference/elements/<tag>` →
+  `/docs/astro/reference/elements/<tag>`); the list is `https://www.smootify.io/docs/astro/search-index.json` and
+  `.md` works there too. The pages without an Astro twin (`/docs/start/changes`, `/docs/start/migrate`,
+  `/docs/start/whats-fixed`, `/docs/start/cms`, publish, domains, hand-off, quick start, templates,
+  `/docs/developers/scripts`) are Webflow-only: never cite them for an Astro site. `doc-map.md` has both columns.
+- **The Smootify MCP:** pass `platform: "astro"` to the tools that accept it, so the references they return are the
+  Astro pages. `audit_page` / `audit_site` work on the published page of the generic build.
+- **Webflow-only checks** are marked as such below and in `support-checks.md`: skip them on Astro, and do not list
+  them under "Not checked" (they do not apply). The selectors of `rules.json` written with Webflow classes read as
+  their generic-build form: `.w-condition-invisible` → the `hidden` attribute, `.w-dyn-item` → `.sm-dyn-item`,
+  `.w-slider` → `[slider-track]`, `.w-dropdown` → `[popover]` + `popovertarget`
+  (`https://www.smootify.io/docs/astro/reference/generic-build`; the build skill's `references/target-astro.md` has the
+  whole table when that skill is installed next to this one). A `w-*` class or `data-w-*` attribute in an Astro
+  page does nothing: a `warning`, one finding for the site.
 
 ## With the Smootify MCP: use it first
 
@@ -25,6 +59,11 @@ Use it instead of applying the rules by hand:
   collection page and the cart, and pass the missing ones to `audit_page`.
 - **Webflow site in the Designer:** read the page tree with the Webflow MCP and pass it to `check_markup` as an
   `outline` (`{tag, type, attributes, children}`). For a component, pass it with `pastedInside`.
+- **Astro project:** build it (`astro build` with the project's package manager) and pass the built HTML of the pages
+  (`dist/**/index.html`: at least the home, one product and one collection page) to `check_markup`. Until its rules
+  know the generic build, these are known false positives: `gallery="slider"` on the generic slider parts ("not a
+  Webflow Slider"), a `*-dropdown` tag that "requires `.w-dropdown`" (the Astro markup uses the `*-popover` tag), and
+  `data-state` on a submit tied with `form=` outside its form. List them as checker gaps, never as findings.
 - **Symptom only:** `diagnose` with the symptom and, when there is one, the page URL.
 - **Store questions** (metafields empty, swatches missing): `probe_storefront` on the product page.
 
@@ -32,7 +71,8 @@ Report its findings as they are: severity, message, fix, where. Its `source` nam
 can open: cite `contract §1 <tag>` as the element's page (`reference` of that tag in `rules.json`,
 `https://www.smootify.io/docs/reference/elements/<tag>`), `glossary <group>` as
 `https://www.smootify.io/docs/reference/attributes/<group>` (conditions: `/docs/reference/conditions/<group>`), and
-MIGRATION / BREAKING-CHANGES / CHANGELOG as the public pages in principle 2. Then apply the rules of this skill
+MIGRATION / BREAKING-CHANGES / CHANGELOG as the public pages in principle 2 (on Astro, the same pages under
+`/docs/astro/`). Then apply the rules of this skill
 **only** to what the report lists under `coverage.notChecked`, and to the audit parts the MCP does not have yet: the
 support checklist (images without CDN sizing, search & discovery limits…), the runtime audit (B) and the account and
 extension usage. Without the MCP, apply everything below by hand.
@@ -54,6 +94,10 @@ extension usage. Without the MCP, apply everything below by hand.
      `references/doc-map.md`.
    - Every page of `https://www.smootify.io/docs/` is fetchable as markdown by adding `.md` to its path
      (`https://www.smootify.io/docs/start/changes.md`).
+   - **An Astro site** cites the `/docs/astro/…` twin of each page above (`/docs/astro/reference/elements/<tag>`,
+     `/docs/astro/reference/attributes/<group>`, `/docs/astro/reference/conditions/<group>`,
+     `/docs/astro/start/debugger`, `/docs/astro/start/performance`); changes, migrate and the 1.x docs do not
+     apply (an Astro site always runs 2.0).
    - **docs.smootify.io** describes 1.x: cite it only when the site runs 1.x.
 
    Fetch, then explain, then cite. Do not paraphrase from memory, and never cite a file the user cannot open.
@@ -66,7 +110,8 @@ extension usage. Without the MCP, apply everything below by hand.
 
 ## Getting access
 
-Ask for whichever of these the user has. More is better, but one is enough to start:
+Ask for whichever of these the user has. More is better, but one is enough to start (on Astro: the project
+folder and the published URL; the CMS slugs below are Webflow-only, the routes are in `smootify.config.mjs`):
 
 - **Webflow site id or site name** — enables the **MCP mode** of the structural audit. The best input.
 - **Published URL** (`*.webflow.io` or the custom domain) — enables the **published HTML mode** of the
@@ -95,9 +140,17 @@ questions — that is the old skill's mode, and it still works.
 Say in the report which mode you used. When both are available, run MCP mode and use the published HTML to
 confirm bindings resolve (an empty `data-id` in the HTML is a CMS item with no Shopify ID).
 
+**On Astro** the two modes are the **code mode** (the project's pages, components, `smootify.config.mjs`,
+`astro.config.mjs` and the built `dist`) and the same **published HTML mode**. In the code, a `data-id` comes from
+a content entry (`shopifyId`); in `dist` it is resolved, and an empty one is an entry with no id.
+
 ## What to run
 
 ### 0. Version gate — first, before any rule
+
+On Astro the `@smootify/astro` integration injects the 2.0 loader: the site runs **2.0**, and the 1.x branches
+below (and "Moving to 2.0") do not apply. Check only that the integration is in `astro.config.mjs` with the site id,
+and that the published `<head>` loads the loader from `cdn.smootify.io` (never a runtime in the bundle).
 
 Read which Smootify the site loads — only from the `src` of `<script>` tags and the `href` of stylesheet
 `<link>`s (published HTML `<head>`, or the site's custom code over MCP), never from inline script text, which
@@ -178,8 +231,8 @@ For every page that contains Smootify elements, check against `rules.json`:
   bar) submits the Smootify form whose `id` is that value, and gets its `data-state`, `data-wait` and disabled state.
   Check that the page has exactly one element with that id and that it is a `form`. No match: the button submits
   nothing — an **error**, whatever else is said about its children (Webflow names a Form Block's form
-  `wf-form-<Name>`, so a bar written for `product-form` points nowhere unless the form's ID was set). Two elements
-  with that id: a **warning**.
+  `wf-form-<Name>`, so a bar written for `product-form` points nowhere unless the form's ID was set; on Astro the
+  `id` is whatever the code writes). Two elements with that id: a **warning**.
 - **Skeleton.** In 2.0 every element Smootify renders into loses its `[skeleton]` (and so do the hosts and the
   repeated rows), so a `[skeleton]` is never a finding by itself: on an element Smootify does not write (a
   `smootify-product[data-id="loader"]` placeholder, a `smootify-metaobject[data-handle="load"]` waiting for a
@@ -250,7 +303,9 @@ because the structural pass was clean. Each one states its severity.
   company-only elements (prices for companies, a quote list) visible to a guest, blocks left empty. The static pass
   cannot see these; they are often the most visible defects.
 - On a `.webflow.io` page running 2.0, the **debugger** (`?smootify-debug=1`,
-  `https://www.smootify.io/docs/start/debugger`) helps with the runtime half. Its Components pane lists every
+  `https://www.smootify.io/docs/start/debugger`) helps with the runtime half. On Astro it runs on the
+  `*.workers.dev` address and the dev server (`astro dev`), never on the domain or `astro preview`: Alt+Shift+D, or
+  `?smootify-debug` (`https://www.smootify.io/docs/astro/start/debugger`). Its Components pane lists every
   Smootify element with its status (loaded, loading, not found, not running), including store-locator, the magic box
   tags, every server extension and the selector hosts (`[popover][data-is="market-dialog"]`,
   `button[data-is="preferences-button"]`, `[policy]`). Its Checks pane warns about the Customer Accounts key for
@@ -283,14 +338,15 @@ Look for a capability the store's own data shows it needs, and a Smootify featur
   element per value.
 - Metaobject references rendered as plain text, where `metaobject-url="/path/{handle}"` would link them.
 - Hand-built "related products" collection lists, where a `smootify-product[data-id="related"]` or
-  `"complementary"` needs no CMS at all.
+  `"complementary"` needs no CMS at all (on Astro: a list picked by hand in the code from the content collection).
 - Add-ons producing separate cart lines where `use-magic-box` would produce one titled, imaged bundle line.
 - Per-product option forms duplicated across templates, where `dynamic-property` would let the merchant
   define them in Shopify once.
 - A configurator hand-wired in JavaScript, where `configurator-field[data-formula]` exists.
 - Popovers built with the `popover` attribute on a div (no class `w-popover`, no `data-w-popover-mode`), where
   Webflow's native Popover element would give them **Animate open** and **Animate close** and Smootify drives it the
-  same way: one opportunity for all of them, with the list of ids.
+  same way: one opportunity for all of them, with the list of ids. **Webflow-only:** on Astro a `[popover]` div is
+  the right markup.
 
 ## Output
 
@@ -300,7 +356,7 @@ Always include the JSON block: it is what makes two audits of the same site comp
 ```
 ## Smootify audit — <site>
 
-**Smootify <2.0 | 1.x>** · <MCP | published HTML | both> mode
+**Smootify <2.0 | 1.x>** · <MCP | published HTML | both> mode   (Astro: **Smootify 2.0 · Astro** · <code | published HTML | both> mode)
 <on 1.x: "This site runs Smootify 1.x. Structural findings are listed under 'Moving to 2.0': they describe
 what changes when the site switches to the 2.0 loader, not current bugs.">
 
@@ -313,7 +369,7 @@ what changes when the site switches to the 2.0 loader, not current bugs.">
    - Why it breaks:
    - Fix:
    - Reference: <public URL: the element or attribute page (`reference` in rules.json), /docs/start/changes,
-     /docs/start/migrate, /changelog/2-0, or docs.smootify.io for a 1.x site>
+     /docs/start/migrate, /changelog/2-0, or docs.smootify.io for a 1.x site; on Astro the /docs/astro/… page>
 
 ### Warnings / Info
 …
@@ -344,13 +400,17 @@ Then:
   "notChecked": [] }
 ```
 
+On Astro, `mode` is `astro-code`, `astro-html` or `astro-both`.
+
 Scoring: start at 100; −15 per error, −5 per warning, counted per finding (per cause), not per occurrence.
 Info, opportunities and "Moving to 2.0" items do not subtract. Floor at 0. State the arithmetic so the number is
 arguable rather than oracular.
 
 ## Out of scope
 
-Generic Webflow issues (CMS limits, billing, hosting) → `https://help.webflow.com`. Shopify admin beyond what
+Generic Webflow issues (CMS limits, billing, hosting) → `https://help.webflow.com`. On Astro, Astro itself →
+`https://docs.astro.build`, Cloudflare hosting → `https://developers.cloudflare.com/workers/` (deploying with
+Smootify: `https://www.smootify.io/docs/astro/start/deploy`). Shopify admin beyond what
 Smootify documents → `https://help.shopify.com`. Anything else → the Discord.
 
 ## References
@@ -361,4 +421,4 @@ Smootify documents → `https://help.shopify.com`. Anything else → the Discord
   events and public API from the 2.0 runtime; Smootify regenerates it. Each tag and attribute carries the public
   page to cite (`reference`).
 - `references/support-checks.md` — the eleven support-derived checks.
-- `references/doc-map.md` — topic → doc path, with what the 1.x docs do not cover yet.
+- `references/doc-map.md` — topic → doc path (2.0 Webflow, 2.0 Astro, 1.x), with what the 1.x docs do not cover yet.

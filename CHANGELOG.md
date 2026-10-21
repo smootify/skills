@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.42 · 2026-10-21
+
+- `smootify-iterate` and `smootify-site-audit` work on Astro sites too. They first tell a Webflow site from an Astro one (the site's licence, Smootify Studio's project, an `astro.config.mjs`); on Astro they read and fix the project's code instead of going through the Webflow MCP, cite the Astro docs (`smootify.io/docs/astro/…`), skip the checks that exist only on Webflow (CMS sync, Designer, publish), and pass `platform: "astro"` to the Smootify MCP. On Webflow nothing changes.
+
 ## 2.0.0-beta.41 · 2026-10-21
 
 - Rules and catalogs from Smootify 2.0.0-beta.5 as republished: in the generic build (Astro) `dynamic-swiper` and `product-slider` do not run (a slider of cards is the site's own), and a Magic Box category marks its slide and its ARIA tab `is-complete`; `data-state` also on the add button of a quantity break (`[price-break="add"]`).

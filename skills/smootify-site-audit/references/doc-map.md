@@ -6,6 +6,10 @@ Use this map to find the right doc page for each topic.
 `.md` to its path (`https://www.smootify.io/docs/build/cart.md`), and `https://www.smootify.io/llms.txt` lists them
 all. Elements and attribute values have a page each: the `reference` URLs in `rules.json`.
 
+**An Astro site: cite `https://www.smootify.io/docs/astro/…`**, the table *Smootify 2.0 on Astro* below. Most pages
+keep their path after `/docs/astro`; `.md` works the same, and `https://www.smootify.io/docs/astro/search-index.json`
+lists every Astro page. A Webflow page with no Astro twin is never cited for an Astro site.
+
 **A 1.x site: cite `docs.smootify.io`**, the tables after the 2.0 one. When citing one of those pages, use
 `https://docs.smootify.io{path}`; its raw markdown is `https://docs.smootify.io/llms.mdx{path}/content.md`, and the
 whole set is `https://docs.smootify.io/llms-full.txt`.
@@ -44,6 +48,47 @@ whole set is `https://docs.smootify.io/llms-full.txt`.
 | JavaScript API, events, filters, custom scripts | `/docs/developers/javascript-api`, `/docs/developers/events`, `/docs/developers/filters`, `/docs/developers/scripts` |
 | CSS, state classes | `/docs/developers/css`, `/docs/reference/state-classes` |
 | Every element, attribute value and condition | `/docs/reference/elements`, `/docs/reference/attributes`, `/docs/reference/conditions` |
+
+---
+
+## Smootify 2.0 on Astro (www.smootify.io/docs/astro)
+
+The same topics as the table above, for an Astro site. "Webflow-only" means the Webflow page has no Astro twin:
+the topic does not exist on Astro, or lives on the page named after it.
+
+| Issue area or topic | Page |
+|---|---|
+| Install, the integration, the options | `/docs/astro/start/install`, `/docs/astro/reference/options`, `/docs/astro/start/studio-scaffold` |
+| What 2.0 removed, renamed or changed; URL defaults | Webflow-only (`/docs/start/changes`); the routes are in `/docs/astro/reference/options` |
+| Moving a 1.x site | Webflow-only: an Astro site always runs 2.0 |
+| What is new in 2.0 | `https://www.smootify.io/changelog/2-0` |
+| 1.x bugs 2.0 fixes | Webflow-only (`/docs/start/whats-fixed`) |
+| The debugger | `/docs/astro/start/debugger` |
+| Something does not work: where to start | `/docs/astro/start/troubleshooting` |
+| CMS collections, sync | Webflow-only (`/docs/start/cms`); on Astro the products, collections and vendors are content collections: `/docs/astro/start/content` |
+| Images, page weight, loading placeholders | `/docs/astro/start/performance`, `/docs/astro/start/first-load` |
+| Publish, domains, hand-off | Webflow-only (`/docs/start/publish`, `/docs/start/domains`, `/docs/start/hand-off`); on Astro: `/docs/astro/start/deploy` |
+| SEO | `/docs/astro/start/seo` |
+| The generic build (HTML instead of `w-*` classes, sliders, tabs, popovers, forms, the seed) | `/docs/astro/reference/generic-build` |
+| Product page, add to cart, variant selectors | `/docs/astro/build/product-page`, `/docs/astro/build/swatches`, `/docs/astro/build/variants-list` |
+| Product gallery (`[product="gallery"]`) | `/docs/astro/build/product-gallery` |
+| Product cards and lists, related products | `/docs/astro/build/product-cards`, `/docs/astro/build/product-lists` |
+| Collection page, search & discovery, filters | `/docs/astro/build/collection-page`, `/docs/astro/build/filters` |
+| Search page, predictive search | `/docs/astro/build/search-page`, `/docs/astro/build/predictive-search` |
+| Cart, cart extras, upsells, gift cards | `/docs/astro/build/cart`, `/docs/astro/build/cart-extras`, `/docs/astro/build/cart-upsells`, `/docs/astro/build/gift-cards` |
+| Popovers (mini cart, panels) | `/docs/astro/build/popovers` |
+| Navbar, markets switcher | `/docs/astro/build/navbar`, `/docs/astro/features/markets` |
+| Account, addresses, orders and buy again, subscriptions | `/docs/astro/build/account`, `/docs/astro/build/addresses`, `/docs/astro/build/orders`, `/docs/astro/build/account-subscriptions` |
+| Metafields, customer data | `/docs/astro/build/metafields`, `/docs/astro/build/customer-data` |
+| Cookie banner (`smootify-consent`) | `/docs/astro/features/cookie-consent` |
+| Market suggestion | `/docs/astro/features/market-suggestion` |
+| Analytics pixels | `/docs/astro/features/analytics` |
+| Add-ons, Magic Box, configurator, file uploads, booking, metaobject creator | `/docs/astro/features/add-ons`, `/docs/astro/features/magic-box`, `/docs/astro/features/product-configurator`, `/docs/astro/features/file-uploads`, `/docs/astro/features/booking`, `/docs/astro/features/metaobject-creator` |
+| Wishlist, back in stock, store availability, quotes | `/docs/astro/features/wishlist`, `/docs/astro/features/back-in-stock`, `/docs/astro/features/store-availability`, `/docs/astro/features/quotes` |
+| JavaScript API, events, filters | `/docs/astro/developers/javascript-api`, `/docs/astro/developers/events`, `/docs/astro/developers/filters` |
+| Custom scripts | Webflow-only (`/docs/developers/scripts`); on Astro a script is code in the project, see `/docs/astro/developers/javascript-api` |
+| CSS, state classes | `/docs/astro/developers/css`, `/docs/astro/reference/state-classes` |
+| Every element, attribute value and condition | `/docs/astro/reference/elements`, `/docs/astro/reference/attributes`, `/docs/astro/reference/conditions` |
 
 ---
 
