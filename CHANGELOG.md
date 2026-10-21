@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0-beta.40 · 2026-10-21
+
+- **Smootify for Astro.** The build skill (`figma-to-webflow-smootify`) builds the same annotated Figma either in Webflow or as an Astro project. Its first step picks the platform from the site's licence (or an `astro.config.mjs` in the folder, or Smootify Studio's request); the Webflow build steps are unchanged. The Astro target installs `@smootify/astro` with `npx astro add @smootify/astro`, writes `.astro` components with props, reads Shopify through the integration's content collections, and uses the generic build's markup: native popovers and dialogs, `hidden`, `[slider-track]` sliders, no `w-*` classes.
+- The annotation skill asks the Astro questions only for an Astro site; what a Webflow designer annotates does not change.
+- Rules and catalogs from the Smootify 2.0.0-beta.5 contract: add-on pickers read `quantity` (`quantity="total"` for one per box), `gift-card-balance` without `is-empty`, and the attributes and structures of the generic build (Astro) beside the Webflow ones.
+
 ## 2.0.0-beta.39 · 2026-10-20
 
 - A component prop bound to the CMS now reads back through the Webflow MCP, with its collection and field (Webflow fixed it). The temporary warning is gone; attributes bound to the CMS are still read with `get_settings`.

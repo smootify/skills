@@ -1,68 +1,27 @@
 ---
 name: figma-to-webflow-smootify
-description: Translates Figma designs into Webflow components using the Figma and Webflow MCP servers, driven by plain-text `@element`/`@style`/`@component`/`@prop`/`@bind`/`@attr`/`@manual` annotations placed on Figma layers. Use this whenever the user shares a Figma file/frame URL and asks to build, recreate, or implement it in Webflow, whenever they mention turning a Figma component into a Webflow component, or whenever Figma layer annotations using these directives come up — even if they don't say "Webflow" explicitly but do have both Figma and Webflow MCP tools available. Also use it to interpret existing `@`-prefixed annotations already present in a Figma file's layers. This is the Smootify fork: it carries the Smootify element/attribute catalogue in `references/` and hard-prohibits the builder tool that destroys custom tags.
+description: Translates Figma designs into a Smootify store, either as Webflow components using the Figma and Webflow MCP servers or as an Astro project using @smootify/astro, driven by plain-text `@element`/`@style`/`@component`/`@prop`/`@bind`/`@attr`/`@manual` annotations placed on Figma layers. Use this whenever the user shares a Figma file/frame URL and asks to build, recreate, or implement it in Webflow, or in an Astro site ("Figma → Astro", "build this in my Astro site"), whenever they mention turning a Figma component into a Webflow component (or an Astro component), or whenever Figma layer annotations using these directives come up — even if they don't say "Webflow" explicitly but do have both Figma and Webflow MCP tools available. Also use it to interpret existing `@`-prefixed annotations already present in a Figma file's layers. This is the Smootify fork: it carries the Smootify element/attribute catalogue in `references/`, builds into Webflow (Webflow MCP) or into an Astro project (@smootify/astro) from one `references/target-*.md` file chosen in Phase 0, and hard-prohibits, on Webflow, the builder tool that destroys custom tags.
 ---
 
-# Figma → Webflow MCP Skill
+# Figma → Webflow / Astro
 
 ## Overview
 
-Standardized workflow to translate Figma designs to Webflow components using MCP tools. The annotations are written by `figma-annotate-smootify` in **annotation format 2** (`references/annotation-format.md`): one Dev Mode annotation per layer, category `Smootify`, all directives on one line.
+Standardized workflow to translate Figma designs into a Smootify store, with one of two outputs: Webflow components built through the Webflow MCP (`references/target-webflow.md`), or an Astro project built with `@smootify/astro` (`references/target-astro.md`). The annotations are written by `figma-annotate-smootify` in **annotation format 2** (`references/annotation-format.md`): one Dev Mode annotation per layer, category `Smootify`, all directives on one line.
 
 Annotations are read from the layer's **Dev Mode annotation**, which is what `figma_get_design_context` returns (as `data-smootify-annotations`), or in one pass over the whole page with `use_figma` (`node.annotations`, the `labelMarkdown` of the `Smootify` category). If a layer carries directives in its name or description instead, they will not be picked up — move them into a Dev Mode annotation first.
 
-## Never use `data_whtml_builder`
+## Choose the output (Phase 0)
 
-**Use `data_element_builder` for every element you create. Never `data_whtml_builder`.**
+The same annotated Figma file builds into Webflow or into Astro. Decide before the first element:
 
-This is not a style preference. `data_whtml_builder` silently destroys exactly what this skill exists to
-produce (verified 2026-09-17):
+1. Read the licence of the **Smootify site id** (`@setup: site=`, or the one the person gives; on Webflow it is the Webflow site id, on Astro the id Smootify generated): `https://cdn.smootify.io/keys/<Smootify site id>.json`. Its field `f` is the platform: **`0` (or the field absent) = Webflow, `1` = Astro**. Any other value (`2`, `3`…): **stop** and tell the person "this platform is not supported by this version of the skill: update the skill". If the file answers 404, the fetch fails or there is no network, do not stop and do not guess from the id: go to step 2.
+2. No site id, or no licence to read: the Webflow MCP connected together with a Webflow site id means **Webflow**, and it wins over everything else (a repository can hold an Astro project while the build goes to Webflow). Otherwise an `astro.config.mjs` in the working directory, or a request that names an Astro project or folder, means Astro. Neither: Webflow.
+3. Then **read the whole target file before building**: `references/target-webflow.md` or `references/target-astro.md`. **Everything in the target file wins over the generic wording in this file.** On Webflow, the ban on `data_whtml_builder` comes right after the target file's short overview: read it first.
 
-- **custom tags are deleted** — a `<smootify-product>` disappears and its children are flattened into the
-  parent, so the product wrapper that every binding depends on is gone;
-- **non-`data-*` attributes are discarded** — `product=title`, `variant=image`, `condition=in-stock`,
-  `label=…` are dropped. These are the majority of the Smootify vocabulary.
+**On Webflow, never `data_whtml_builder`**: it deletes custom tags and non-`data-*` attributes (details in `target-webflow.md`).
 
-The failure is silent: the build reports success, the page looks right in the Designer, and nothing works at
-runtime. It is also invisible in `get_all_elements`.
-
-`data_whtml_builder` may look like a faster bulk path when you are building many elements. It is not a
-trade-off — it produces a broken page. If you catch yourself reaching for it, use `data_element_builder` with
-`type: "BY_CUSTOM_TAG"` + `custom_tag` (or `type: "DOM"` + `set_dom_config`) and set attributes afterwards
-with `set_attributes`.
-
-## An attribute CAN vary per instance — and you can build the whole chain
-
-Tested end to end on a real site, 2026-09-21. All three legs work through the MCP:
-
-1. **Create the prop** — `data_component_props_tool > create_prop`, type `string`.
-2. **Bind the attribute value to it** — `data_element_settings_tool > set_settings`, key `attributes`,
-   using **`static_json`**. The documented `value_binding` branch is broken; see below.
-3. **Set a different value per instance** — `set_component_instance_prop_values`.
-
-**Step 2 is the trap.** This is what the schema advertises, and it fails:
-
-```
-attributes: [{ name_static: "cart", value_binding: { source_type: "prop", prop_id: "…" } }]
-→ "value must be a string or a binding"
-```
-
-This is what works — the raw stored shape, passed as JSON:
-
-```
-{ key: "attributes",
-  static_json: { value: '[{"name":"cart","value":{"sourceType":"prop","propId":"<id>"}}]' } }
-```
-
-Only `propId` is required; the server fills in `propName` and `propGroup`. Verify with `get_attributes`:
-without `with_resolved_bindings` you should see the binding object, with it the resolved value.
-
-**So build one component, not one per value.** An element whose Smootify attribute must differ per instance
-is still a single component: give it a `string` prop, bind the attribute to it, and set the value on each
-instance. Do not emit `@manual` for this, and do not build N components — that advice was based on a
-limitation that does not exist.
-
-- `domId` binds the ordinary way, via `set_dom_id` with `binding`.
+This file is the common core: annotation format, directive meanings, how to read the Figma file, the Smootify rules that are runtime truths on any platform, the catalogue and the report. The target file says how each of them is written on that platform.
 
 ## Annotation format 2
 
@@ -77,38 +36,33 @@ node each one goes on, and how to read them. The points that change how you buil
 - **Prop defaults carry no quotes**: `@prop: text Title = Summer sale`. `text` is the `textContent` type.
 - **Classes**: `@style` as written, base first. Without `@style`, `sm-` + the kebab-case layer name.
 
-How each directive is built:
+### What each directive means
 
-| Directive | Build |
+How each one is written is in the target file (*How each directive is built in Webflow / Astro*).
+
+| Directive | Meaning |
 |---|---|
-| `@setup` | Read it first. `site=` is the site to build on (ask if `none`); the other answers are already in the annotations: `image=url` means the image nodes are `DOM img` with `src`/`alt` bound to props that `@cms` connects to Image URL / Image Alt |
-| `@ask` | **Do not build** the node's Smootify part. List it first in the summary: the annotation is not finished |
+| `@setup` | Read it first: `site=` is the Smootify site (ask if `none`); `image=url` means the product pictures are plain `img` with `src` / `alt` from the data. The other answers are already in the annotations |
+| `@ask` | **Do not build** the node's Smootify part. List it first in the report: the annotation is not finished |
 | `@skip` | Do not build the node |
 | `@repeat` | Build this node once; Smootify repeats it. Its `@skip` siblings are drawn copies |
-| `@wrap: <tag or element> over <a>..<b>` | Create the wrapper (a custom tag, or a Webflow element type such as `DivBlock` or `FormBlock`) and move the siblings from `a` to `b` inside it. Then `@attr: wrap …` and `@cms: wrap attr:…` on the same node go on the wrapper |
-| `@target: <layer>` | Apply the node's directives to that descendant (a group that could not hold them) |
-| `@component` `@group` `@desc` | `transform_element_to_component` with `group` and `description` at creation |
-| `@prop` + `@tip` | `create_prop` with the tooltip |
-| `@bind: text\|image\|alt\|link\|domId = P` | `set_settings` binding to the prop (`domId` with `set_dom_id`) |
-| `@bind: attr:<name> = P` | The `static_json` recipe of *An attribute CAN vary per instance* |
-| `@bind: visibility = P` | `set_visibility` with a prop binding |
-| `@slot` | `data_element_builder` type `ComponentSlot` in the component |
-| `@axis: X = variant` + `@variant: N` on each variant | `create_variant` N, then `set_variant_styles` with what that variant changes |
-| `@axis: X = state` + `@state: <class> on <layer>` | A combo class style `<base>` + `<class>` on that layer with what the state changes. Not a Webflow variant |
-| `@axis: X = interaction` | Pseudo-state styles (`hover`, `focus`, `pressed`) on the class |
-| `@axis: X = breakpoint` | Responsive styles on the same element, from the other frame's values. Never a second element |
-| `@axis: X = split` | Each variant carrying `@component` is a separate component |
-| `@axis: X = prop` / `sample` | Already covered by the prop it names (a `boolean` bound to visibility, or a `string` bound to `attr:`) / nothing |
-| `@attr: name=<Name>` on a form field | The field's Name setting (element settings), not a custom attribute; keep the case |
-| `@set: P = v` (and `@set: Variant = N`) | `set_component_instance_prop_values`; the variant takes its id from `get_component` with `includeVariants`. `@set: P = prop:Q`: the same call with `type: bindable`, `binding_source_type: prop` and `binding_prop_id` = the id of prop Q of the component being built, with `scope_component_id` set to it |
-| `@cms: P = Collection.Field` · `@cms: attr:<name>\|text\|image\|link = Collection.Field` | Bind the instance prop to the CMS field; the `attr:`/`text`/`image`/`link` form binds a plain page element (a wrap too). On a plain element, the attribute's CMS recipe (`static_json` with `sourceType: "cms"`, see Limitations). If binding an instance prop to CMS fails through the MCP, report it as a manual step with the exact field |
-| `@inline: Master` | Build a copy of that master's annotated elements in place of the instance (not a component instance); bind its `@bind`s to the props of the component it lands in, matched by name |
-| `@element: FormSuccess` / `FormError` | The content of the Form Block's Success / Error message (the one you add for the tag, or the drawn one) |
-| `@use: Component` | Insert an instance of that component instead of building the frame. On a main component: build no component for it, and place the target (with its `@set` values) wherever its instances are |
-| `@page: template C` | Build on the CMS template page of collection C |
-| `@list: C limit=… sort=…` | A Collection List (`DynamoWrapper`) with `source`, `limit`, `sort` set through `set_settings` |
-| `@manual` | Collect for the summary |
-| *(no directive)* a tag whose catalogue row must contain `form` | If the design has no form inside it, wrap the tag's content in a Form Block yourself (FormWrapper > FormForm, with its Success and Error messages), then put the fields inside. It is never a manual step |
+| `@wrap: <tag or element> over <a>..<b>` | A new wrapper around the siblings from `a` to `b`; `@attr: wrap …` and `@cms: wrap attr:…` on the same node go on it |
+| `@target: <layer>` | The node's directives apply to that descendant (a group that could not hold them) |
+| `@component` `@group` `@desc` | A reusable component; the group is the Figma page, the description its documentation |
+| `@prop` + `@tip` | A property of the component, with its tooltip |
+| `@bind: text\|image\|alt\|link\|domId\|attr:<name>\|visibility = P` | The element's text, image, alt, link, id, an attribute or its visibility follows prop `P` of the nearest component |
+| `@slot` | Where the person placing the component puts content |
+| `@axis: X = variant` / `state` / `interaction` / `breakpoint` / `split` / `prop` / `sample` | How a Figma property becomes code: a variant (styles per case), a state Smootify toggles with a class, a pseudo-state, responsive styles on the same element, a separate component per value, a prop already declared, or nothing |
+| `@attr: name=<Name>` on a form field | The field's name, case included |
+| `@set: P = v` | The value of a prop on this instance (`@set: Variant = N` the variant) |
+| `@cms: P = Collection.Field` · `@cms: attr:<name>\|text\|image\|link = Collection.Field` | The prop (or the plain element) shows that field of the store's data |
+| `@inline: Master` | Copy that master's annotated elements in place of the instance |
+| `@element: FormSuccess` / `FormError` | The success / error content of the form around it |
+| `@use: Component` | Place that component instead of building the frame |
+| `@page: template C` | The page that is the template of collection C |
+| `@list: C limit=… sort=…` | A list of the items of collection C |
+| `@manual` | Collect for the report, after doing everything the target can do |
+| *(no directive)* a tag whose catalogue row must contain `form` | If the design has no form inside it, put one around the tag's content; never a manual step |
 | `@note` | Ignore |
 
 The sections below describe the older syntax; where they differ from the format file, the format file wins.
@@ -119,35 +73,6 @@ Before Phase 4, verify every `@bind` on a component's descendants references a p
 
 - Treat it as a build error for that binding — do not attempt to bind it.
 - Add a corresponding line to the `@manual` checklist (e.g. `@manual: "Prop 'X' referenced by @bind but never declared — bind manually or add @prop"`).
-
-## Element Type Mapping
-
-| `@element` | Webflow `type` | Notes |
-|---|---|---|
-| `DOM` | `type: "DOM"` + `set_dom_config` | Only tags Webflow does not offer on an element: span, `input`/`button` with reserved attributes, `dialog`… Semantic tags (section, nav, header, footer, main, aside, article, address, figure) are a `DivBlock` with `set_tag` (or the Section element), never DOM |
-| `BY_CUSTOM_TAG` | `type: "BY_CUSTOM_TAG"` + `custom_tag` | Arbitrary tags like `smootify-product`, `web-component` |
-| `Image` | `type: "Image"` | Use `@bind: assetId` for swappable images |
-| `Heading` | `type: "Heading"` | Use element_builder or set_heading_level |
-| `Paragraph` | `type: "Paragraph"` | Text content element |
-| `TextBlock` | `type: "TextBlock"` | Inline text |
-| `Button` | `type: "Button"` | Supports link binding |
-| `TextLink` | `type: "TextLink"` | Inline link |
-| `LinkBlock` | `type: "LinkBlock"` | Block link |
-| `Container` / `Section` / `DivBlock` | Respectively | Use `@tag: div` to retag after creation |
-| `CMSCollection` | `type: "CMSCollection"` | **Manual** — must be bound to CMS in Designer |
-| `CMSSlot` | `type: "PageSlot"` | **Manual** — CMS slot for dynamic content |
-| `Form` | `type: "Form"` | Form wrapper — create it, then configure submission manually |
-| `FormTextInput` | `type: "FormTextInput"` | Single-line text input |
-| `FormTextarea` | `type: "FormTextarea"` | Multi-line text input |
-| `FormSelect` | `type: "FormSelect"` | Dropdown select |
-| `FormCheckboxInput` | `type: "FormCheckboxInput"` | Checkbox |
-| `FormRadioInput` | `type: "FormRadioInput"` | Radio button |
-| `FormFileUploadWrapper` | `type: "FormFileUploadWrapper"` | File upload |
-| `FormButton` | `type: "FormButton"` | Submit button |
-| `FormBlockLabel` | `type: "FormBlockLabel"` | Field label |
-
-**Form elements can be built with `element_builder`.** A form's redirect is `set_settings` key `redirect` on the
-form (`FormForm`, value `/newsletter-confirmed`); the email notification stays manual.
 
 ### Element Type Fallback (when `@element` is absent)
 
@@ -196,120 +121,43 @@ What the styles carry over from Figma, and what they do not:
 - a font the site does not have falls back: install it, or use the stack the person chose, before comparing
   screenshots.
 
-**Special case — empty `@style` value:** if `@style:` is present but has no value (as opposed to being entirely absent), do not derive a class from the layer name. Instead, fall back to the default Figma→Webflow MCP class-generation behavior for that element.
+**Special case — empty `@style` value:** if `@style:` is present but has no value (as opposed to being entirely absent), do not derive a class from the layer name. The target file says what to do instead.
 
 ## Component Decision Rules
 
 A node becomes a component when it has `@component: Name`. All descendants of that node belong to the component. Nested and sibling components follow these rules:
 
 - **Inner components first**: If a node has `@component` and one of its children also has `@component`, build the inner component first.
-- **Sibling components are not rebuilt — they're instanced**: Webflow components aren't rebuilt per occurrence. If multiple sibling nodes at the same depth share `@component: Name` (or are Figma instances of the same component), build it **once**, then insert instances via `insert_component_instance` for each remaining occurrence, and set each instance's props (see *Props on instances* below). Do not flag per-instance differences as `@manual`: they are settable.
 - **Props on the component**: All `@prop` directives on descendant nodes define the component's props. Collect them at the component level.
 - **Bindings scope**: `@bind` references a prop defined on the **nearest ancestor** with `@component`.
 - **What changes per use is a prop, never a manual step.** When an instance needs a setting the component does
   not expose (required or not, a placeholder, a link shown or not), add a prop to the component and set it on the
   instance; do not leave it to the person in the Designer.
+- **Sibling components are not rebuilt, they are instanced.** If several sibling nodes at the same depth share `@component: Name` (or are Figma instances of the same component), build it **once**, then place an instance for each remaining occurrence and set its props. Per-instance differences are never `@manual`.
 
 ### Prefer components, and make the difference a prop
 
-This project goes **full components** in Webflow. When a node repeats with the same structure, it is a
-component — even when every occurrence differs. Differences are props, not copies:
+When a node repeats with the same structure, it is a component, even when every occurrence differs. Differences are props, not copies:
 
-| What differs between occurrences | How |
-|---|---|
-| Text | `textContent` prop, bound to the element's `text` setting |
-| A Smootify attribute's value (`cart=`, `data-option=`) | `string` prop, bound to the attribute — see *An attribute CAN vary per instance* above |
-| Visual style (muted, emphasised, active) | A **variant**, not a second component |
-| **An element that exists in one case and not another** | A **second component** — not a conditional, see below |
-| Layout at another breakpoint | Nothing — same element, responsive styles |
-| A block drawn only in the Tablet or Mobile frame (a filter bar that replaces the sidebar, a tab bar that replaces the side nav, cards that replace a table) | Build it too, in the same page or component, hidden with `display: none` at the breakpoints that do not draw it and shown at the ones that do; the Desktop counterpart is hidden there in turn. Never leave it out as "tablet only": the review checks all three widths |
-| An image, a link, whether something shows per instance | `image` / `link` / `boolean` prop |
-| A slot that would sit inside a Form | A **second component** with the content placed directly: Webflow rejects slots inside a Form ("Slots can not be placed inside Form"), so an Add to cart or a metaobject form with different pickers or fields is one component per layout |
-| Parts that only work together (a trigger and the panel it opens, such as the cookie preferences button and the consent banner; a field and its results panel) | **One component**, with both inside the Smootify element that ties them. Two components that must be placed in pairs, and stay in the same element, are a build error |
-| A block that exists only in a **state** variant (out of stock, logged in, empty, reached) | Nothing to choose: build the union in the one component, the base plus the block of each state variant with the `condition` / `data-state` its annotation gives. Smootify shows the right one. Never a `@manual` that says "add the block of variant X" |
+- text, an image, a link, whether something shows, an attribute's value (`cart=`, `data-option=`): a prop (`textContent`, `image`, `link`, `boolean`, `string`);
+- visual style (muted, emphasised, active): a **variant**, not a second component;
+- layout at another breakpoint: nothing, the same element with responsive styles;
+- a block drawn only in the Tablet or Mobile frame (a filter bar that replaces the sidebar, a tab bar that replaces the side nav): build it too, hidden at the breakpoints that do not draw it, the Desktop counterpart hidden in turn. Never leave it out as "tablet only": the review checks all three widths;
+- an element that exists in one case and not in another: a **second component** (the Webflow note on conditionals is in `target-webflow.md`; on Astro a `boolean` prop can also show or hide it);
+- parts that only work together (a trigger and the panel it opens, a field and its results panel): **one component**, with both inside the Smootify element that ties them;
+- a block that exists only in a **state** variant (out of stock, logged in, empty, reached): build the union in the one component, the base plus the block of each state variant with the `condition` / `data-state` its annotation gives. Smootify shows the right one. Never a `@manual` that says "add the block of variant X".
 
-Build **one** component per structure. Two components are justified when the *structure* differs — an
-element present in one case and absent in another — and never when only a value does.
-
-> **Webflow can do better than this, and we are deliberately not using it.** A conditional on `visibility`
-> lets one component show or hide elements depending on the active variant, which would absorb structural
-> differences too. But conditionals cannot be authored through the MCP — `visibility` reads back as
-> `{sourceType: "conditional"}` and the condition itself is not exposed, written, or resolvable — so every
-> one of them is a manual step in the Designer, per component.
->
-> **Do not design around conditionals for now.** A second component costs
-> the agent nothing to build; a conditional costs a person. Prefer the second component, and revisit if
-> Webflow ever exposes conditionals through the MCP.
+Build **one** component per structure. Two are justified when the *structure* differs, never when only a value does. The Webflow-specific rows (slots inside a Form, conditionals) are in `target-webflow.md`.
 
 ### Naming and grouping
 
-**Mirror the Figma file.** The Figma page a component lives on becomes its Webflow **group**; its Figma
-name becomes its Webflow **name**, unchanged. The two libraries are meant to be the same library seen from
-two sides, and a designer who can find `Cart line` under *Cart* in Figma must find it in the same place in
-Webflow.
-
-- Pass `group` and `description` on `transform_element_to_component` — not afterwards. Both are accepted at
-  creation, and a component created without a group lands loose in the panel where nobody looks.
-- The `description` is the component's documentation and it **travels to the agent**: it shows up in
-  `get_design_context`. Write what the thing is and what its constraints are, not what it looks like.
-- Names are human and unprefixed — `Cart line`, `Summary row`, `Free shipping bar`. No `smootify-` prefix:
-  the tag is in the markup, not in the name.
-- Variant names describe the case, not the styling — `Muted`, `Total`, `Compact` — because they read as
-  `Component / Variant` in the panel.
-- Use `set_component_metadata` only to fix an existing component; prefer getting it right at creation.
-
-### Props on instances
-
-All three legs work through the MCP. Verified 2026-09-21.
-
-1. **Define** — `data_component_props_tool > create_prop` with `component_id` and `props[]`. Types:
-   `textContent`, `string`, `richText`, `image`, `link`, `video`, `number`, `boolean`, `id`, `altText`.
-   Give every prop a `tooltip`: it is the only guidance whoever uses the component will see.
-2. **Bind** — `set_settings` on the element inside the component definition, passing `scope_component_id`.
-   Text binds with `{key: "text", binding: {source_type: "prop", prop_id}}`; `domId` with `set_dom_id`;
-   attributes need the `static_json` workaround documented above.
-3. **Set per instance** — `set_component_instance_prop_values` with `element_id` and `values[]`, each
-   `{prop_id, type, string_value}`. Confirm with `query_elements` and a `component_filter`: the instance
-   reports `hasOverride: true` on every prop you set.
-
-**The variant is a prop too.** As soon as a component has variants, Webflow adds a `Variant` prop of type
-`variant` by itself. Set it per instance like any other, passing the **variant id** as `string_value` —
-`get_component` with `options.includeVariants` gives you the ids. So style-per-instance needs no extra
-components and no manual step.
-
-> **Gotcha:** `set_text` inside `element_schema.children[]` does not apply — children are created with
-> Webflow's placeholder text regardless. Create the tree first, then set the text with `set_settings`
-> (`{key: "text", static_text: {value: "…"}}`) or `set_text`. Check it; do not assume it took.
+**Mirror the Figma file.** The Figma page a component lives on is its group; its Figma name is its name, unchanged: a designer who can find `Cart line` under *Cart* in Figma must find it in the same place in code. Names are human and unprefixed (`Cart line`, `Summary row`, `Free shipping bar`; no `smootify-` prefix, the tag is in the markup). The description says what the thing is and what its constraints are, not what it looks like. Variant names describe the case, not the styling (`Muted`, `Total`, `Compact`).
 
 ## Smootify rules the build must apply
 
 Learned on the starter build (beta.10, October 2026). Each one cost a question or a manual step there.
 
-- **Popovers are native.** When the Designer offers Webflow's Popover element, every popover is that element, never
-  a div with the `popover` attribute: only the native one has **Animate open** and **Animate close**, and it is what
-  the starter uses. Create it with the MCP (`data_element_builder`, type `Popover`), inside the Smootify element it
-  belongs to, and position it as the design draws it; point its trigger at it with the Link setting in mode
-  `popover` (`to_element_id` the Popover, `popover_action` toggle, show or hide). Where the MCP cannot reach, the
-  Designer through the browser (the built-in one, or Claude in Chrome) does it: never fall back to attributes. A published native popover has the class `w-popover` and
-  `data-w-popover-mode`; one without them is a fallback to fix before review. A native Popover takes no id (Webflow publishes
-  `w-popover-…`): Smootify does not need one, and its CSS goes on its class, never on an id.
-  Its open and close animations are an interaction with the **Popover toggle** trigger: create it with the MCP
-  (see *Animating a native popover*). The element writes `popover`, `popovertarget` and the close action itself: add none of them. Its trigger is any Webflow Button or Link Block, with Link → Type *Popover*, its Target and the Action (Toggle, Show, Hide); a close button is the same with Action Hide. A DOM `button` cannot target it. Only on a site without it, build the panel with the `popover` attribute and the trigger with
-  `popovertarget`, and give the panel the design's position in the site custom code: without one, the browser opens
-  every popover in the middle of the page, which is right only when the design puts it there. Never put a popover inside a template Smootify repeats (an address card,
-  a cart line): every copy repeats the id. Use `details` / `summary` there.
-- **Animating a native popover.** With `data_interactions_tool` → `create_interaction`: trigger `wf:popover` whose
-  target is the Popover (`wf:inst`), one timeline with `triggerMetadata.role` `open` and one with `close`, and
-  actions on `wf:popover-element` (and `wf:popover-backdrop` for a drawn backdrop) with `wf:transform` properties
-  (`autoAlpha`, plus the motion the design asks for, such as `y`, `xPercent` or `scale`). The tool's `guide` action
-  gives the exact shape. In the Designer the same thing is the Popover's **Animate open/close** button. Set it on the
-  component (`scope: {type: "component", componentId}`, `wf:inst` targets `[componentId, elementId]`), not on a page
-  instance, so every instance gets it. A panel that is a popover only on some breakpoints (filters in a column on desktop, a drawer below) gets
-  **Conditional playback** on the breakpoints where it is not a popover (`conditionalPlayback: [{type: "breakpoint",
-  breakpoints: ["main"], behavior: "dont-animate"}]`, in the Designer Breakpoint → *No animation*). After
-  publishing, check that the motion you set is in the published `webflow.js` (the `wf:popover-element` actions and
-  their properties, such as `xPercent`, `y` or `scale`), not only the fade: once the Designer put a changed
-  Move Y back to its default on publish.
+
 - **A trigger lives in the element it opens.** `data-action="open-cart"` opens only the `smootify-cart` that
   contains the button: the cart icon goes inside the same `smootify-cart` as its drawer panel, not in another one.
   The same for the other Smootify triggers: check the catalogue's context before placing a trigger elsewhere.
@@ -338,8 +186,6 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   not a bare attribute.
 - **A list of products to pick in a form** (a gift list, an alert for several products) is a Collection List whose
   checkbox `value` is bound to the item's Shopify ID: a checkbox with no value sends `on`.
-- **The cookie preferences' Necessary box** is checked, disabled and without a `name`, written in a Code Embed
-  (Webflow drops `checked` and `disabled`); the other categories stay switchable.
 - **Where the design draws a Smootify value with a fixed width**, leave the element free to grow or to cut with
   an ellipsis: the sort toggle, an option name and a price change length with the data. An element Smootify fills
   as a background image (`data-prop="flag"`) gets `background-size: cover` and `background-position: center`.
@@ -351,12 +197,6 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   - `booking-form` reads `name`, `email`, `phone`, `note`.
 - **Search & discovery filters.** A filter's `label` must be the label of a filter set in the store's
   Search & Discovery app (Availability, Price, Color…), or Smootify removes the filter.
-- **CSS the Designer cannot write lives in the component.** A child styled by its parent's state
-  (`is-not-available` on a search result, `is-full` on a booking day), a chevron turned while a popover is open
-  (`:has([popover]:popover-open)`), `:has()` rules, a panel's position: put them in a Code Embed inside the
-  component, a `<style>` scoped to the component's root class, with its visibility bound to a boolean prop such as
-  *Include styles* (default on), so whoever does not want it switches it off on the instance. The site's custom code
-  keeps only what belongs to the whole site: Smootify's options, scripts, global variables.
 - **Elements Smootify removes when the store lacks their data.** Check the store before building, or the page
   comes out empty: `store-locator` without `data-api-key` (the store list goes too, not only the map);
   `smootify-magic-box` whose `data-handle` is not the handle of a Magic Box entry in the store; a booking
@@ -365,22 +205,8 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   `button[data-is="direct-add-to-cart"]`, never an add-to-cart form (Webflow does not nest forms).
 - **Counters Smootify writes.** Before writing a number as static text, look for its attribute: "Filters (2)" is
   `filter="active-count"`, the box counters are `data-prop` inside `smootify-magic-box-cart`.
-- **Slider arrows.** Smootify does not drive arrows outside a Webflow Slider: the arrows a design draws in a
-  section header are the Slider's own arrows, styled and placed there.
-- **A name that is a Webflow element is that element.** A component or variant called Dropdown, Tabs, Slider,
-  Lightbox or Popover is built with that Webflow element (a Cart dropdown is a `smootify-cart` around a Webflow
-  Dropdown, not a button and a popover), because Smootify drives each of them in its own way. Two variants built
-  on the same mechanism are one variant drawn twice.
-- **Reserved slugs.** Webflow keeps `/search` for its own site search: the page with `smootify-search-page` takes
-  another slug (`/search-page`), and every search form's action and `search="search-page"` link point to it.
 - **Class names.** Name classes from the component and the role (`sm-` library classes for shared parts such as
   buttons), never from a layer's sample text or another language.
-- **What the MCP cannot do**, so it goes to the person, in the report, with the page and the element:
-  site redirects, deleting pages, page folders, copying a design into the 404 utility page, publishing.
-- **Text fields Smootify does not clone are DOM `input`s** with a Field Label: a Webflow form field always publishes
-  the placeholder "Example Text" and refuses reserved attributes, while a DOM `input` / `textarea` / `button`
-  publishes `placeholder`, `type` (`date` too), `value` and `disabled` as written. Fields inside templates Smootify
-  clones keep the Webflow elements.
 - **Every empty state is built.** The annotation lists the empty states (cart, search, collection and filters,
   orders, addresses, subscriptions, store credit, wishlist, gift lists, recently viewed, a day with no slot, 404).
   Build each one with its condition, and check it on the published page with the state forced (an empty cart, a
@@ -389,9 +215,6 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
 - **System pages first.** The 404 (and the other utility pages the design draws) goes in the plan with the first
   pages, not at the end: while pages are missing, every link to them lands on it, and on a theme that is not a
   starter it must be the designed one, not Webflow's default.
-- **Required fields are `data-required`.** Webflow strips a custom `required` attribute, so a Field or Checkbox
-  component carries `data-required="True"` / `"False"` (a prop), and Smootify makes the field required in every
-  form of the page. Do not replace the component with a native input to get `required`.
 - **An `edit-address` without the country select is a "Set as default" form.** It sends only the address id and
   `defaultAddress`, and the address stays as it is. The country and zone selects are required only in a form that
   edits the address: do not add them, hidden, to a "Set as default" button.
@@ -429,208 +252,69 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   shopper the product is in the cart: build it when the design draws a toast, and its "View cart" is a link to the
   cart page with `data-action="open-cart"`. Optional parts (`variant-title`) are hidden when empty: design the toast
   so it holds without them.
-
-## Webflow rules the build must apply
-
-Also from the starter build: each of these broke something before it was known.
-
-- **Panels and their styles.** With Smootify loaded, a closed popover stays hidden whatever `display` its class
-  has, so give the panel its layout on its class. Smootify adds no backdrop: where the design draws one (a cart
-  drawer, a dialog), set `--smootify-backdrop-color` on the panel's class. A panel that is a popover only on small
-  screens (filters in a column on desktop) gets `--smootify-closed-display: flex` at the desktop breakpoint, with
-  `position: static`, `inset: auto` and `margin: 0`, and `none` below. On a `dialog` or a `.w-dropdown-list` a
-  `display` on the class still keeps it open: give their layout to the open state in the site custom code.
-- **Labels are Field Labels.** A form field's label is Webflow's Field Label element tied to its field (the "For"
-  setting), never a text block: a tap on it focuses the field and screen readers read it.
-- **Webflow's form defaults.** `.w-input` and `.w-select` have `margin-bottom: 10px` and a fixed height, and
-  `.w-radio` / `.w-checkbox` a left padding and a float. Where a field sits in a row with a button (discount code,
-  search, newsletter) or in a card, reset them on the field's class, or the row comes out taller than the field
-  and the button no longer lines up.
-- **Semantic tags are Div Blocks.** `section`, `article`, `aside`, `nav`, `header`, `footer`, `main`, `address`,
-  `figure` are a Div Block with its Tag setting (or Webflow's Section element), never a Custom element: the Custom
-  element is only for tags Webflow does not offer (Smootify's tags, `button`, `details`, `summary`, `dialog`,
-  `select`, `option`…).
 - **Smootify's tags are inline.** A `smootify-*` custom element (and every other Smootify tag) is `inline` by
   default, like any unknown HTML tag: give its class `display: block` (or flex, grid) whenever it carries layout,
   or widths, margins and gaps on it do nothing.
-- **Webflow's defaults that break a layout.** The Form Block wrapper `.w-form` has a 15 px bottom margin and
-  shrinks in a flex parent: give it a class with `margin: 0` and its width. A FormButton (`input type=submit`)
-  starts with white text and its own line-height: set colour, font and line-height on its class, without negative
-  letter-spacing, or the label is clipped. The Dropdown's toggle is centred with its own padding and its icon is
-  positioned absolutely over the text: reset them where the dropdown sits among links, with an inline SVG chevron
-  in the flow. A Code Embed that holds only a `<style>` still takes space in flex and grid: add
-  `.w-embed:has(>style:only-child){display:none}` once in the site code.
-- **Elements Webflow will not let go.** Removing a Form Block's Success or Error block deletes the form: keep
-  them hidden on forms that never submit (search, filters, sort), and give them the design's text elsewhere.
-  Deleting a Slider's nav deletes the slider: hide it with a class. A Webflow checkbox's inline label cannot be
-  removed: hide it.
-- **`details` that starts open** is written `open="open"`: an empty `open` is dropped at publish. A `dialog` closes
-  with a `form method="dialog"` holding a real `button`, never a bare icon.
-- **Ids and Names are unique on the page.** Webflow names forms `Email Form N` and fields `field-N`, and a component
-  with a form repeats them on every instance: give forms and fields names and ids from their role (a prop when
-  the component is placed twice), and list what only the Designer can rename.
-- **Fields the builder creates can come with Required on.** Turn it off unless the annotation asks for
-  `data-required`: a stray required field blocks the cart or the add to cart.
-- **A Collection List item's link to its own page** (Current Product, Current Collection) written through the MCP
-  publishes `#` or a relative href: set it in the Designer's link panel and check the published href.
-- **Every page and template has its title.** Webflow defaults to the site name; a template title bound to a CMS
-  field is set in the Designer, so list it.
 - **Icons follow their control.** An SVG icon inside a button or link uses `currentColor`, so it follows the
   text colour in every state; an icon that fills on a state (a filled heart) loses its own `fill` attribute and
   gets `fill` from the class and its state combo. Every clickable element that is not a link or a button
   (thumbnails, swatches, clickable cards) gets `cursor: pointer`.
 - **Rows drawn at one height stay at one height** with real texts of different length: stretch the cards and pin
   the price or the button to the bottom.
-- **A DOM `button` keeps the browser's look.** A Custom element `button` (a consent action, a text link that is a
-  button, a toggle) starts with the browser's grey background, border and padding. Reset them on its class
-  (`background-color: transparent`, `border: 0`, `padding: 0`, `font: inherit`, `color: inherit`) unless the design
-  draws them, or a light text lands on a light background.
-- **Required fields on a shared template.** A required field in a block a condition hides (`if-metafield`, Webflow's
-  conditional visibility) does not count while hidden; one hidden by CSS or `display: none` still blocks the form.
-  On a product template that every product shares, hide such blocks with a condition only.
-- **Templates Smootify repeats are Webflow's own elements.** A radio Smootify copies (a subscription plan, a
-  configurator choice, a `dynamic-property` with choices) is Webflow's Radio Button (`w-radio` with its Field Label),
-  never a Div with a custom input: the custom one is not repeated and its value never reaches the cart. A
-  `dynamic-property` checkbox is Webflow's Checkbox (`w-checkbox`). Never wrap the input in a `label` of your own:
-  Smootify writes the property's title into every plain `label` inside a `dynamic-property`, so a label that holds
-  the input is emptied and the element removes itself. Titles and help texts go in a div or in a Field Label with no
-  input inside. These Webflow elements live only inside a Form, so place them in the page's Form of
-  `smootify-add-to-cart`, not in a component. Keep the design's classes on them and reset Webflow's offsets (see the
-  form defaults above).
-- **Everything in a repeated copy follows the same state.** In a template Smootify repeats per value (`option-values`,
-  a swatch, a cart line), an element Smootify hides for one value (an `[option-metafield]` with no data gets
-  `w-condition-invisible`) does not hide its siblings. When a row only makes sense with that data (a "next batch"
-  note and its "Join the waitlist" link), hide the whole row with the state, for example
-  `.row:has(> [option-metafield].w-condition-invisible) { display: none; }` in the component's styles.
-- **No image without a source.** An image bound to a component prop ships `src=""` when the prop is left empty on an
-  instance: give every image prop a default, set it on each instance, and before the report look for `img[src=""]`
-  in the published pages. A decorative icon keeps `alt=""`, a picture that means something gets its alt.
 - **Error states carry a text.** Smootify blocks an invalid configurator field without the browser's message: build
   each `error-message` the design draws, with the field's limits, and the `is-invalid` style on the field.
-- **Reserved attributes.** `id`, `type`, `placeholder`, `value`, `checked` and `disabled` cannot be set as
-  attributes. `id` goes through `set_dom_id`; an input `type` through its settings (text, email, password, tel,
-  number, url only); the rest is manual.
-- **Attributes on a Form Block** land on the inner form, not on the `.w-form` wrapper, and cannot be removed from
-  the wrapper afterwards. Put Smootify attributes on the form or on an element around the Form Block.
-- **A prop bound to an attribute is a `string`**, whatever the annotation says (a limit, a delay, a flag): a
-  `number` prop defaults to 0 and cannot be cleared, so the attribute ships as `limit="0"`.
-- **The Current state is styled in CSS**: a `w--current` combo made through the MCP comes out as `_w--current`,
-  but `.x.w--current { … }` in the component's "Include styles" embed or the page CSS works. Webflow marks the
-  current link only on links of type *page*: plain links inside a component take `set_link` to a page with
-  `scope_component_id`, while an instance's Link prop takes only url / email / phone / popover through the MCP
-  (list those as Designer steps when the current state matters).
-- **Not as styles**: a CSS custom property (`--metafield-rating`) and a variable in `accent-color` are refused.
-  Put the first in the site custom code, write the second as a literal colour.
-- **The Designer canvas is not the site.** It does not load the site custom code, draws `details` closed, keeps
-  old snapshots after changes made headless, and cannot reach utility pages. Styles created or updated through the
-  data API (`create_style`, `update_style`) are saved and publish, but a Designer already open does not load them:
-  the new classes vanish from its canvas and changes to existing ones do not show until the person reloads it.
-  Measure only classes the canvas already had; check everything else on the published staging, and say in the
-  report what you could only check from the data.
-- **A component that is 100% wide does not go loose in a flex row.** Next to a text block it takes the whole row and
-  squeezes the text to one word per line (a contact card beside "Missing a document?"): wrap it in a div with its
-  own flex basis, since the component's class is shared with the places where 100% is right.
-- **Radios and checkboxes in an embed inside a flex parent.** Webflow's clearfix `::before` / `::after` on `.w-embed`
-  (even with `display: contents`) and on every `.w-radio` / `.w-checkbox` become flex items and add the gap before
-  the first option: set them to `content: none` in the custom code, or the group starts 24-34 px off its column.
 - **A variant's size comes from all its instances.** Before giving a component variant an `aspect-ratio` or a
   height, look at every instance of that variant in the file: a ratio taken from one frame (a card 221 px wide on
   the tablet home) is wrong where the same variant is 432 px wide. When the image keeps one height at every width,
   the rule is that height.
-- **A state border over a picture goes on `::after`.** A button with a border and a full-bleed image inside shows
-  the border only where there is no image: draw the selected border on an `::after` with `inset: 0` in the
-  component's styles (a swatch with a photo).
 - **Images are the picture alone, at 2x.** Export the image fill of the picture's rectangle, never the whole card
   (photo, band and text), or the text comes back wherever the image is reused. `get_screenshot` does not go past
   the node's size: take the originals with `download_assets` on the frame that holds the photography, and match
   them to the layers by SHA-1 = `imageHash`. Never add temporary layers to the Figma file. Product and collection
   pictures stay in Shopify.
+- **A popover is never inside a template Smootify repeats.** Never put a popover inside a template Smootify repeats (an address card, a cart line): every copy repeats the id. Use `details` / `summary` there.
+- **The cookie preferences' Necessary box** is checked, disabled and without a `name`; the other categories stay switchable.
+- **Required fields**: Smootify reads `data-required="True"` / `"False"` on a field and makes it required in every form of the page. How the attribute is written depends on the output (see the target file).
+- **Popover panels and their styles.** With Smootify loaded, a closed popover stays hidden whatever `display` its class has, so give the panel its layout on its class. Smootify adds no backdrop: where the design draws one (a cart drawer, a dialog), set `--smootify-backdrop-color` on the panel's class. A panel that is a popover only on small screens gets `--smootify-closed-display: flex` at the desktop breakpoint, with `position: static`, `inset: auto` and `margin: 0`, and `none` below.
+
+The rules that are about the platform's own mechanics (Webflow's Popover element, Field Labels, reserved attributes, the Designer…) are in the target file.
+
+## Catalogue, glossary and `check_markup`
+
+- `references/smootify-catalog.md` is the catalogue: every Smootify tag with where it must sit (*Dentro*), what it must contain, what happens outside its context, the extension it needs and its host attributes. Read the context column before placing a trigger or a child.
+- `references/glossary.json` is the glossary of attribute values: on what kind of element each value goes and which values repeat the element. For a value, the glossary decides; the catalogue's value list is only names.
+- With the Smootify MCP connected, run `check_markup` on what you built (on Webflow, on each component's tree with the Smootify elements it will sit in; on Astro, on the built HTML of every page), and use `resolve_vocabulary` / `get_example` for a value or a structure the annotation lacks instead of guessing. Never invent an element or an attribute value.
+- `check_markup` answers "unknown" for what no rule can check: say so in the report, never read it as approval.
 
 ## Workflow
 
-### Phase 0: Ask for everything the build needs, then install Smootify
+### Phase 0: Decide the output, ask for everything the build needs
 
-**One checklist before the first element.** Everything below is the person's to do, outside the Designer, and
-each one, found halfway, stops the build until they answer. Ask for all of it in one message, before building:
-
-- the Webflow site exists, Smootify is connected to it, and the Designer is open with the Webflow MCP app;
-- the Smootify licence is active, with the plan and the extensions the design uses (server plan, Draft Orders,
-  Product configurator, Dynamic Properties, Booking, Magic Box…: read them from the annotation and the catalogue's
-  *Extension* column);
-- the store is ready: products, collections, metafield and metaobject definitions the design reads, and the CMS
-  sync from Smootify done, with the product ids at hand (a template needs them, the sample data does not);
-- the Customer Account API client id, when the design has account parts (below), with the staging and live
-  domains added to its JavaScript origins and callback URIs in Shopify: from any other origin the login fails;
-- whether to keep Webflow's spam protection (Turnstile) on the site: it guards only plain Webflow forms (Smootify
-  turns it off on its own forms and never sends its token), and its empty slot takes space in the layout;
-- the redirects, policies and other admin settings the design depends on, to put in the report.
+Choose the output (above), read the target file, then **ask for everything the build needs in one message**, before building. What it holds is in the target file (*Phase 0*); in both outputs it covers the site and its licence (plan and extensions the design uses), the store being ready (products, collections, the metafield and metaobject definitions the design reads), the Customer Account API client id when the design has account parts, and the redirects, policies and admin settings the design depends on.
 
 **Ask only what the person decides.** A question the catalogue, the contract or the annotation already answers
 (which attribute, which state class, which value) is not a question: apply it and write the choice in the report.
 Ask about what the design does not settle (copy, a variant, whether to build a proposal), and group those
 questions instead of stopping on each.
 
-Before the first component, read the site's head code (`get_site_freeform_code`) and make sure Smootify loads on
-every page. Without it nothing works on the published site, and no check of the Designer or of the markup shows it.
-
-- Add the loader line from the Install guide (docs.smootify.io, *Install Smootify 2.0*) at the top of the head
-  code, with the options script before it if the site needs one (template URLs that are not `products`,
-  `collections`, `vendors`).
-- `set_site_freeform_code` replaces the whole block: write back what was there, plus the loader. The site rules
-  of *Webflow rules the build must apply* go in the same block, after it.
-- **Customer accounts need the store's Customer Account API client id.** When the design has anything for
-  logged-in customers (sign in, account pages, orders, addresses, profile, store credit, entries a customer owns),
-  ask the person for it before building those parts, and put it in the options script as
-  `newCustomerAccountsPublicKey`. Without it Smootify turns off the login and every account element, so the account
-  pages come out empty and nothing in the Designer shows why.
-- If the person gives you another install (a test site that loads a local build), use theirs and say so in the
-  report.
-- After the first publish, check the page source for the line: it is the first thing to look at when a page
-  shows sample text instead of products.
-
 ### Phase 1: Analyze
 
 1. Call `figma_get_design_context` for the target frame
+   (the annotations of component masters are not in its result: read them with `use_figma`, `node.annotations`, category `Smootify`; on a whole page it truncates, so call it per section)
 2. Parse the `Smootify` annotation of every node by `@` token (see *Annotation format 2*); stop and report every `@ask` before building
 3. Build a tree of components vs static elements
 4. For nested components, identify the inner-most components first
 5. Collect all `@manual` directives for the final summary
 6. Identify the root node of the component (the one with `@component`)
 
-### Phase 2: Build Root
+### Phases 2–5: Build
 
-1. On a regular Designer page, create **only the root element** via `element_builder`
-2. Apply `@tag`, `@style` (split by `|` for multiple classes, applied as combo classes; if empty, use default MCP class behavior), `@attr` directives
-3. Transform the root into a component via `transform_element_to_component`
-
-### Phase 3: Create Props
-
-1. Open the component canvas via `designer_tool > open_canvas`
-2. Create ALL props via `create_prop` — props must exist before binding
-3. Validate every planned `@bind` against the created props (see [Bind Validation](#bind-validation)); route unmatched binds to `@manual`
-
-### Phase 4: Build Children with Bindings
-
-1. Use `element_builder` with `scope_component_id` to create children, passing `set_style` (styles) and `set_text`/`set_attributes` (static content) directly in the creation call.
-2. **Binding timing depends on element type** — `element_builder`'s `settings[].binding` reliably pre-applies bindings only on plain `DOM` / `BY_CUSTOM_TAG` elements. For built-in element types (`Image`, `Paragraph`, `Heading`, `TextBlock`, `Button`, etc.), bindings set at creation time are unreliable; instead:
-   - Create the element first via `element_builder` (style/text/attributes only, no `settings[].binding`).
-   - Fetch its element id via `get_all_elements` (`scope_component_id`, `depth: -1`) — nested `children[]` passed to `element_builder` don't return per-child ids in the creation response, so this lookup is required regardless of element type.
-   - Bind afterward via `data_element_tool > set_settings`, passing `{ key: <setting key>, binding: { source_type: "prop", prop_id } }`. Confirm the exact setting key first with `get_settings type: "all_raw_settings"` (e.g. `text` for Paragraph/Heading/TextBlock/Button, `assetId` for Image) — don't assume it matches the `@bind` setting-key name verbatim.
-3. Static attributes via `set_attributes` with `scope_component_id`
-4. Styles via `set_style` with `scope_component_id` (pass the full array of classes from `\|`-separated `@style`)
-
-### Phase 5: Root Bindings
-
-1. Root domId via `set_dom_id` with `scope_component_id`
-2. Root static attributes via `set_attributes`
+Follow the target file: *Phases 2–5* in `references/target-webflow.md` (root, props, children with bindings, root bindings, through the Webflow MCP), *Build (Phases 2–5 for Astro)* in `references/target-astro.md`. Inner components first; one component per distinct structure.
 
 ### Phase 6: Verify
 
-1. `get_settings` with `type: "all_raw_settings"` + `scope_component_id` to verify bindings
-2. `get_all_elements` with `scope_component_id` to verify tree
-3. Insert instance on the target page specified by the requester, take snapshot
-4. **On the published page, with Smootify running** (the Designer shows neither the runtime nor the site custom
-   code), use it as a shopper would, at desktop, tablet and mobile width:
+The target file has the checks of its platform (*Phase 6*, or *Verify (Phase 6 for Astro)*). Use the output as a shopper would, with Smootify running, at desktop, tablet and mobile width:
+
    - every card, link and button goes somewhere: no `href="#"` left, cards open their product or collection;
    - every panel opens from its trigger, closes, and does not cover what opened it;
    - lists and pages with no data (empty cart, no reviews, nothing recently viewed, a visitor not logged in) show
@@ -640,86 +324,26 @@ every page. Without it nothing works on the published site, and no check of the 
    - every product picture is an `img` (never an empty slide that Smootify fills as a background), and on a CMS
      template its `src` and `alt` are bound to the CMS, so the page shows it before Smootify loads; images Smootify
      fills carry `max-width` (about twice their displayed width, such as `192` on a 96px thumbnail);
-   - in a Collection List or on a CMS template, the card's title, price, compare-at price and product link are bound
-     to the CMS too (Name, Price Formatted, Compare At Price Formatted, the current item's page), not left as sample
-     text for Smootify to replace: the published HTML carries the real content for search engines before Smootify
-     loads. A reused card component exposes them as props (defaults = its sample text) so each list binds them;
    - a state style (the active thumbnail, the selected swatch) sits only on its combo class (`is-active`), never on
      the base class, or every item looks selected;
-   - every state class the catalogue lists for what you built (`is-active`, `w--current`, `is-disabled`,
-     `is-done`, `is-invalid`, `is-full`…) has a style that shows it, checked with the state forced, and a disabled
-     control looks disabled;
    - no block ships empty: every accordion item, tab pane and panel has its bound rows or its text;
-   - no Webflow sample text is left: search the published HTML for `Email Form`, "Thank you! Your submission",
-     "First choice", "Checkbox", "Radio", "Example Text", and for sample fields (`name="email-N"`,
-     `value="Submit"`, a leftover `required` field that blocks a Smootify form such as a subscription cancel);
    - every link template Smootify fills (`[product=url|link]`, `[cart-item=url]`, `[subscription=url]`,
      `[order=url]`) has a fallback URL (`/shop`), so the published HTML never carries `href="#"`;
    - `img[src=""]` and similar checks run on the rendered DOM, not on the HTML: a selector in the head CSS is a false
      positive;
-   - the template title and description are bound to the CMS (`update_page_settings` with
-     `{{wf {"path":"name","type":"PlainText"\} }}`, or the Designer's page settings), checked in the published
-     `<title>`;
-   - the template's og:image comes from the CMS too: Image URL is a plain-text field and Webflow's Open Graph image
-     binds only to Image fields, so write `<meta property="og:image" content="{{wf {"path":"image-url","type":"PlainText"\} }}">`
-     in the template's head custom code (the data API accepts it; check the published `og:image`);
    - while pages are still missing, the report lists the links that lead to them.
-   With the Smootify MCP connected, run `check_markup` on each component's tree (with the Smootify elements it will
-   sit in), and use `resolve_vocabulary` / `get_example` for a value or a structure the annotation lacks instead of
-   guessing.
-   What fails goes in the report before anything else: a component that renders but cannot be used is not done.
+   - every state class the catalogue lists for what you built (`is-active`, `is-disabled`, `is-done`, `is-invalid`, `is-full`…) has a style that shows it, checked with the state forced, and a disabled control looks disabled;
+   - in a product list or on a product template, the card's title, price, compare-at price and link are real content in the HTML, not sample text for Smootify to replace: search engines read it before Smootify loads.
+
+What fails goes in the report before anything else: a component or page that renders but cannot be used is not done.
 
 ### Phase 7: Inner and Sibling Components
 
-If there are nested or repeated (sibling) components:
-1. Build each distinct inner component fully (Phases 1–6), once per distinct component — not once per occurrence
-2. Use `element_builder` to insert an instance of the inner component wherever it recurs, via `insert_component_instance` on the outer's canvas
-3. Then continue building the outer component
+Build each distinct inner component fully (Phases 1–6), once per distinct component, not once per occurrence; place it wherever it recurs, then continue with the outer one (on Webflow with `insert_component_instance`, on Astro with an import).
 
 ### Phase 8: Manual Summary
 
-1. **Do every `@manual` the MCP can do**, with the calls in `references/mcp-recipes.md`: a hidden select with
-   options, number and range inputs, a Webflow Dropdown or Tabs, a template moved into another element, a block
-   placed next to another, a popover and its trigger, a slot, a form inside a custom tag, a page wrapper, a
-   collection list, an instance placed on a page. Write each one in the report as "done by hand", with its node
-   id, so the annotation can turn it into a directive next time.
-2. Collect what is left, the steps no tool can do (see *Smootify rules the build must apply*), into a checklist
-   for the person
-3. Present it as remaining work
-
-## Limitations & Workarounds
-
-| Limitation | Workaround |
-|---|---|
-| `set_settings` rejects `attributes` with `value_binding`, and `element_builder` rejects the `attributes` settings key at creation | Bind with `set_settings` + `static_json` carrying the raw shape — see *An attribute CAN vary per instance*. Webflow MCP bug, not a Webflow limit |
-| ~~Cannot set CMS bindings via MCP~~ | **They can.** An attribute binds to a CMS field with `set_settings`, key `attributes`, `static_json` carrying `[{"name":"data-id","value":{"sourceType":"cms","collectionId":"…","collectionName":"Products","fieldId":"…","fieldName":"Shopify ID","fieldGroup":null,"fieldType":"plainText"}}]` — it replaces the whole attribute list, so pass the static ones too. A Collection List's source, filters, sort and limit are `set_settings` keys on the `DynamoWrapper` |
-| ~~Cannot create interactions~~ | `data_interactions_tool` (IX3). Confirm in Preview: an accepted interaction can still not run |
-| ~~Cannot install fonts programmatically~~ | `data_fonts_tool > create_font` |
-| A reset of the native popover's UA styles in the site's head code (`[popover]{margin:0;border:0;padding:0;inset:auto}`) loads after Webflow's CSS with the same specificity as a class, so it wipes every popover's own padding, border and position (the Spannbach market dialog shipped as a bare strip) | Write the reset with zero specificity: `:where([popover]){…}`, so the popover's class always wins |
-| A native Popover and its animation | The Popover is created with `data_element_builder` (type `Popover`), its open/close animation with `data_interactions_tool` (trigger `wf:popover`, see *Animating a native popover*). The `popover` / `popovertarget` attributes are only for a site whose Designer has no Popover element; never as a shortcut |
-| Bindings not visible in `get_all_elements` | Always use `get_settings type: "all_raw_settings"` to verify |
-| ~~Cannot set per-instance prop overrides via MCP~~ | **Not true** — `set_component_instance_prop_values` works, variants included. Verified 2026-09-21 |
-| `element_builder`'s `settings[].binding` doesn't reliably pre-apply on built-in element types (Image, Paragraph, Heading, etc.) at creation time | Create the element first (style/text/attributes only), look up its id via `get_all_elements`, then bind with a follow-up `set_settings` call |
-| Conditional visibility (show/hide by variant) can be neither read nor written via MCP | Don't use conditionals — build a second component instead |
-| `element_builder` with nested `children[]` doesn't return per-child element ids in the creation response | Follow up with `get_all_elements` (`scope_component_id`, `depth: -1`) to resolve every child's id before binding or further edits |
-| `set_text` and `set_link` inside `children[]` are ignored — children are created with Webflow's placeholder text and no link | Set them after creation, then read them back: do not assume they took. A top-level Button takes both |
-| `set_style` on an element inside a component answers "styles not found" when its classes form a combo that does not exist yet, even if each class exists | Create the combo first (`parent_style_names`), then apply it |
-| `remove_properties` and `properties` on the same property in one call: the removal wins | To replace a value pass only `properties` |
-| A FormSelect has no setting for its options | A DOM `select` with DOM `option` children: `set_attributes` for each `value`, `set_settings` `text` for the label |
-| An instance cannot be the anchor of `before` / `after` (`insert_component_instance`, `data_element_builder`) | `prepend` / `append` in the parent, or anchor on a plain element next to it |
-| Slots cannot be placed inside a Form, and an instance cannot be detached on a template | A second component for each layout of the form (see *Component Decision Rules*) |
-| No tool for site redirects, deleting pages, page folders, noindex, custom checkbox and radio styles, the 404 utility page | The person does them: list them in the report with page and element. A page to delete goes to draft, renamed "(to delete)" |
-| Placeholders and Form names have no MCP tool | Do them in the Designer through the browser page by page, before the page is published for review, not at the end; check the published page for inputs without a placeholder |
-| Reading CMS bindings back (checking a template) | An attribute bound to the CMS reads as `null` through `get_attributes`: read it with `data_element_settings_tool` → `get_settings` type `all_raw_settings`, which shows the collection and the field. A component prop bound to the CMS reads as its binding (`sourceType: "cms"`, collection and field) in `get_component_instance_props` and in `query_elements` |
-| `move_element` rejects an instance as anchor; `set_style` replaces every class of the element; `element_snapshot_tool` fails when the Designer is not on the element's page | Anchor on a plain element; pass all the classes the element keeps; open the page first |
-| `bulk_update_pages` answers ok and changes nothing | `update_page_settings`, one page at a time |
-| `unlink_component_instance` is refused by the permission system | Do not work around it: build what the instance should contain another way (a second component) |
-| The Webflow Navbar (`w-nav`) cannot be created; a new Form Block comes with Name, Email and Submit; a new Rich Text with sample headings and lists | Build the nav from Div blocks; delete the sample content right after creating the element |
-| `transform_element_to_component` leaves an element without its class when the style does not exist yet | Create the styles first, then transform |
-| A radio's `groupName` written through the API lands only in `data-name`: the published radios get a different `name="radio-N"` each, so the group does not exist and the form sends the wrong name | A radio group a form sends (a score, a choice saved to a metafield or metaobject field) is an HTML Embed with native `input type="radio" name="<key>"` and their labels, styled by class |
-| `FormTextInput` takes only text, email, password, tel, number and url as type | A date field (`purchase_date`) is an HTML Embed with `input type="date" name="<key>"` |
-| A custom attribute (`customer-condition`, `if-metafield`, …) cannot be set on a component instance | Wrap the instance in a Div Block that carries the attribute |
-| `transform_element_to_component` refuses an element that contains a Collection List bound to the CMS (a Magic Box with its category lists, a product slider) | Convert it in the Designer (right click → Create component, through Claude in Chrome); the Designer also turns the list's source, filters and limit into component props. Add the other props with the data API afterwards |
+Do every `@manual` the target can do (Webflow: with the calls in `references/mcp-recipes.md`; Astro: in code, there is no Designer). Write each one in the report as "done by hand", with its node, so the annotation can turn it into a directive next time. Collect what is left, the steps no tool can do, into a checklist for the person, and present it as remaining work.
 
 ## Summary Output Template
 

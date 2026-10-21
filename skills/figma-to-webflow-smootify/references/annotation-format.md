@@ -3,6 +3,8 @@
 The contract between the two skills: `figma-annotate-smootify` writes it into Figma, `figma-to-webflow-smootify`
 reads it and builds Webflow. **The same file lives in both skills — change both copies together.**
 
+This file says "Webflow" where it describes what a directive becomes; the build side has two outputs, Webflow and Astro, and how each directive is built in each is in `references/target-webflow.md` and `references/target-astro.md` of the build skill.
+
 ## Transport — verified on a real file
 
 Directives travel as a **Dev Mode annotation**, which `get_design_context` returns as

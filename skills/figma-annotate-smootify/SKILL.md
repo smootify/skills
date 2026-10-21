@@ -136,6 +136,14 @@ all together, in one message, before reading the file**, and do not start step 1
    or a popover? And a popover: the native Popover element of Webflow (beta, built by hand) or the `popover`
    attributes (built by the MCP)?
 
+**For an Astro site** (the licence `cdn.smootify.io/keys/<Smootify site id>.json` has `f: 1`, or the person says
+Astro) the same annotations serve the build skill's Astro output, and three answers are fixed: `image=url` (the page
+renders a plain `img` from the loader's data; `image=image` has no meaning there), `popover=attributes` (a native
+`[popover]`; Webflow's Popover element does not exist), and `pickers` is `select` or `popover` (a drawn dropdown is
+built as a popover: there is no Webflow Dropdown). Question 2 has no Webflow site to read: use the Smootify defaults
+(`Products`, `Collections`, `Vendors` and their field names, which the build maps to the content collections).
+`site=` is the Smootify site id.
+
 Write the answers on the top frame of the file's first page, as one annotation:
 `@setup: image=url site=<site id or none> plan=standard pickers=dropdown popover=attributes`. On a later run,
 read `@setup` first and ask only what it lacks. The build skill reads it too.
