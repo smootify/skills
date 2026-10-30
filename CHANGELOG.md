@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.43 · 2026-10-30
+
+- Rules and catalogs from Smootify 2.0.0-beta.10: `shipping-estimate` (a form with a country and a postal code, the delivery options in `[shipping-option="item"]` with `title`, `price`, `description`) and `quick-order` (every variant of a product as a `smootify-variant` row with a `quantity-input`, `[quick-order="price|line-total|pieces|total|add|error"]`, a form for pasted SKUs).
+
 ## 2.0.0-beta.42 · 2026-10-21
 
 - `smootify-iterate` and `smootify-site-audit` work on Astro sites too. They first tell a Webflow site from an Astro one (the site's licence, Smootify Studio's project, an `astro.config.mjs`); on Astro they read and fix the project's code instead of going through the Webflow MCP, cite the Astro docs (`smootify.io/docs/astro/…`), skip the checks that exist only on Webflow (CMS sync, Designer, publish), and pass `platform: "astro"` to the Smootify MCP. On Webflow nothing changes.

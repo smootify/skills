@@ -1,6 +1,6 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-21",
+  "generatedAt": "2026-10-30",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0), §2 Form fields, §2.15 Generic build only (Astro, D4), §2.16 Other attributes e §4 Webflow classes and structures",
     "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 09fab077b0e244df)",
@@ -3643,7 +3643,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Creates a metaobject from a Webflow form: every filled field whose name does not start with _; a name the form repeats (a checkbox group with each checkbox's value, a multiple select) sends all its values; a lone checkbox sends true / false. The backend converts each value to its field type: rating from a number (the field's scale), list.* from repeated values, a comma separated text or a JSON array, boolean, number_decimal with a comma, url without https://, references from a numeric id, rich_text_field from lines (one paragraph each), money in the shop currency, date_time from datetime-local, dimension / volume / weight from \"2.5 cm\" (a select data-unit-for=\"<name>\" gives the unit of that field, its own name is not sent); a value already in Shopify's format passes as it is. A definition without the publishable capability gets no status (data-draft is ignored there). The backend refuses Shopify's standard types (shopify--…), the app-reserved ones ($app:…) and Smootify's own (magic_box, combinations, dynamic_property, option), with the form error \"This form cannot create entries of this metaobject type\". customer-field=\"<key>\": the entry belongs to the logged-in customer, written by the backend into that field (a customer reference) from the Customer Account token, never from the form; logged out the element is hidden and its form inert (is-customer while logged in), and a request without a valid token is refused (\"Log in to send this form\"). 2.0: with customer-field the backend also puts the entry, first, into the customer's metafield smootify.<type> (a list of references to that type, created the first time, at most 128: the oldest leave the list), which smootify-metaobjects[data-type=\"metafield.smootify.<type>\"][data-parent-id=\"customer\"] lists on the account pages. Once the entry is created: data-handle and is-created on the host, every a[data-handle-param=\"<param>\"] inside (in the form's success state) links its page with ?<param>=<handle>, the page whose smootify-metaobject[data-handle-param] shows the entry (a gift list), and button[data-action=\"share\"] shares that link: the device's share sheet where there is one, else it is copied (data-copy always copies, data-title titles the share), is-shared / is-copied on the button for two seconds. 2.0: input[type=number][data-quantity-for=\"<list key>\"] beside each checkbox of that list (in the same product card) sends, under its own name, one JSON field {\"<product id>\": n} with the count of every checked product (at least 1; an unchecked one is left out), such as how many units a gift list asks for.",
+      "purpose": "Creates a metaobject from a Webflow form: every filled field whose name does not start with _; a name the form repeats (a checkbox group with each checkbox's value, a multiple select) sends all its values; a lone checkbox sends true / false. The backend converts each value to its field type: rating from a number (the field's scale), list.* from repeated values, a comma separated text or a JSON array, boolean, number_decimal with a comma, url without https://, references from a numeric id, rich_text_field from lines (one paragraph each), money in the shop currency, date_time from datetime-local, dimension / volume / weight from \"2.5 cm\" (a select data-unit-for=\"<name>\" gives the unit of that field, its own name is not sent); a value already in Shopify's format passes as it is. data-draft with a value (\"true\") saves a draft; empty (a switched-off Webflow prop) or \"false\" in any case saves it active (1.x: \"false\" made a draft). A definition without the publishable capability gets no status (data-draft is ignored there). The backend refuses Shopify's standard types (shopify--…), the app-reserved ones ($app:…) and Smootify's own (magic_box, combinations, dynamic_property, option), with the form error \"This form cannot create entries of this metaobject type\". customer-field=\"<key>\": the entry belongs to the logged-in customer, written by the backend into that field (a customer reference) from the Customer Account token, never from the form; logged out the element is hidden and its form inert (is-customer while logged in), and a request without a valid token is refused (\"Log in to send this form\"). 2.0: with customer-field the backend also puts the entry, first, into the customer's metafield smootify.<type> (a list of references to that type, created the first time, at most 128: the oldest leave the list), which smootify-metaobjects[data-type=\"metafield.smootify.<type>\"][data-parent-id=\"customer\"] lists on the account pages. Once the entry is created: data-handle and is-created on the host, every a[data-handle-param=\"<param>\"] inside (in the form's success state) links its page with ?<param>=<handle>, the page whose smootify-metaobject[data-handle-param] shows the entry (a gift list), and button[data-action=\"share\"] shares that link: the device's share sheet where there is one, else it is copied (data-copy always copies, data-title titles the share), is-shared / is-copied on the button for two seconds. 2.0: input[type=number][data-quantity-for=\"<list key>\"] beside each checkbox of that list (in the same product card) sends, under its own name, one JSON field {\"<product id>\": n} with the count of every checked product (at least 1; an unchecked one is left out), such as how many units a gift list asks for.",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/metaobject-creator",
       "section": "Server extensions (plan server)",
@@ -4337,6 +4337,50 @@
       ]
     },
     {
+      "tag": "quick-order",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "(HQ #59b) Every variant of a product in a table, with a quantity each (a quick order list). Its smootify-variant (without data-product-id) is the row: copied once per variant with the [variant=\"…\"] values, data-id and the variant's state classes, is-active with a quantity. The row's quantity-input starts at 0 and takes 0 or what the Smootify purchase rules and Shopify's B2B quantity rule accept, up to the stock (a variant sold out takes none); its input keeps its own name, it is not the product form's quantity. [quick-order=\"add\"] adds every row with a quantity in one addition, then empties the table; disabled while it is empty. data-sync (\"false\" turns it off): the rows show the cart's own lines of each variant (no properties, add-ons or box) and every change goes to the cart, 0 taking the line out; no add button then. A form inside takes pasted SKUs, one per line with its quantity (\"TEE-S 4\", any case): the rows of this product's SKUs take them; the others are the form error, data-error-not-found (default \"SKU not found\") followed by the SKUs. Asks Shopify for the volume pricing (§2.11). The [condition=\"…\"] inside a row follow the row's variant (out-of-stock on a sold-out one), even inside a product page. Every plan. Keep it outside smootify-add-to-cart.",
+      "onlyIn2": true,
+      "reference": "https://www.smootify.io/docs/reference/elements/quick-order",
+      "section": "Product and variants",
+      "context": {
+        "anywhere": false,
+        "requiresAncestorOneOf": [
+          "smootify-product"
+        ],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "smootify-variant",
+          "quantity-input"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "inert",
+        "debugger": false,
+        "detail": "without a product (data-product-id, or a smootify-product around it) it shows no row"
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": false
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [
+        "data-product-id",
+        "data-sync",
+        "data-error-not-found"
+      ],
+      "ancestorAttributes": [],
+      "writes": [
+        "is-empty"
+      ]
+    },
+    {
       "tag": "recover-form",
       "kind": "removed",
       "registered": false,
@@ -4659,6 +4703,48 @@
       "writes": [],
       "readBy": [
         "smootify-search"
+      ]
+    },
+    {
+      "tag": "shipping-estimate",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "(HQ #72) The delivery options of the cart before the checkout: a Webflow form with a country and a postal code. Smootify puts the address on the visitor's cart, and each [shipping-option=\"item\"] copy shows one of Shopify's options with its price (§2.11); the one in the total takes is-selected, a click on another selects it. The total then holds that shipping (cart=\"shipping\" shows it), and the checkout opens with that country, postal code and option (checked by Pietro on the E2E store, 2026-10-30). The options follow the cart: a line added, removed or changed asks again. An address already on the cart (typed before, a logged-in customer's) fills the form and shows its options at load. A country select the page leaves empty gets the countries of the shop's markets; without a country field the cart's country is used. The form stays visible (no success state). is-estimated on the host with options, no-options and the form error when Shopify has none for that address, is-loading while it asks. Shopify's rates need lines that ship: an empty cart asks nothing. Every plan. Inside smootify-cart too: the cart never takes its form, field or form states as its own.",
+      "onlyIn2": true,
+      "reference": "https://www.smootify.io/docs/reference/elements/shipping-estimate",
+      "section": "Cart",
+      "context": {
+        "anywhere": true,
+        "requiresAncestorOneOf": [],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [
+          "form"
+        ],
+        "mustContainOneOf": [],
+        "confidence": "parsed"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": ""
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": false
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [
+        "data-error-no-options",
+        "data-free-text"
+      ],
+      "ancestorAttributes": [],
+      "writes": [
+        "is-estimated",
+        "no-options",
+        "is-loading"
       ]
     },
     {
@@ -5113,7 +5199,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Build-a-box: the add-to-cart forms inside it add to the box instead of the cart. 2.0: its pieces stay through a reload or another page until the box goes to the cart (a week at most); the card (smootify-product) of a picked product takes is-in-box and data-in-box (how many of it); the total takes the box's discount only once the box can be bought.",
+      "purpose": "Build-a-box: the add-to-cart forms inside it add to the box instead of the cart. 2.0: its pieces stay through a reload or another page until the box goes to the cart (a week at most); the card (smootify-product) of a picked product takes is-in-box and data-in-box (how many of it); the total takes the box's discount only once the box can be bought. 2.0: data-unique, data-unique-per-category, data-all-categories and data-auto-remove-category are on with a value (\"true\") and off when empty (what a switched-off Webflow prop writes) or \"false\" in any case; 1.x took \"false\" as on.",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/smootify-magic-box",
       "section": "Extensions",
@@ -20067,6 +20153,41 @@
         "does": "the gift card code, trimmed, in any case (Shopify ignores case); every other field is ignored"
       }
     ],
+    "shipping-estimate": [
+      {
+        "name": "a field named `country`, `country code`, `paese` or `nazione`; `zip`, `zip code`, `postal code`, `postcode` or `cap`; `province`, `state`, `region` or `provincia` (any case, a space or `_` in the two-word names)",
+        "names": [
+          "country",
+          "country code",
+          "paese",
+          "nazione",
+          "zip",
+          "zip code",
+          "postal code",
+          "postcode",
+          "cap",
+          "province",
+          "state",
+          "region",
+          "provincia",
+          "_"
+        ],
+        "field": "select or text; text",
+        "required": null,
+        "requiredNote": "the country: without a field, the cart's country",
+        "does": "the country as its two-letter ISO code (the value of a select option: Smootify fills an empty select with the market countries), the postal code and the province code, trimmed; every other field is ignored"
+      }
+    ],
+    "quick-order": [
+      {
+        "name": "the first field filled (a textarea)",
+        "names": [],
+        "field": "textarea or text",
+        "required": false,
+        "requiredNote": "",
+        "does": "the pasted SKUs: one per line, the quantity after a space, tab, comma or semicolon (`x` before it works: \"TEE-S x 4\"), 1 without one; the same SKU twice adds up"
+      }
+    ],
     "smootify-add-to-cart": [
       {
         "name": "`quantity`",
@@ -21099,7 +21220,9 @@
     "gift-card-balance",
     "items-list",
     "metaobject-editor",
+    "quick-order",
     "search-empty",
+    "shipping-estimate",
     "smootify-consent",
     "smootify-consent [data-action]",
     "smootify-consent [popover]",
