@@ -227,6 +227,12 @@ Learned on the starter build (beta.10, October 2026). Each one cost a question o
   `popovertarget`, and give the panel the design's position in the site custom code: without one, the browser opens
   every popover in the middle of the page, which is right only when the design puts it there. Never put a popover inside a template Smootify repeats (an address card,
   a cart line): every copy repeats the id. Use `details` / `summary` there.
+- **A native popover that is a drawer.** Webflow's shared CSS anchors every `.w-popover` to its trigger in the space
+  above it (`:where(.w-popover){position-anchor:auto;position-area:top}`), and the panel's own position and size count
+  inside that space. A panel that fills the window (cart drawer, filters on mobile, full-screen menu) opened from a button
+  near the top gets only that strip, and a sticky footer can cover its close button. Give its class `position-area: none`
+  at the breakpoints where it is a drawer; a dropdown meant to open next to its button keeps the anchoring. Check each
+  drawer opened from its own trigger at 375 px before review.
 - **Animating a native popover.** With `data_interactions_tool` → `create_interaction`: trigger `wf:popover` whose
   target is the Popover (`wf:inst`), one timeline with `triggerMetadata.role` `open` and one with `close`, and
   actions on `wf:popover-element` (and `wf:popover-backdrop` for a drawn backdrop) with `wf:transform` properties

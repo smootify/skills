@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.44 · 2026-10-30
+
+- The build skill sets `position-area: none` on a native Webflow popover that is a drawer (cart drawer, filters on mobile, full-screen menu): Webflow anchors every popover in the space above the button that opens it, so a full-height panel otherwise gets only that strip and its footer can cover its close button.
+
 ## 2.0.0-beta.43 · 2026-10-30
 
 - Rules and catalogs from Smootify 2.0.0-beta.10: `shipping-estimate` (a form with a country and a postal code, the delivery options in `[shipping-option="item"]` with `title`, `price`, `description`) and `quick-order` (every variant of a product as a `smootify-variant` row with a `quantity-input`, `[quick-order="price|line-total|pieces|total|add|error"]`, a form for pasted SKUs).
