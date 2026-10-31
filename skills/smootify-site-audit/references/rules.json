@@ -1,9 +1,9 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-10-30",
+  "generatedAt": "2026-10-31",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0), §2 Form fields, §2.15 Generic build only (Astro, D4), §2.16 Other attributes e §4 Webflow classes and structures",
-    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 09fab077b0e244df)",
+    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 22d409b301bb4d43)",
     "surface": "v2/src: domain/views.ts, kernel/events.ts, compat/public-api.ts",
     "snapshot": "v2/test/contract/snapshots/v1.json (tipi di metafield, eventi degli elementi della 1.x)"
   },
@@ -4264,7 +4264,8 @@
         "anywhere": false,
         "requiresAncestorOneOf": [
           "smootify-product",
-          "cart-item"
+          "cart-item",
+          "quick-order"
         ],
         "ancestorSelectors": [],
         "notInside": [],
@@ -4346,10 +4347,8 @@
       "reference": "https://www.smootify.io/docs/reference/elements/quick-order",
       "section": "Product and variants",
       "context": {
-        "anywhere": false,
-        "requiresAncestorOneOf": [
-          "smootify-product"
-        ],
+        "anywhere": true,
+        "requiresAncestorOneOf": [],
         "ancestorSelectors": [],
         "notInside": [],
         "mustContain": [
@@ -7660,6 +7659,14 @@
       "video",
       "videos"
     ],
+    "quick-order": [
+      "add",
+      "error",
+      "line-total",
+      "pieces",
+      "price",
+      "total"
+    ],
     "reference": [
       "body",
       "description",
@@ -7690,6 +7697,12 @@
       "color",
       "image",
       "name",
+      "title"
+    ],
+    "shipping-option": [
+      "description",
+      "item",
+      "price",
       "title"
     ],
     "skeleton": [
@@ -10553,6 +10566,185 @@
         "generic"
       ],
       "reference": "https://www.smootify.io/docs/reference/attributes/gift-card"
+    },
+    {
+      "kind": "attribute",
+      "group": "shipping-option",
+      "name": "shipping-option",
+      "value": "item",
+      "inside": [
+        "shipping-estimate"
+      ],
+      "on": [
+        "container"
+      ],
+      "note": "Copied once per delivery option; is-selected on the one in the cart total, a click selects another",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/shipping-option"
+    },
+    {
+      "kind": "attribute",
+      "group": "shipping-option",
+      "name": "shipping-option",
+      "value": "title",
+      "inside": [
+        "shipping-estimate [shipping-option=\"item\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Shopify's name of the rate, such as Standard",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/shipping-option"
+    },
+    {
+      "kind": "attribute",
+      "group": "shipping-option",
+      "name": "shipping-option",
+      "value": "price",
+      "inside": [
+        "shipping-estimate [shipping-option=\"item\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Free, or data-free-text on shipping-estimate, for a rate at 0",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/shipping-option"
+    },
+    {
+      "kind": "attribute",
+      "group": "shipping-option",
+      "name": "shipping-option",
+      "value": "description",
+      "inside": [
+        "shipping-estimate [shipping-option=\"item\"]"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Hidden when the rate has none",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/shipping-option"
+    },
+    {
+      "kind": "attribute",
+      "group": "quick-order",
+      "name": "quick-order",
+      "value": "price",
+      "inside": [
+        "quick-order smootify-variant"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The price of one at the row's quantity (B2B volume price)",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/quick-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "quick-order",
+      "name": "quick-order",
+      "value": "line-total",
+      "inside": [
+        "quick-order smootify-variant"
+      ],
+      "on": [
+        "text"
+      ],
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/quick-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "quick-order",
+      "name": "quick-order",
+      "value": "pieces",
+      "inside": [
+        "quick-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The rows' quantities added up",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/quick-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "quick-order",
+      "name": "quick-order",
+      "value": "total",
+      "inside": [
+        "quick-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The rows' totals added up",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/quick-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "quick-order",
+      "name": "quick-order",
+      "value": "add",
+      "inside": [
+        "quick-order"
+      ],
+      "on": [
+        "button"
+      ],
+      "note": "Adds every row with a quantity in one addition; disabled while the table is empty, not needed with data-sync",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/quick-order"
+    },
+    {
+      "kind": "attribute",
+      "group": "quick-order",
+      "name": "quick-order",
+      "value": "error",
+      "inside": [
+        "quick-order"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "The cart's error after an addition; hidden without one",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/quick-order"
     },
     {
       "kind": "attribute",

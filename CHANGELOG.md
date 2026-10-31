@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.45 · 2026-10-31
+
+- Rules from Smootify 2.0.0-beta.10 as republished: `quick-order` goes anywhere (inside a product, or pointed at one with `data-product-id`), and a `quantity-input` inside `quick-order` is its row's quantity.
+
 ## 2.0.0-beta.44 · 2026-10-30
 
 - The build skill sets `position-area: none` on a native Webflow popover that is a drawer (cart drawer, filters on mobile, full-screen menu): Webflow anchors every popover in the space above the button that opens it, so a full-height panel otherwise gets only that strip and its footer can cover its close button.

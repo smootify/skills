@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-30.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-10-31.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -77,8 +77,8 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `print-button` | Prints the printable-element its target names. | ovunque | — | si rimuove | — | `data-target` |
 | `printable-element` | A region that a print-button prints alone. | ovunque | — | resta inerte | — | `id` |
 | `product-slider` | At boot, each CMS item with a product card becomes a slide of a Webflow slider or Swiper. | ovunque | `.w-dyn-item smootify-product`, uno fra `.w-slider-mask .w-slide`, `swiper-container swiper-slide` | resta inerte | — | — |
-| `quantity-input` | Number input with plus and minus buttons for a quantity. In a product, min, step and max come from the variant's quantity rules: Shopify's (B2B catalogs) together with the Smootify purchase rules (2.0, HQ #68), max from the stock without a rule maximum; a quantity the rules refuse moves to the nearest they take. | `smootify-product` o `cart-item` | `input` | si rimuove | — | `data-disable-max` |
-| `quick-order` | (HQ #59b) Every variant of a product in a table, with a quantity each (a quick order list). Its smootify-variant (without data-product-id) is the row: copied once per variant with the [variant="…"] values, data-id and the variant's state classes, is-active with a quantity. The row's quantity-input starts at 0 and takes 0 or what the Smootify purchase rules and Shopify's B2B quantity rule accept, up to the stock (a variant sold out takes none); its input keeps its own name, it is not the product form's quantity. [quick-order="add"] adds every row with a quantity in one addition, then empties the table; disabled while it is empty. data-sync ("false" turns it off): the rows show the cart's own lines of each variant (no properties, add-ons or box) and every change goes to the cart, 0 taking the line out; no add button then. A form inside takes pasted SKUs, one per line with its quantity ("TEE-S 4", any case): the rows of this product's SKUs take them; the others are the form error, data-error-not-found (default "SKU not found") followed by the SKUs. Asks Shopify for the volume pricing (§2.11). The [condition="…"] inside a row follow the row's variant (out-of-stock on a sold-out one), even inside a product page. Every plan. Keep it outside smootify-add-to-cart. | `smootify-product` | `smootify-variant`, `quantity-input` | resta inerte | — | `data-product-id`, `data-sync`, `data-error-not-found` |
+| `quantity-input` | Number input with plus and minus buttons for a quantity. In a product, min, step and max come from the variant's quantity rules: Shopify's (B2B catalogs) together with the Smootify purchase rules (2.0, HQ #68), max from the stock without a rule maximum; a quantity the rules refuse moves to the nearest they take. | `smootify-product` o `cart-item` o `quick-order` | `input` | si rimuove | — | `data-disable-max` |
+| `quick-order` | (HQ #59b) Every variant of a product in a table, with a quantity each (a quick order list). Its smootify-variant (without data-product-id) is the row: copied once per variant with the [variant="…"] values, data-id and the variant's state classes, is-active with a quantity. The row's quantity-input starts at 0 and takes 0 or what the Smootify purchase rules and Shopify's B2B quantity rule accept, up to the stock (a variant sold out takes none); its input keeps its own name, it is not the product form's quantity. [quick-order="add"] adds every row with a quantity in one addition, then empties the table; disabled while it is empty. data-sync ("false" turns it off): the rows show the cart's own lines of each variant (no properties, add-ons or box) and every change goes to the cart, 0 taking the line out; no add button then. A form inside takes pasted SKUs, one per line with its quantity ("TEE-S 4", any case): the rows of this product's SKUs take them; the others are the form error, data-error-not-found (default "SKU not found") followed by the SKUs. Asks Shopify for the volume pricing (§2.11). The [condition="…"] inside a row follow the row's variant (out-of-stock on a sold-out one), even inside a product page. Every plan. Keep it outside smootify-add-to-cart. | ovunque | `smootify-variant`, `quantity-input` | resta inerte | — | `data-product-id`, `data-sync`, `data-error-not-found` |
 | `shipping-estimate` | (HQ #72) The delivery options of the cart before the checkout: a Webflow form with a country and a postal code. Smootify puts the address on the visitor's cart, and each [shipping-option="item"] copy shows one of Shopify's options with its price (§2.11); the one in the total takes is-selected, a click on another selects it. The total then holds that shipping (cart="shipping" shows it), and the checkout opens with that country, postal code and option (checked by Pietro on the E2E store, 2026-10-30). The options follow the cart: a line added, removed or changed asks again. An address already on the cart (typed before, a logged-in customer's) fills the form and shows its options at load. A country select the page leaves empty gets the countries of the shop's markets; without a country field the cart's country is used. The form stays visible (no success state). is-estimated on the host with options, no-options and the form error when Shopify has none for that address, is-loading while it asks. Shopify's rates need lines that ship: an empty cart asks nothing. Every plan. Inside smootify-cart too: the cart never takes its form, field or form states as its own. | ovunque | `form` | si rimuove | — | `data-error-no-options`, `data-free-text` |
 | `smootify-account-component` | Embeds Shopify's account web component (login menu) while the visitor is logged out. | ovunque | — | si rimuove | Customer Accounts | — |
 | `smootify-add-to-cart` | Product form that turns the selection into cart lines. | `smootify-product` | `form` | si rimuove | — | `use-magic-box`, `box-title`, `box-image`, `single-addon-swatch`, `allow-unavailable`, `avoid-option-update` |
@@ -414,6 +414,10 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 
 `category` · `collections` · `created-at` · `description` · `external-video` · `external-videos` · `first-collection` · `gallery` · `link` · `max-compare-at-price` · `max-price` · `min-available-price` · `min-compare-at-price` · `min-price` · `model` · `option-values` · `published-at` · `specific-image` · `stock` · `tags` · `title` · `type` · `url` · `vendor` · `video` · `videos`
 
+### `quick-order=…` (6)
+
+`add` · `error` · `line-total` · `pieces` · `price` · `total`
+
 ### `reference=…` (6)
 
 `body` · `description` · `handle` · `image` · `title` · `url`
@@ -425,6 +429,10 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 ### `selected-option=…` (5)
 
 `bg-color` · `color` · `image` · `name` · `title`
+
+### `shipping-option=…` (4)
+
+`description` · `item` · `price` · `title`
 
 ### `skeleton=…` (5)
 
