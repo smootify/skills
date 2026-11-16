@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.46 · 2026-11-16
+
+- Rules and catalogs from Smootify 2.0.0-beta.14: `data-format="table"` turns a JSON metafield, variant metafield or metaobject field shaped as `{"headers":[…],"rows":[[…]]}` into a table (on a `<table>` the header cell, the row and the cell are copied; with divs, `table="head|row|cell"` marks them), also on a nested `data-path`.
+- Search, predictive search and Search & discovery work on every plan, Free included, with nothing to turn on: the audit no longer reports them as add-ons to activate.
+
 ## 2.0.0-beta.45 · 2026-10-31
 
 - Rules from Smootify 2.0.0-beta.10 as republished: `quick-order` goes anywhere (inside a product, or pointed at one with `data-product-id`), and a `quantity-input` inside `quick-order` is its row's quantity.
