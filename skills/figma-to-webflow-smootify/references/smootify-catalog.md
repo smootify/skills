@@ -1,7 +1,7 @@
 # Smootify catalogue
 
 GENERATO da `tools/contract-to-rules.ts`. Non modificare a mano.
-Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-11-16.
+Fonte: `v2/docs/markup-contract.md` §1 nel repo storefront (scritta dai sorgenti 2.0) · rigenerato il 2026-11-24.
 
 Serve ad annotare i layer Figma: dice quale tag mettere in `@tag`, dentro cosa deve stare, cosa deve
 contenere e quali attributi sono leciti in `@attr`.
@@ -22,7 +22,7 @@ qualsiasi con quell'attributo.
 tipo di elemento va ogni valore e quali valori ripetono l'elemento. La sezione "Valori leciti" qui sotto
 è solo l'elenco dei nomi.
 
-## Elementi (95)
+## Elementi (96)
 
 "Dentro" è vincolante: uno di quei contenitori deve essere un antenato. "Fuori contesto" dice cosa succede
 se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
@@ -83,11 +83,12 @@ se non c'è: si rimuove dalla pagina, resta inerte o dà errore.
 | `smootify-account-component` | Embeds Shopify's account web component (login menu) while the visitor is logged out. | ovunque | — | si rimuove | Customer Accounts | — |
 | `smootify-add-to-cart` | Product form that turns the selection into cart lines. | `smootify-product` | `form` | si rimuove | — | `use-magic-box`, `box-title`, `box-image`, `single-addon-swatch`, `allow-unavailable`, `avoid-option-update` |
 | `smootify-cart` | Renders the cart and opens or closes it as a mini cart. | ovunque | — | resta inerte | — | `data-open`, `data-draft`, `data-free-gift`, `data-error-gift-card-not-found` |
+| `smootify-collection` | One collection read from Shopify by data-id (numeric or gid; it wins over the handle) or data-handle, for what the Webflow CMS does not carry (its metafields, of any type) or a page without a CMS collection. Fields through [collection="…"] (§2.17), its metafields through [collection-metafield] / [if-collection-metafield] / [unless-collection-metafield] (§2.8, namespace default custom, asked for in the collection's own query); a field inside another smootify-collection belongs to that one. A smootify-metaobjects[data-type="metafield.<ns>.<key>"] inside lists that collection metafield's entries. Once drawn: data-collection-id (the gid), class loaded, event loaded (detail.collection), [skeleton] cleared. In the page's market and language. | ovunque | — | si rimuove | — | `data-id`, `data-handle` |
 | `smootify-consent` | Cookie banner and preferences panel built in Webflow over Shopify's Customer Privacy API: shown while Shopify asks for consent and the visitor has not answered, the preferences while open. With button[data-is="preferences-button"] inside (one component, e.g. in the Footer, the banner in a [popover] or [consent-panel]) it stays for the button wherever the consent applies, the banner closed until asked; elsewhere it is hidden whole (2.0). | ovunque | — | resta inerte | — | — |
 | `smootify-magic-box` | Build-a-box: the add-to-cart forms inside it add to the box instead of the cart. 2.0: its pieces stay through a reload or another page until the box goes to the cart (a week at most); the card (smootify-product) of a picked product takes is-in-box and data-in-box (how many of it); the total takes the box's discount only once the box can be bought. 2.0: data-unique, data-unique-per-category, data-all-categories and data-auto-remove-category are on with a value ("true") and off when empty (what a switched-off Webflow prop writes) or "false" in any case; 1.x took "false" as on. | ovunque | `smootify-magic-box-cart` | si rimuove | "Magic Box" | `data-handle`, `data-title`, `data-image`, `data-min`, `data-max`, `data-step`, `data-unique`, `data-unique-per-category`, `data-all-categories`, `data-auto-remove-category`, `data-only-one`, `data-only-one-per-category`, `data-full-error`, `data-too-many-error` |
 | `smootify-magic-box-cart` | Box panel: picked items, counters, totals and the form that adds the whole box to the cart. | `smootify-magic-box` | `form`, `box-item` | si rimuove | "Magic Box" | `data-buy-now` |
 | `smootify-metaobject` | One metaobject, written into its [metaobject] descendants. With data-handle-param the handle comes from that parameter of the page url (data-handle-param="l" on /list?l=giulia-birthday: a link to one entry, such as one a metaobject-creator form created), before data-id and data-handle, which stay the fallback; the handle only goes to the query, never into the page. Without the parameter (and no fallback) or with an unknown handle the element is removed like any not found: a message next to it can show with :has() (.list:not(:has(smootify-metaobject)) .not-found). | ovunque | — | si rimuove | — | `data-id`, `data-handle`, `data-handle-param`, `data-type` |
-| `smootify-metaobjects` | Paged list of the metaobjects of a type, or of a product metafield. 2.0: data-type="metafield.<ns>.<key>" with data-parent-id="customer" lists the entries of the logged-in customer's metafield, such as metafield.smootify.gift_list, the entries a metaobject-creator[customer-field] made for them (newest first; logged out, or none yet: is-empty; an entry deleted in the admin is skipped). | ovunque | `smootify-metaobject` | si rimuove | — | `data-type`, `data-limit`, `data-product-id`, `data-parent-id` |
+| `smootify-metaobjects` | Paged list of the metaobjects of a type, or of a product metafield, or (2.0) of a collection metafield: data-collection-id (numeric or gid; it wins over the handle) or data-collection-handle, else the data-id / data-handle of the smootify-collection around it. 2.0: data-type="metafield.<ns>.<key>" with data-parent-id="customer" lists the entries of the logged-in customer's metafield, such as metafield.smootify.gift_list, the entries a metaobject-creator[customer-field] made for them (newest first; logged out, or none yet: is-empty; an entry deleted in the admin is skipped). | ovunque | `smootify-metaobject` | si rimuove | — | `data-type`, `data-limit`, `data-product-id`, `data-parent-id`, `data-collection-id`, `data-collection-handle` |
 | `smootify-price` | Writes the price, compare-at price and total of its scope into its children. Inside subscription-swatches it shows its own option's price whatever plan is chosen: in a plan's radio that plan, in the one-time tab or radio the price without a plan, and (2.0) in a group's tab link its first plan. | `smootify-product` o `smootify-variant` o `smootify-magic-box-cart` o `box-item` | — | resta inerte | — | `no-quantity`, `data-ignore`, `data-remove`, `data-replace`, `skeleton` |
 | `smootify-product` | Loads a Shopify product into a scope and binds its descendants. | ovunque | — | si rimuove | — | `data-id`, `data-parent-id`, `limit`, `data-query`, `data-sort`, `data-collection-handle`, `data-repeat`, `hide-if-product-in-cart`, `data-new-days`, `skeleton` |
 | `smootify-product[data-id="cart-complementary"]` | Card template repeated with the complementary products of the latest cart line. | ovunque | — | resta inerte | "Cart Upsell" | `data-id`, `limit` |
@@ -269,6 +270,10 @@ elemento col tag button) e se ripete l'elemento lo dice il glossario, o `attribu
 ### `cart-item=…` (19)
 
 `compare-at-price` · `compare-at-total` · `discount` · `discount-percentage` · `image` · `options` · `price` · `product-image` · `quantity` · `savings` · `sku` · `subtotal` · `title` · `total` · `unit-price` · `url` · `variant-title` · `variant-url` · `vendor`
+
+### `collection=…` (8)
+
+`description` · `description-html` · `handle` · `image` · `seo-description` · `seo-title` · `title` · `url`
 
 ### `company=…` (1)
 

@@ -1,9 +1,9 @@
 {
   "$comment": "GENERATO da tools/contract-to-rules.ts. Non modificare a mano: i tag si correggono nel contratto (storefront, v2/docs/markup-contract.md §1), i valori degli attributi nel glossario (designer-app, catalog-worker/glossary.json, pubblicato sul CDN), e poi si rigenera.",
-  "generatedAt": "2026-11-16",
+  "generatedAt": "2026-11-24",
   "sources": {
     "contract": "v2/docs/markup-contract.md §1 (dai sorgenti 2.0), §2 Form fields, §2.15 Generic build only (Astro, D4), §2.16 Other attributes e §4 Webflow classes and structures",
-    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 2f05ff9c9776af74)",
+    "glossary": "https://cdn.smootify.io/components-v2/glossary.json (runtime 2.0, sha256 f7c7838b17412ae2)",
     "surface": "v2/src: domain/views.ts, kernel/events.ts, compat/public-api.ts",
     "snapshot": "v2/test/contract/snapshots/v1.json (tipi di metafield, eventi degli elementi della 1.x)"
   },
@@ -4954,6 +4954,45 @@
       "writes": []
     },
     {
+      "tag": "smootify-collection",
+      "kind": "element",
+      "registered": true,
+      "selector": false,
+      "purpose": "One collection read from Shopify by data-id (numeric or gid; it wins over the handle) or data-handle, for what the Webflow CMS does not carry (its metafields, of any type) or a page without a CMS collection. Fields through [collection=\"…\"] (§2.17), its metafields through [collection-metafield] / [if-collection-metafield] / [unless-collection-metafield] (§2.8, namespace default custom, asked for in the collection's own query); a field inside another smootify-collection belongs to that one. A smootify-metaobjects[data-type=\"metafield.<ns>.<key>\"] inside lists that collection metafield's entries. Once drawn: data-collection-id (the gid), class loaded, event loaded (detail.collection), [skeleton] cleared. In the page's market and language.",
+      "onlyIn2": true,
+      "reference": "https://www.smootify.io/docs/reference/elements/smootify-collection",
+      "section": "Extensions",
+      "context": {
+        "anywhere": true,
+        "requiresAncestorOneOf": [],
+        "ancestorSelectors": [],
+        "notInside": [],
+        "mustContain": [],
+        "mustContainOneOf": [],
+        "confidence": "anywhere"
+      },
+      "outsideContext": {
+        "effect": "removed",
+        "debugger": false,
+        "detail": "without data-id and data-handle, when Shopify has no such collection, or the request fails"
+      },
+      "requires": {
+        "plan": null,
+        "extensions": [],
+        "accounts": false
+      },
+      "serverPlanOnly": false,
+      "hostAttributes": [
+        "data-id",
+        "data-handle"
+      ],
+      "ancestorAttributes": [],
+      "writes": [
+        "data-collection-id",
+        "loaded"
+      ]
+    },
+    {
       "tag": "smootify-consent",
       "kind": "element",
       "registered": true,
@@ -5317,7 +5356,7 @@
       "kind": "element",
       "registered": true,
       "selector": false,
-      "purpose": "Paged list of the metaobjects of a type, or of a product metafield. 2.0: data-type=\"metafield.<ns>.<key>\" with data-parent-id=\"customer\" lists the entries of the logged-in customer's metafield, such as metafield.smootify.gift_list, the entries a metaobject-creator[customer-field] made for them (newest first; logged out, or none yet: is-empty; an entry deleted in the admin is skipped).",
+      "purpose": "Paged list of the metaobjects of a type, or of a product metafield, or (2.0) of a collection metafield: data-collection-id (numeric or gid; it wins over the handle) or data-collection-handle, else the data-id / data-handle of the smootify-collection around it. 2.0: data-type=\"metafield.<ns>.<key>\" with data-parent-id=\"customer\" lists the entries of the logged-in customer's metafield, such as metafield.smootify.gift_list, the entries a metaobject-creator[customer-field] made for them (newest first; logged out, or none yet: is-empty; an entry deleted in the admin is skipped).",
       "onlyIn2": false,
       "reference": "https://www.smootify.io/docs/reference/elements/smootify-metaobjects",
       "section": "Extensions",
@@ -5335,7 +5374,7 @@
       "outsideContext": {
         "effect": "removed",
         "debugger": false,
-        "detail": "also without data-type, or data-product-id / data-parent-id=\"customer\" for metafield lists"
+        "detail": "also without data-type, or data-product-id / data-parent-id=\"customer\" / a collection for metafield lists"
       },
       "requires": {
         "plan": null,
@@ -5347,7 +5386,9 @@
         "data-type",
         "data-limit",
         "data-product-id",
-        "data-parent-id"
+        "data-parent-id",
+        "data-collection-id",
+        "data-collection-handle"
       ],
       "ancestorAttributes": [],
       "writes": []
@@ -7263,6 +7304,16 @@
       "variant-title",
       "variant-url",
       "vendor"
+    ],
+    "collection": [
+      "description",
+      "description-html",
+      "handle",
+      "image",
+      "seo-description",
+      "seo-title",
+      "title",
+      "url"
     ],
     "company": [
       "name"
@@ -11557,7 +11608,8 @@
         "cart-item",
         "bundle-item",
         "box-item",
-        "smootify-metaobject"
+        "smootify-metaobject",
+        "smootify-collection"
       ],
       "on": [
         "image"
@@ -11578,7 +11630,9 @@
         "[gallery=\"slider\"]",
         "[gallery=\"thumbnails\"]",
         "[gallery=\"lightboxes\"]",
-        "[box-item=\"image\"]"
+        "[box-item=\"image\"]",
+        "[collection=\"image\"]",
+        "[collection-metafield]"
       ],
       "note": "On an image Smootify fills: the Shopify CDN resizes it. In a gallery, on the Slider for its slides, on the thumbnail or lightbox part itself",
       "builds": [
@@ -11598,7 +11652,8 @@
         "cart-item",
         "bundle-item",
         "box-item",
-        "smootify-metaobject"
+        "smootify-metaobject",
+        "smootify-collection"
       ],
       "on": [
         "image"
@@ -11619,7 +11674,9 @@
         "[gallery=\"slider\"]",
         "[gallery=\"thumbnails\"]",
         "[gallery=\"lightboxes\"]",
-        "[box-item=\"image\"]"
+        "[box-item=\"image\"]",
+        "[collection=\"image\"]",
+        "[collection-metafield]"
       ],
       "note": "On an image Smootify fills: the Shopify CDN resizes it. In a gallery, on the Slider for its slides, on the thumbnail or lightbox part itself",
       "builds": [
@@ -11639,7 +11696,8 @@
         "cart-item",
         "bundle-item",
         "box-item",
-        "smootify-metaobject"
+        "smootify-metaobject",
+        "smootify-collection"
       ],
       "on": [
         "image"
@@ -11660,7 +11718,9 @@
         "[gallery=\"slider\"]",
         "[gallery=\"thumbnails\"]",
         "[gallery=\"lightboxes\"]",
-        "[box-item=\"image\"]"
+        "[box-item=\"image\"]",
+        "[collection=\"image\"]",
+        "[collection-metafield]"
       ],
       "note": "On an image Smootify fills: the Shopify CDN resizes it. In a gallery, on the Slider for its slides, on the thumbnail or lightbox part itself",
       "builds": [
@@ -11680,7 +11740,8 @@
         "cart-item",
         "bundle-item",
         "box-item",
-        "smootify-metaobject"
+        "smootify-metaobject",
+        "smootify-collection"
       ],
       "on": [
         "image"
@@ -11701,7 +11762,9 @@
         "[gallery=\"slider\"]",
         "[gallery=\"thumbnails\"]",
         "[gallery=\"lightboxes\"]",
-        "[box-item=\"image\"]"
+        "[box-item=\"image\"]",
+        "[collection=\"image\"]",
+        "[collection-metafield]"
       ],
       "note": "On an image Smootify fills: the Shopify CDN resizes it. In a gallery, on the Slider for its slides, on the thumbnail or lightbox part itself",
       "builds": [
@@ -12247,7 +12310,8 @@
         "[variant-metafield]",
         "[metaobject]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "text"
@@ -12269,7 +12333,8 @@
         "[variant-metafield]",
         "[metaobject]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "text"
@@ -12291,7 +12356,8 @@
         "[variant-metafield]",
         "[metaobject]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "rich",
@@ -12314,7 +12380,8 @@
         "[variant-metafield]",
         "[metaobject]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "rich",
@@ -12337,7 +12404,8 @@
         "[variant-metafield]",
         "[metaobject]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "link"
@@ -12359,7 +12427,8 @@
         "[variant-metafield]",
         "[metaobject]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "image"
@@ -12381,7 +12450,8 @@
         "[variant-metafield]",
         "[metaobject]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "link"
@@ -12586,7 +12656,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "text",
@@ -12613,7 +12684,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "any"
@@ -12638,7 +12710,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "any"
@@ -12662,7 +12735,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "any"
@@ -12687,7 +12761,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "any"
@@ -12711,7 +12786,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "any"
@@ -12735,7 +12811,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": [
         "container"
@@ -13104,6 +13181,319 @@
         "generic"
       ],
       "reference": "https://www.smootify.io/docs/reference/attributes/customer"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection",
+      "name": "collection",
+      "value": "title",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "A field of the collection smootify-collection loads; empty takes the empty state of a CMS field",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection",
+      "name": "collection",
+      "value": "handle",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "A field of the collection smootify-collection loads; empty takes the empty state of a CMS field",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection",
+      "name": "collection",
+      "value": "description",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "A field of the collection smootify-collection loads; empty takes the empty state of a CMS field",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection",
+      "name": "collection",
+      "value": "description-html",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "rich",
+        "container"
+      ],
+      "note": "A field of the collection smootify-collection loads; empty takes the empty state of a CMS field",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection",
+      "name": "collection",
+      "value": "image",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "image"
+      ],
+      "note": "A field of the collection smootify-collection loads; empty takes the empty state of a CMS field",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection",
+      "name": "collection",
+      "value": "url",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "link",
+        "text"
+      ],
+      "note": "On a link, the href; elsewhere the text",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection",
+      "name": "collection",
+      "value": "seo-title",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Else the title",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection",
+      "name": "collection",
+      "value": "seo-description",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "text"
+      ],
+      "note": "Else the description",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection-metafield",
+      "name": "collection-metafield",
+      "placeholder": "key, like banner_text",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "text",
+        "rich",
+        "container",
+        "link",
+        "button",
+        "image",
+        "video"
+      ],
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection-metafield"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection-metafield",
+      "name": "namespace",
+      "placeholder": "custom",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[collection-metafield]"
+      ],
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection-metafield"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection-metafield",
+      "name": "property",
+      "placeholder": "--metafield-color",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[collection-metafield]"
+      ],
+      "generic": true,
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection-metafield"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection-metafield",
+      "name": "data-attr",
+      "placeholder": "href",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[collection-metafield]"
+      ],
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection-metafield"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection-metafield",
+      "name": "separator",
+      "placeholder": ", ",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[collection-metafield]"
+      ],
+      "note": "Used as written, spaces included: a comma and a space joins with a comma and a space",
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection-metafield"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection-metafield",
+      "name": "data-digits",
+      "placeholder": "2",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[collection-metafield]"
+      ],
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection-metafield"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection-metafield",
+      "name": "data-path",
+      "placeholder": "items.0.name",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "any"
+      ],
+      "with": [
+        "[collection-metafield]"
+      ],
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection-metafield"
+    },
+    {
+      "kind": "attribute",
+      "group": "collection-metafield",
+      "name": "data-format",
+      "value": "table",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": [
+        "container"
+      ],
+      "with": [
+        "[collection-metafield]"
+      ],
+      "note": "A JSON field shaped as {\"headers\":[…],\"rows\":[[…]]}: on a <table> the header cell, the row and the cell are copied; with divs mark them with table=head|row|cell. Hidden when empty or not that shape",
+      "generic": true,
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/attributes/collection-metafield"
     },
     {
       "kind": "attribute",
@@ -19551,6 +19941,74 @@
     },
     {
       "kind": "condition",
+      "group": "collection-metafield",
+      "name": "if-collection-metafield",
+      "placeholder": "key",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": null,
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/conditions/collection-metafield"
+    },
+    {
+      "kind": "condition",
+      "group": "collection-metafield",
+      "name": "unless-collection-metafield",
+      "placeholder": "key",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": null,
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/conditions/collection-metafield"
+    },
+    {
+      "kind": "condition",
+      "group": "collection-metafield",
+      "name": "data-check-value",
+      "placeholder": "value to match",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": null,
+      "with": [
+        "[if-collection-metafield]",
+        "[unless-collection-metafield]"
+      ],
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/conditions/collection-metafield"
+    },
+    {
+      "kind": "condition",
+      "group": "collection-metafield",
+      "name": "namespace",
+      "placeholder": "custom",
+      "inside": [
+        "smootify-collection"
+      ],
+      "on": null,
+      "with": [
+        "[if-collection-metafield]",
+        "[unless-collection-metafield]"
+      ],
+      "builds": [
+        "webflow",
+        "generic"
+      ],
+      "reference": "https://www.smootify.io/docs/reference/conditions/collection-metafield"
+    },
+    {
+      "kind": "condition",
       "group": "customer-metafield",
       "name": "if-customer-metafield",
       "placeholder": "key",
@@ -19649,7 +20107,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": null,
       "builds": [
@@ -19668,7 +20127,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": null,
       "builds": [
@@ -19687,7 +20147,8 @@
         "[metafield]",
         "[variant-metafield]",
         "[customer-metafield]",
-        "[company-metafield]"
+        "[company-metafield]",
+        "[collection-metafield]"
       ],
       "on": null,
       "with": [
@@ -21541,6 +22002,7 @@
     "quick-order",
     "search-empty",
     "shipping-estimate",
+    "smootify-collection",
     "smootify-consent",
     "smootify-consent [data-action]",
     "smootify-consent [popover]",

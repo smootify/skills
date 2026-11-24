@@ -134,6 +134,33 @@
 					"note": "Holds the gallery parts"
 				},
 				{
+					"label": "Videos and 3D in the gallery",
+					"name": "include-media",
+					"value": "",
+					"on": ["container"],
+					"inside": ["smootify-product"],
+					"with": ["[product=\"gallery\"]"],
+					"note": "Adds the product's videos, YouTube and Vimeo videos and 3D models; without it the gallery shows images only"
+				},
+				{
+					"label": "Only the variant's images, by position",
+					"name": "variant-images",
+					"value": "",
+					"on": ["container"],
+					"inside": ["smootify-product"],
+					"with": ["[product=\"gallery\"]"],
+					"note": "Each image linked to a variant starts a group that runs until the next linked image"
+				},
+				{
+					"label": "Only the variant's images, by alt text",
+					"name": "variant-images",
+					"value": "alt",
+					"on": ["container"],
+					"inside": ["smootify-product"],
+					"with": ["[product=\"gallery\"]"],
+					"note": "Each image goes with the variants its alt text names after the last #; an image without a tag shows for every variant"
+				},
+				{
 					"label": "Images (deprecated: use Gallery)",
 					"value": "images",
 					"on": ["image", "link", "lightbox", "container"],
@@ -355,6 +382,26 @@
 					"note": "One copy per component of a fixed bundle"
 				},
 				{
+					"label": "Volume pricing",
+					"value": "price-breaks",
+					"on": ["container"],
+					"inside": ["smootify-product"],
+					"note": "One copy per row of the B2B buyer's volume pricing; a click sets the form's quantity, the current row takes is-active. No copy without breaks"
+				},
+				{
+					"label": "Price at the quantity",
+					"value": "price-at-quantity",
+					"inside": ["smootify-product"],
+					"note": "The price of one at the form's quantity, from its volume pricing row; follows the quantity"
+				},
+				{
+					"label": "Pay later amount",
+					"value": "pay-later",
+					"on": ["container"],
+					"inside": ["smootify-product"],
+					"note": "On PayPal's or Klarna's pay later placement, or the element around it: the form's total, followed as it changes"
+				},
+				{
 					"label": "Swatch of option 1",
 					"value": "swatch1",
 					"on": ["container"],
@@ -434,6 +481,49 @@
 					"label": "Link",
 					"value": "url",
 					"on": ["link"]
+				}
+			]
+		},
+		{
+			"id": "price-break",
+			"label": "Volume pricing row",
+			"inside": ["smootify-product [variant=\"price-breaks\"]"],
+			"name": "price-break",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Range",
+					"value": "range",
+					"note": "1\u20139, 10\u201349, 50+"
+				},
+				{
+					"label": "First quantity",
+					"value": "min"
+				},
+				{
+					"label": "Last quantity",
+					"value": "max",
+					"note": "Hidden on the last row"
+				},
+				{
+					"label": "Unit price",
+					"value": "price"
+				},
+				{
+					"label": "Savings",
+					"value": "savings",
+					"note": "-10% below the variant's price; hidden on the first row"
+				},
+				{
+					"label": "Row total",
+					"value": "total",
+					"note": "The row's first quantity at its price"
+				},
+				{
+					"label": "Add the row's quantity",
+					"value": "add",
+					"on": ["button"],
+					"note": "Adds the row's first quantity to the cart; the form's quantity stays"
 				}
 			]
 		},
@@ -691,9 +781,30 @@
 					"inside": [
 						"smootify-add-to-cart [type=\"submit\"]",
 						"smootify-cart [type=\"submit\"]",
+						"smootify-magic-box-cart [type=\"submit\"]",
+						"klaviyo-back-in-stock [type=\"submit\"]",
+						"customer-user-update [type=\"submit\"]",
+						"create-address [type=\"submit\"]",
+						"edit-address [type=\"submit\"]",
+						"delete-address [type=\"submit\"]",
+						"customer-subscribe-email [type=\"submit\"]",
+						"customer-unsubscribe-email [type=\"submit\"]",
+						"customer-metafields-editor [type=\"submit\"]",
+						"subscription-activate [type=\"submit\"]",
+						"subscription-pause [type=\"submit\"]",
+						"subscription-cancel [type=\"submit\"]",
+						"passwordless-login [type=\"submit\"]",
+						"logout-form [type=\"submit\"]",
+						"webflow-form [type=\"submit\"]",
+						"newsletter-subscribe [type=\"submit\"]",
+						"metaobject-creator [type=\"submit\"]",
+						"metaobject-editor [type=\"submit\"]",
+						"booking-form [type=\"submit\"]",
+						"[form]",
 						"customer-order [data-action=\"buy-again\"]",
 						"order-page [data-action=\"buy-again\"]",
-						"smootify-product [data-is=\"direct-add-to-cart\"]"
+						"smootify-product [data-is=\"direct-add-to-cart\"]",
+						"smootify-product [price-break=\"add\"]"
 					]
 				},
 				{
@@ -704,9 +815,30 @@
 					"inside": [
 						"smootify-add-to-cart [type=\"submit\"]",
 						"smootify-cart [type=\"submit\"]",
+						"smootify-magic-box-cart [type=\"submit\"]",
+						"klaviyo-back-in-stock [type=\"submit\"]",
+						"customer-user-update [type=\"submit\"]",
+						"create-address [type=\"submit\"]",
+						"edit-address [type=\"submit\"]",
+						"delete-address [type=\"submit\"]",
+						"customer-subscribe-email [type=\"submit\"]",
+						"customer-unsubscribe-email [type=\"submit\"]",
+						"customer-metafields-editor [type=\"submit\"]",
+						"subscription-activate [type=\"submit\"]",
+						"subscription-pause [type=\"submit\"]",
+						"subscription-cancel [type=\"submit\"]",
+						"passwordless-login [type=\"submit\"]",
+						"logout-form [type=\"submit\"]",
+						"webflow-form [type=\"submit\"]",
+						"newsletter-subscribe [type=\"submit\"]",
+						"metaobject-creator [type=\"submit\"]",
+						"metaobject-editor [type=\"submit\"]",
+						"booking-form [type=\"submit\"]",
+						"[form]",
 						"customer-order [data-action=\"buy-again\"]",
 						"order-page [data-action=\"buy-again\"]",
-						"smootify-product [data-is=\"direct-add-to-cart\"]"
+						"smootify-product [data-is=\"direct-add-to-cart\"]",
+						"smootify-product [price-break=\"add\"]"
 					]
 				}
 			]
@@ -746,6 +878,11 @@
 				{
 					"label": "Total",
 					"value": "total"
+				},
+				{
+					"label": "Compare-at total",
+					"value": "compareAtTotal",
+					"note": "The struck-through total; hidden when nothing is on sale"
 				}
 			]
 		},
@@ -816,6 +953,12 @@
 					"value": "gift-card",
 					"on": ["container"],
 					"note": "Template: one per gift card"
+				},
+				{
+					"label": "Pay later amount",
+					"value": "pay-later",
+					"on": ["container"],
+					"note": "On PayPal's or Klarna's pay later placement, or the element around it: the cart's total"
 				}
 			]
 		},
@@ -839,17 +982,100 @@
 		{
 			"id": "gift-card",
 			"label": "Gift card",
-			"inside": ["smootify-cart [cart=\"gift-card\"]"],
+			"inside": ["smootify-cart [cart=\"gift-card\"]", "gift-card-balance"],
 			"name": "gift-card",
 			"on": ["text"],
 			"items": [
 				{
 					"label": "Code",
-					"value": "code"
+					"value": "code",
+					"note": "The end of the code, such as \u2022\u2022\u2022\u2022 4F2A"
 				},
 				{
 					"label": "Amount",
-					"value": "amount"
+					"value": "amount",
+					"inside": ["smootify-cart [cart=\"gift-card\"]"],
+					"note": "The amount the card covers on this cart"
+				},
+				{
+					"label": "Balance",
+					"value": "balance",
+					"inside": ["gift-card-balance"],
+					"note": "What is left on the card, in the form's Success message. A card used up shows the form's error, as an unknown code"
+				}
+			]
+		},
+		{
+			"id": "shipping-option",
+			"label": "Shipping estimate option",
+			"inside": ["shipping-estimate"],
+			"name": "shipping-option",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Option row",
+					"value": "item",
+					"on": ["container"],
+					"note": "Copied once per delivery option; is-selected on the one in the cart total, a click selects another"
+				},
+				{
+					"label": "Name",
+					"value": "title",
+					"inside": ["shipping-estimate [shipping-option=\"item\"]"],
+					"note": "Shopify's name of the rate, such as Standard"
+				},
+				{
+					"label": "Price",
+					"value": "price",
+					"inside": ["shipping-estimate [shipping-option=\"item\"]"],
+					"note": "Free, or data-free-text on shipping-estimate, for a rate at 0"
+				},
+				{
+					"label": "Description",
+					"value": "description",
+					"inside": ["shipping-estimate [shipping-option=\"item\"]"],
+					"note": "Hidden when the rate has none"
+				}
+			]
+		},
+		{
+			"id": "quick-order",
+			"label": "Quick order list",
+			"inside": ["quick-order"],
+			"name": "quick-order",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Unit price",
+					"value": "price",
+					"inside": ["quick-order smootify-variant"],
+					"note": "The price of one at the row's quantity (B2B volume price)"
+				},
+				{
+					"label": "Row total",
+					"value": "line-total",
+					"inside": ["quick-order smootify-variant"]
+				},
+				{
+					"label": "Pieces",
+					"value": "pieces",
+					"note": "The rows' quantities added up"
+				},
+				{
+					"label": "Total",
+					"value": "total",
+					"note": "The rows' totals added up"
+				},
+				{
+					"label": "Add to cart",
+					"value": "add",
+					"on": ["button"],
+					"note": "Adds every row with a quantity in one addition; disabled while the table is empty, not needed with data-sync"
+				},
+				{
+					"label": "Error",
+					"value": "error",
+					"note": "The cart's error after an addition; hidden without one"
 				}
 			]
 		},
@@ -1139,7 +1365,7 @@
 		{
 			"id": "image-size",
 			"label": "Image size",
-			"inside": ["smootify-product", "smootify-variant", "cart-item", "bundle-item", "box-item", "smootify-metaobject"],
+			"inside": ["smootify-product", "smootify-variant", "cart-item", "bundle-item", "box-item", "smootify-metaobject", "smootify-collection"],
 			"on": ["image"],
 			"note": "On an image Smootify fills: the Shopify CDN resizes it. In a gallery, on the Slider for its slides, on the thumbnail or lightbox part itself",
 			"items": [
@@ -1179,7 +1405,10 @@
 				"[metaobject]",
 				"[gallery=\"slider\"]",
 				"[gallery=\"thumbnails\"]",
-				"[gallery=\"lightboxes\"]"
+				"[gallery=\"lightboxes\"]",
+				"[box-item=\"image\"]",
+				"[collection=\"image\"]",
+				"[collection-metafield]"
 			]
 		},
 		{
@@ -1295,6 +1524,14 @@
 					"note": "A calculation on the configurator's values, data-digits decimals (2)"
 				},
 				{
+					"label": "Calculation decimals",
+					"name": "data-digits",
+					"placeholder": "2",
+					"on": ["text"],
+					"with": ["[configurator-formula]"],
+					"note": "Decimals of the configurator calculation (default 2)"
+				},
+				{
 					"label": "If the field counts",
 					"name": "if-configurator",
 					"placeholder": "Engraving",
@@ -1368,6 +1605,14 @@
 					"placeholder": "--metafield-color",
 					"on": ["any"],
 					"with": ["[metafield]"]
+				},
+				{
+					"label": "As a table",
+					"name": "data-format",
+					"value": "table",
+					"on": ["container"],
+					"with": ["[metafield]"],
+					"note": "A JSON field shaped as {\"headers\":[…],\"rows\":[[…]]}: on a <table> the header cell, the row and the cell are copied; with divs mark them with table=head|row|cell. Hidden when empty or not that shape"
 				}
 			]
 		},
@@ -1379,7 +1624,8 @@
 				"[variant-metafield]",
 				"[metaobject]",
 				"[customer-metafield]",
-				"[company-metafield]"
+				"[company-metafield]",
+				"[collection-metafield]"
 			],
 			"name": "reference",
 			"on": ["text"],
@@ -1453,6 +1699,14 @@
 					"placeholder": "--metafield-color",
 					"on": ["any"],
 					"with": ["[variant-metafield]"]
+				},
+				{
+					"label": "As a table",
+					"name": "data-format",
+					"value": "table",
+					"on": ["container"],
+					"with": ["[variant-metafield]"],
+					"note": "A JSON field shaped as {\"headers\":[…],\"rows\":[[…]]}: on a <table> the header cell, the row and the cell are copied; with divs mark them with table=head|row|cell. Hidden when empty or not that shape"
 				}
 			]
 		},
@@ -1492,7 +1746,7 @@
 		{
 			"id": "metaobject",
 			"label": "Metaobject field",
-			"inside": ["smootify-metaobject", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]"],
+			"inside": ["smootify-metaobject", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]", "[collection-metafield]"],
 			"items": [
 				{
 					"label": "Value",
@@ -1535,7 +1789,28 @@
 					"placeholder": "items.0.name",
 					"on": ["any"],
 					"with": ["[metaobject]"]
+				},
+				{
+					"label": "As a table",
+					"name": "data-format",
+					"value": "table",
+					"on": ["container"],
+					"with": ["[metaobject]"],
+					"note": "A JSON field shaped as {\"headers\":[…],\"rows\":[[…]]}: on a <table> the header cell, the row and the cell are copied; with divs mark them with table=head|row|cell. Hidden when empty or not that shape"
 				}
+			]
+		},
+		{
+			"id": "json-table",
+			"label": "JSON table parts",
+			"inside": ["[data-format=\"table\"]"],
+			"name": "table",
+			"on": ["container"],
+			"note": "Templates of a data-format=\"table\" built with divs (a <table> needs none); every copy keeps the template classes",
+			"items": [
+				{ "label": "Heading cell", "value": "head" },
+				{ "label": "Row", "value": "row" },
+				{ "label": "Cell", "value": "cell", "inside": ["[table=\"row\"]"] }
 			]
 		},
 		{
@@ -1667,6 +1942,119 @@
 			]
 		},
 		{
+			"id": "collection",
+			"label": "Collection",
+			"inside": ["smootify-collection"],
+			"name": "collection",
+			"on": ["text"],
+			"note": "A field of the collection smootify-collection loads; empty takes the empty state of a CMS field",
+			"items": [
+				{
+					"label": "Title",
+					"value": "title"
+				},
+				{
+					"label": "Handle",
+					"value": "handle"
+				},
+				{
+					"label": "Description",
+					"value": "description"
+				},
+				{
+					"label": "Description (HTML)",
+					"value": "description-html",
+					"on": ["rich", "container"]
+				},
+				{
+					"label": "Image",
+					"value": "image",
+					"on": ["image"]
+				},
+				{
+					"label": "Link",
+					"value": "url",
+					"on": ["link", "text"],
+					"note": "On a link, the href; elsewhere the text"
+				},
+				{
+					"label": "SEO title",
+					"value": "seo-title",
+					"note": "Else the title"
+				},
+				{
+					"label": "SEO description",
+					"value": "seo-description",
+					"note": "Else the description"
+				}
+			]
+		},
+		{
+			"id": "collection-metafield",
+			"label": "Collection metafield",
+			"inside": ["smootify-collection"],
+			"items": [
+				{
+					"label": "Value",
+					"name": "collection-metafield",
+					"placeholder": "key, like banner_text",
+					"on": ["text", "rich", "container", "link", "button", "image", "video"]
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"on": ["any"],
+					"with": ["[collection-metafield]"]
+				},
+				{
+					"label": "Color variable",
+					"name": "property",
+					"placeholder": "--metafield-color",
+					"on": ["any"],
+					"with": ["[collection-metafield]"]
+				},
+				{
+					"label": "Into an attribute",
+					"name": "data-attr",
+					"placeholder": "href",
+					"on": ["any"],
+					"with": ["[collection-metafield]"]
+				},
+				{
+					"label": "List separator",
+					"name": "separator",
+					"placeholder": ", ",
+					"note": "Used as written, spaces included: a comma and a space joins with a comma and a space",
+					"on": ["any"],
+					"with": ["[collection-metafield]"]
+				},
+				{
+					"label": "Decimal digits",
+					"name": "data-digits",
+					"placeholder": "2",
+					"on": ["any"],
+					"with": ["[collection-metafield]"]
+				},
+				{
+					"label": "JSON path",
+					"name": "data-path",
+					"placeholder": "items.0.name",
+					"on": ["any"],
+					"with": ["[collection-metafield]"]
+				},
+				{
+					"label": "As a table",
+					"name": "data-format",
+					"value": "table",
+					"on": ["container"],
+					"with": ["[collection-metafield]"],
+					"note": "A JSON field shaped as {\"headers\":[…],\"rows\":[[…]]}: on a <table> the header cell, the row and the cell are copied; with divs mark them with table=head|row|cell. Hidden when empty or not that shape"
+				}
+			],
+			"on": ["text", "rich", "container", "link", "button", "image", "video"]
+		},
+		{
 			"id": "customer-metafield",
 			"label": "Customer metafield",
 			"inside": [],
@@ -1723,6 +2111,14 @@
 					"placeholder": "items.0.name",
 					"on": ["any"],
 					"with": ["[customer-metafield]", "[company-metafield]"]
+				},
+				{
+					"label": "As a table",
+					"name": "data-format",
+					"value": "table",
+					"on": ["container"],
+					"with": ["[customer-metafield]", "[company-metafield]"],
+					"note": "A JSON field shaped as {\"headers\":[…],\"rows\":[[…]]}: on a <table> the header cell, the row and the cell are copied; with divs mark them with table=head|row|cell. Hidden when empty or not that shape"
 				}
 			],
 			"on": ["text", "rich", "container", "link", "button", "image", "video"]
@@ -1903,7 +2299,7 @@
 		{
 			"id": "line-item",
 			"label": "Order line",
-			"inside": ["line-item"],
+			"inside": ["line-item", "request-line-item"],
 			"name": "line-item",
 			"on": ["text"],
 			"items": [
@@ -1914,6 +2310,12 @@
 				{
 					"label": "Title",
 					"value": "title"
+				},
+				{
+					"label": "Variant title",
+					"value": "variant-title",
+					"aliases": ["variantTitle"],
+					"note": "Red / L; removed for a product without variants"
 				},
 				{
 					"label": "Quantity",
@@ -2044,6 +2446,189 @@
 					"value": "trackingUrl",
 					"on": ["link"],
 					"aliases": ["tracking-url"]
+				}
+			]
+		},
+		{
+			"id": "draft-order",
+			"label": "Quote (draft order)",
+			"inside": ["customer-draft-order"],
+			"name": "draft-order",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Number",
+					"value": "name",
+					"note": "#D12"
+				},
+				{
+					"label": "Status",
+					"value": "status",
+					"note": "Open, Invoice sent or Completed, or the SmootifyStatusLabels texts"
+				},
+				{
+					"label": "Pay the quote",
+					"value": "invoice-url",
+					"on": ["link"],
+					"aliases": ["invoiceUrl"],
+					"note": "Where the customer pays it; removed once paid"
+				},
+				{
+					"label": "Order page",
+					"value": "order-url",
+					"on": ["link"],
+					"aliases": ["orderUrl"],
+					"note": "The order the quote became; removed until then"
+				},
+				{
+					"label": "Order number",
+					"value": "order-number",
+					"aliases": ["orderNumber"]
+				},
+				{
+					"label": "Email",
+					"value": "email"
+				},
+				{
+					"label": "Phone",
+					"value": "phone"
+				},
+				{
+					"label": "Billing address",
+					"value": "billing-address",
+					"aliases": ["billingAddress"]
+				},
+				{
+					"label": "Shipping address",
+					"value": "shipping-address",
+					"aliases": ["shippingAddress"]
+				},
+				{
+					"label": "Subtotal",
+					"value": "subtotal-price",
+					"aliases": ["subtotalPrice"]
+				},
+				{
+					"label": "Total",
+					"value": "total-price",
+					"aliases": ["totalPrice"]
+				},
+				{
+					"label": "Taxes",
+					"value": "total-tax",
+					"aliases": ["totalTax"]
+				},
+				{
+					"label": "Shipping",
+					"value": "total-shipping",
+					"aliases": ["totalShipping"]
+				},
+				{
+					"label": "Discounts",
+					"value": "total-discounts",
+					"aliases": ["totalDiscounts"],
+					"note": "Removed when the quote has no discount"
+				},
+				{
+					"label": "Item count",
+					"value": "item-count",
+					"aliases": ["itemCount"],
+					"note": "The pieces"
+				},
+				{
+					"label": "Created on",
+					"value": "created-at",
+					"aliases": ["createdAt"]
+				},
+				{
+					"label": "Updated on",
+					"value": "updated-at",
+					"aliases": ["updatedAt"]
+				}
+			]
+		},
+		{
+			"id": "order-return",
+			"label": "Return request",
+			"inside": ["order-return"],
+			"name": "order-return",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Why no return",
+					"value": "reason",
+					"note": "Like Return window expired, or the SmootifyStatusLabels text; removed when a line can be returned"
+				},
+				{
+					"label": "Last return",
+					"value": "request",
+					"on": ["container"],
+					"note": "Removed when no return was asked"
+				},
+				{
+					"label": "Return number",
+					"value": "name",
+					"note": "#1001-R1"
+				},
+				{
+					"label": "Return status",
+					"value": "status"
+				},
+				{
+					"label": "Asked on",
+					"value": "created-at",
+					"aliases": ["createdAt"]
+				}
+			]
+		},
+		{
+			"id": "order-edit-request",
+			"label": "Removal request",
+			"inside": ["order-edit-request"],
+			"name": "order-edit-request",
+			"on": ["text"],
+			"items": [
+				{
+					"label": "Why no removal",
+					"value": "reason",
+					"note": "Like Edit window expired, or the SmootifyStatusLabels text; removed when a line can be removed"
+				},
+				{
+					"label": "Last removal",
+					"value": "request",
+					"on": ["container"],
+					"note": "Removed when no removal was asked"
+				},
+				{
+					"label": "Request status",
+					"value": "status"
+				}
+			]
+		},
+		{
+			"id": "order-request-fields",
+			"label": "Return and removal fields",
+			"inside": ["order-return request-line-item", "order-edit-request request-line-item"],
+			"name": "name",
+			"on": ["input"],
+			"note": "The fields of each line row; a checkbox, any name, picks the row",
+			"items": [
+				{
+					"label": "Quantity asked",
+					"value": "quantity",
+					"note": "A number input or a select, up to what the line allows"
+				},
+				{
+					"label": "Return reason",
+					"value": "reason",
+					"inside": ["order-return request-line-item"],
+					"note": "A select Smootify fills with Shopify's reasons; required when it has some"
+				},
+				{
+					"label": "Return note",
+					"value": "note",
+					"inside": ["order-return request-line-item"],
+					"note": "A textarea, up to 300 characters"
 				}
 			]
 		},
@@ -2648,6 +3233,20 @@
 			]
 		},
 		{
+			"id": "booking-form",
+			"label": "Booking form fields",
+			"inside": ["booking-form"],
+			"name": "name",
+			"on": ["input"],
+			"note": "The fields the booking saves on its entry, with the picked slot; any case works (Webflow's Name, Email). Any other field is not sent",
+			"items": [
+				{"label": "Booking name", "value": "name"},
+				{"label": "Booking email", "value": "email"},
+				{"label": "Booking phone", "value": "phone"},
+				{"label": "Booking note", "value": "note", "note": "A textarea"}
+			]
+		},
+		{
 			"id": "pickup-location",
 			"label": "Pickup location",
 			"inside": ["store-availability store-location", "store-availability"],
@@ -2996,6 +3595,128 @@
 			]
 		},
 		{
+			"id": "toast",
+			"label": "Toasts",
+			"inside": [
+				"smootify-toasts"
+			],
+			"name": "toast",
+			"on": [
+				"container"
+			],
+			"items": [
+				{
+					"label": "Added to cart",
+					"value": "added-to-cart",
+					"note": "Template: shown after an add to cart, from any button; not when a mini cart opens for that add"
+				},
+				{
+					"label": "Cart error",
+					"value": "cart-error",
+					"note": "Template: shown when Shopify refuses a cart change (add, quantity, discount code); is-error and role=alert"
+				},
+				{
+					"label": "Saved to wishlist",
+					"value": "wishlist-added",
+					"note": "Template: shown when a wishlist-toggle saves a product"
+				},
+				{
+					"label": "Removed from wishlist",
+					"value": "wishlist-removed",
+					"note": "Template: shown when a wishlist-toggle removes a product"
+				},
+				{
+					"label": "Form sent",
+					"value": "form-sent",
+					"note": "Template: shown when a Smootify form is sent (newsletter, back in stock, account and server forms)"
+				},
+				{
+					"label": "Link copied",
+					"value": "link-copied",
+					"note": "Template: shown when a share button copies its link, not when the share sheet opens"
+				},
+				{
+					"label": "Error",
+					"value": "error",
+					"note": "Template: the fallback for cart-error and for Smootify.toast(\"…-error\"); is-error and role=alert"
+				}
+			]
+		},
+		{
+			"id": "toast-item",
+			"label": "Toast content",
+			"inside": [
+				"smootify-toasts [toast]"
+			],
+			"name": "toast-item",
+			"on": [
+				"text"
+			],
+			"items": [
+				{
+					"label": "Product image",
+					"value": "image",
+					"on": [
+						"image"
+					],
+					"note": "src and alt; added-to-cart, wishlist-added, wishlist-removed"
+				},
+				{
+					"label": "Product name",
+					"value": "title",
+					"note": "added-to-cart, wishlist-added, wishlist-removed"
+				},
+				{
+					"label": "Variant",
+					"value": "variant-title",
+					"note": "Blue / M; hidden for a product with one variant"
+				},
+				{
+					"label": "Quantity added",
+					"value": "quantity",
+					"note": "added-to-cart"
+				},
+				{
+					"label": "Price added",
+					"value": "price",
+					"note": "The cost of what was added, in the store's money format; added-to-cart"
+				},
+				{
+					"label": "Lines added",
+					"value": "count",
+					"note": "How many lines one add put in the cart (a bundle, add-ons); added-to-cart"
+				},
+				{
+					"label": "Message",
+					"value": "message",
+					"note": "Shopify's text for cart-error and error; for form-sent the text of that form's Success message"
+				}
+			]
+		},
+		{
+			"id": "toast-actions",
+			"label": "Toast buttons",
+			"inside": [
+				"smootify-toasts [toast]"
+			],
+			"name": "data-action",
+			"on": [
+				"button",
+				"link"
+			],
+			"items": [
+				{
+					"label": "Close the toast",
+					"value": "close"
+				},
+				{
+					"label": "Open the cart",
+					"value": "open-cart",
+					"note": "Opens the page's mini cart and closes the toast; with no mini cart a link to the cart page works as a link"
+				}
+			]
+		},
+		{
 			"id": "modal-backdrop",
 			"label": "Off-canvas panel",
 			"inside": [],
@@ -3110,6 +3831,12 @@
 				{
 					"label": "Is not a subscription",
 					"value": "no-subscription"
+				},
+				{
+					"label": "Has volume pricing",
+					"value": "has-price-breaks",
+					"inside": ["smootify-product"],
+					"note": "B2B volume pricing; needs a [variant=\"price-breaks\"] on the page"
 				},
 				{
 					"label": "Not for local pickup",
@@ -3302,6 +4029,16 @@
 					"value": "no-subscriptions"
 				},
 				{
+					"label": "Has quotes",
+					"value": "has-draft-orders",
+					"note": "Needs customer-draft-orders on the page"
+				},
+				{
+					"label": "Has no quotes",
+					"value": "no-draft-orders",
+					"note": "Needs customer-draft-orders on the page"
+				},
+				{
 					"label": "Has store credit",
 					"value": "has-store-credit"
 				},
@@ -3409,6 +4146,24 @@
 					"label": "Has fulfillments",
 					"name": "order-condition",
 					"value": "has-fulfillments"
+				}
+			]
+		},
+		{
+			"id": "draft-order",
+			"label": "Quote",
+			"inside": ["customer-draft-order"],
+			"name": "draft-order-condition",
+			"items": [
+				{
+					"label": "In review",
+					"value": "in-review",
+					"note": "A B2B order the merchant has yet to approve"
+				},
+				{
+					"label": "Has discounts",
+					"value": "has-discounts",
+					"note": "Around the discount's label and amount"
 				}
 			]
 		},
@@ -3530,6 +4285,35 @@
 			]
 		},
 		{
+			"id": "collection-metafield",
+			"label": "Collection metafield",
+			"inside": ["smootify-collection"],
+			"items": [
+				{
+					"label": "If it has a value",
+					"name": "if-collection-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Unless it has a value",
+					"name": "unless-collection-metafield",
+					"placeholder": "key"
+				},
+				{
+					"label": "Equal to",
+					"name": "data-check-value",
+					"placeholder": "value to match",
+					"with": ["[if-collection-metafield]", "[unless-collection-metafield]"]
+				},
+				{
+					"label": "Namespace",
+					"name": "namespace",
+					"placeholder": "custom",
+					"with": ["[if-collection-metafield]", "[unless-collection-metafield]"]
+				}
+			]
+		},
+		{
 			"id": "customer-metafield",
 			"label": "Customer metafield",
 			"inside": [],
@@ -3581,7 +4365,7 @@
 		{
 			"id": "metaobject",
 			"label": "Metaobject field",
-			"inside": ["smootify-metaobject", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]"],
+			"inside": ["smootify-metaobject", "[metafield]", "[variant-metafield]", "[customer-metafield]", "[company-metafield]", "[collection-metafield]"],
 			"items": [
 				{
 					"label": "If it has a value",

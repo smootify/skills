@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-beta.47 · 2026-11-24
+
+- Rules and catalogs from Smootify 2.0.0-beta.16: `smootify-collection` loads one collection by `data-id` or `data-handle`, with `[collection="title|handle|description|description-html|image|url|seo-title|seo-description"]` and its metafields through `collection-metafield`, `if-collection-metafield` and `unless-collection-metafield`; `smootify-metaobjects` lists a collection metafield with `data-collection-id`, `data-collection-handle` or the `smootify-collection` around it.
+
 ## 2.0.0-beta.46 · 2026-11-16
 
 - Rules and catalogs from Smootify 2.0.0-beta.14: `data-format="table"` turns a JSON metafield, variant metafield or metaobject field shaped as `{"headers":[…],"rows":[[…]]}` into a table (on a `<table>` the header cell, the row and the cell are copied; with divs, `table="head|row|cell"` marks them), also on a nested `data-path`.
